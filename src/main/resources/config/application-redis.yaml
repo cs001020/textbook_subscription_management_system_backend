@@ -1,0 +1,10 @@
+spring:
+  redis:
+    client-type: lettuce
+    host: localhost
+    port: 6399
+    password: 001020
+  cache:
+    type: redis
+    redis:
+      cache-null-values: true

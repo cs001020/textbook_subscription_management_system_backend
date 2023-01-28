@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.graduation.mapper.TextbookMapper">
+
+    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.Textbook">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="bookName" column="book_name" jdbcType="VARCHAR"/>
+            <result property="isbn" column="isbn" jdbcType="VARCHAR"/>
+            <result property="barCode" column="bar_code" jdbcType="VARCHAR"/>
+            <result property="author" column="author" jdbcType="VARCHAR"/>
+            <result property="binding" column="binding" jdbcType="VARCHAR"/>
+            <result property="print" column="print" jdbcType="VARCHAR"/>
+            <result property="folio" column="folio" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="VARCHAR"/>
+            <result property="words" column="words" jdbcType="VARCHAR"/>
+            <result property="publishingHouse" column="publishing_house" jdbcType="VARCHAR"/>
+            <result property="pageNumber" column="page_number" jdbcType="OTHER"/>
+            <result property="issueNumber" column="issue_number" jdbcType="VARCHAR"/>
+            <result property="prePacketNumber" column="pre_packet_number" jdbcType="OTHER"/>
+            <result property="publicationDate" column="publication_date" jdbcType="DATE"/>
+            <result property="imgUrl" column="img_url" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="state" column="state" jdbcType="SMALLINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,book_name,isbn,
+        bar_code,author,binding,
+        print,folio,price,
+        words,publishing_house,page_number,
+        issue_number,pre_packet_number,publication_date,
+        img_url,description,state,
+        create_time,update_time,is_deleted
+    </sql>
+</mapper>

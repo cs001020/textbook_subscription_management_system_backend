@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.graduation.mapper.FacultyInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.FacultyInfo">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="userFacultyId" column="user_faculty_id" jdbcType="BIGINT"/>
+            <result property="sex" column="sex" jdbcType="SMALLINT"/>
+            <result property="birthday" column="birthday" jdbcType="TIMESTAMP"/>
+            <result property="address" column="address" jdbcType="VARCHAR"/>
+            <result property="email" column="email" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,user_faculty_id,sex,
+        birthday,address,email,
+        create_time,update_time,is_deleted
+    </sql>
+</mapper>

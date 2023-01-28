@@ -1,0 +1,9 @@
+logging:
+  level:
+    com.chen.graduation.mapper: debug
+mybatis-plus:
+  global-config:
+    db-config:
+      logic-delete-field: isDeleted
+      logic-delete-value: id
+      logic-not-delete-value: 0

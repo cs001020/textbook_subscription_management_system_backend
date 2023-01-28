@@ -1,0 +1,39 @@
+knife4j:
+  enable: true
+  openapi:
+    title: 高校教材征订管理系统
+    description: 个人毕业设计
+    email: 1006596474@qq.com
+    concat: chen
+    url: http://tagao.warframe.top
+    version: v1.0
+    license: Apache 2.0
+    license-url: https://stackoverflow.com/
+    terms-of-service-url: https://stackoverflow.com/
+    group:
+      test1:
+        group-name: aaa
+        api-rule: package
+        api-rule-resources:
+          - com.chen.graduation.controller
+
+  #生产环境 屏蔽所有knife4j api
+  production: false
+  #前端Ui的个性化配置属性（无需配置）
+  setting:
+    custom-code: 500
+    enable-footer-custom: false
+    footer-custom-content: 我是自定义的Footer
+    language: zh_cn
+    enable-footer: true
+    enable-debug: true
+    enable-open-api: true
+    enable-host: false
+    enable-host-text: localhost:9090
+  #访问控制
+  basic:
+    enable: false
+    username: abc
+    password: 123
+  #跨域
+  cors: true
