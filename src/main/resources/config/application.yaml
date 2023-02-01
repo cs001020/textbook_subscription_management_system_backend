@@ -1,3 +1,6 @@
 spring:
   profiles:
     active: knife4j,postgres,redis,mybatis
+timing:
+  warning-time: 200
+  enable: true
