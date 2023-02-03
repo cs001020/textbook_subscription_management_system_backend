@@ -19,20 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    @ApiOperation("获取图片验证码")
-    @GetMapping("/captcha")
-    public AjaxResult<CaptchaVO> captcha() {
-        // TODO: 2023/2/1 获取图片验证码 for cs
-        return AjaxResult.success();
-    }
-
-    @ApiOperation("发送短信验证码")
-    @PostMapping("/smsCaptcha")
-    public AjaxResult<Object> smsCaptcha(@Validated @RequestBody PhoneNumberDTO phoneNumberDTO) {
-        // TODO: 2023/2/1 发送短信验证码 for cs
-        return AjaxResult.success(phoneNumberDTO);
-    }
-
     @ApiOperation("教职工登陆")
     @GetMapping("/faculty/login")
     public AjaxResult<Object> facultyLogin() {

@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 @ApiModel("图形验证码")
 public class CaptchaVO {
-    @ApiModelProperty("图片验证码uid")
-    private String uid;
+    @ApiModelProperty("图片验证码唯一id")
+    private Long uid;
     @ApiModelProperty("图片验证码base64格式")
     private String captcha;
 }

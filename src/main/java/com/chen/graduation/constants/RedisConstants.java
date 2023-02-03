@@ -7,5 +7,28 @@ package com.chen.graduation.constants;
  * @date 2023/01/28
  */
 public class RedisConstants {
+    /**
+     * 教材分页缓存key
+     */
     public static final String TEXTBOOK_PAGE_CACHE_KET="textbook.page";
+
+    /**
+     * 图片验证码key
+     */
+    public static final String IMG_CAPTCHA_KEY="captcha.img.";
+
+    /**
+     * 图形验证码缓存时间（分钟）
+     */
+    public static final Long IMG_CAPTCHA_TTL=5L;
+
+    /**
+     * 图片验证码key
+     */
+    public static final String SMS_CAPTCHA_KEY="captcha.sms.";
+
+    /**
+     * 图形验证码缓存时间（毫秒）
+     */
+    public static final Long SMS_CAPTCHA_TTL=5*60*1000L;
 }

@@ -29,7 +29,7 @@ public class AjaxResult<T> implements Serializable {
     /**
      * 返回内容
      */
-    @ApiModelProperty("返回内容")
+    @ApiModelProperty("消息")
     private String msg;
 
     /**
