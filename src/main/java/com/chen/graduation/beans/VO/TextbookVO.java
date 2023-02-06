@@ -46,7 +46,7 @@ public class TextbookVO implements Serializable {
     @ApiModelProperty("描述")
     private String description;
     @ApiModelProperty("状态")
-    private TextbookStateEnums state;
+    private String state;
     @ApiModelProperty("库存")
     private Integer stock;
 

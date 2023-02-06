@@ -3,6 +3,7 @@ package com.chen.graduation.converter;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.TextbookVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ public interface TextbookConverter {
      * @param textbook 教科书
      * @return {@link TextbookVO}
      */
+    @Mapping(target = "state",expression = "java(textbook.getState().getStateName())")
     TextbookVO po2vo(Textbook textbook);
 
     /**
