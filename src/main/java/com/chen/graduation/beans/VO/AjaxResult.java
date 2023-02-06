@@ -94,7 +94,7 @@ public class AjaxResult<T> implements Serializable {
      *
      * @return 成功消息
      */
-    public static <T> AjaxResult<T> success() {
+    public static AjaxResult<Object> success() {
         return new AjaxResult<>(ResponseType.SUCCESS, "操作成功", null);
     }
 
@@ -113,7 +113,7 @@ public class AjaxResult<T> implements Serializable {
      * @param msg 返回内容
      * @return 成功消息
      */
-    public static <T> AjaxResult<T> success(String msg) {
+    public static AjaxResult<Object> success(String msg) {
         return new AjaxResult<>(ResponseType.SUCCESS, msg, null);
     }
 
@@ -134,8 +134,8 @@ public class AjaxResult<T> implements Serializable {
      * @param msg 返回内容
      * @return 警告消息
      */
-    public static <T> AjaxResult<T> warn(String msg) {
-        return new AjaxResult<T>(ResponseType.WARN, msg, null);
+    public static AjaxResult<Object> warn(String msg) {
+        return new AjaxResult<>(ResponseType.WARN, msg, null);
     }
 
     /**
@@ -146,7 +146,7 @@ public class AjaxResult<T> implements Serializable {
      * @return 警告消息
      */
     public static <T> AjaxResult<T> warn(String msg, T data) {
-        return new AjaxResult<T>(ResponseType.WARN, msg, data);
+        return new AjaxResult<>(ResponseType.WARN, msg, data);
     }
 
     /**
@@ -154,7 +154,7 @@ public class AjaxResult<T> implements Serializable {
      *
      * @return AjaxResult
      */
-    public static <T> AjaxResult<T> error() {
+    public static AjaxResult<Object> error() {
         return new AjaxResult<>(ResponseType.ERROR, "操作失败", null);
     }
 
@@ -164,7 +164,7 @@ public class AjaxResult<T> implements Serializable {
      * @param msg 返回内容
      * @return 警告消息
      */
-    public static <T> AjaxResult<T> error(String msg) {
+    public static AjaxResult<Object> error(String msg) {
         return new AjaxResult<>(ResponseType.ERROR, msg, null);
     }
 

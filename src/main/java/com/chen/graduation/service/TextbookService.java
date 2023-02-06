@@ -1,7 +1,12 @@
 package com.chen.graduation.service;
 
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Textbook;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.TextbookVO;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -10,4 +15,12 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface TextbookService extends IService<Textbook> {
 
+    /**
+     * 页面查询
+     * 分页查询
+     *
+     * @param pageParamDTO 页面参数dto
+     * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
+     */
+    AjaxResult<List<TextbookVO>> pageQuery(PageParamDTO pageParamDTO);
 }

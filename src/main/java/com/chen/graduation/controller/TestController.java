@@ -65,19 +65,4 @@ public class TestController {
         return res.toString();
     }
 
-    @PostMapping("/page")
-    @ApiOperation("教材数据分页查询")
-    @Cacheable(value = RedisConstants.TEXTBOOK_PAGE_CACHE_KET,key = "#pageParamDTO.page+'-'+#pageParamDTO.size")
-    public AjaxResult<List<Textbook>> get(@RequestBody @Validated PageParamDTO pageParamDTO){
-        //String json = stringRedisTemplate.opsForValue().get("test."+pageParamDTO.getPage()+pageParamDTO.getSize());
-        //if (StrUtil.isNotEmpty(json)){
-        //    return JSON.parseObject(json,AjaxResult.class);
-        //}
-        Page<Textbook> page = textbookService.page(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()));
-        AjaxResult<List<Textbook>> success = AjaxResult.success(page.getRecords());
-        success.setTotal(page.getTotal());
-        log.info("TestController.get业务结束，结果:{}",success);
-        //stringRedisTemplate.opsForValue().set("test.1", JSON.toJSONString(success));
-        return success;
-    }
 }

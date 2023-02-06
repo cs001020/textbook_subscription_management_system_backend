@@ -3,6 +3,8 @@ package com.chen.graduation.beans.PO;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.TextbookStateEnums;
 import lombok.Data;
 
 /**
@@ -45,7 +47,9 @@ public class Textbook implements Serializable {
 
     private String description;
 
-    private Integer state;
+    private TextbookStateEnums state;
+
+    private Integer stock;
 
     private Date createTime;
 
