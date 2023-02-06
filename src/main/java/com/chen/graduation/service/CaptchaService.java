@@ -1,7 +1,7 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.model.VO.AjaxResult;
-import com.chen.graduation.model.VO.CaptchaVO;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.CaptchaVO;
 
 /**
  * 验证码服务

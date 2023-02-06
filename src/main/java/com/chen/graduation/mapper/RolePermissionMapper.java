@@ -1,6 +1,6 @@
 package com.chen.graduation.mapper;
 
-import com.chen.graduation.model.DO.RolePermission;
+import com.chen.graduation.beans.PO.RolePermission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

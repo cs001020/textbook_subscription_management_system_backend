@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chen.graduation.mapper.FacultyRoleMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.FacultyRole">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.FacultyRole">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="facultyId" column="faculty_id" jdbcType="BIGINT"/>
             <result property="roleId" column="role_id" jdbcType="BIGINT"/>

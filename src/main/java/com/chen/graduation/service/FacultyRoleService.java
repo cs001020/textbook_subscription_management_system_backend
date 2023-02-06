@@ -1,6 +1,6 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.model.DO.FacultyRole;
+import com.chen.graduation.beans.PO.FacultyRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

@@ -1,4 +1,4 @@
-package com.chen.graduation.model.DO;
+package com.chen.graduation.beans.PO;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -6,20 +6,24 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * @TableName tb_opening_plan
+ * @TableName tb_user_student
  */
-@TableName(value ="tb_opening_plan")
+@TableName(value ="tb_user_student")
 @Data
-public class OpeningPlan implements Serializable {
+public class UserStudent implements Serializable {
     private Long id;
 
-    private String description;
+    private String account;
 
-    private Long teacherId;
+    private String password;
+
+    private String phoneNumber;
 
     private Long gradeId;
 
     private String name;
+
+    private String icon;
 
     private Integer state;
 

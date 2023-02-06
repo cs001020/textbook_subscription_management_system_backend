@@ -1,7 +1,7 @@
 package com.chen.graduation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.model.DO.Textbook;
+import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.service.TextbookService;
 import com.chen.graduation.mapper.TextbookMapper;
 import org.springframework.stereotype.Service;

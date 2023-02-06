@@ -1,6 +1,6 @@
 package com.chen.graduation.mapper;
 
-import com.chen.graduation.model.DO.TeachingGroup;
+import com.chen.graduation.beans.PO.TeachingGroup;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**

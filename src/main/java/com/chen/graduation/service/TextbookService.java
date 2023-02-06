@@ -1,6 +1,6 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.model.DO.Textbook;
+import com.chen.graduation.beans.PO.Textbook;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

@@ -1,6 +1,6 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.model.DO.RolePermission;
+import com.chen.graduation.beans.PO.RolePermission;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**

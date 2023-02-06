@@ -1,4 +1,4 @@
-package com.chen.graduation.model.DO;
+package com.chen.graduation.beans.PO;
 
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -6,18 +6,20 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * @TableName tb_major
+ * @TableName tb_permission
  */
-@TableName(value ="tb_major")
+@TableName(value ="tb_permission")
 @Data
-public class Major implements Serializable {
+public class Permission implements Serializable {
     private Long id;
+
+    private String url;
 
     private String name;
 
     private String description;
 
-    private Long secondaryCollegeId;
+    private Integer state;
 
     private Date createTime;
 

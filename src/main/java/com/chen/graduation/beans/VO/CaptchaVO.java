@@ -1,4 +1,4 @@
-package com.chen.graduation.model.VO;
+package com.chen.graduation.beans.VO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

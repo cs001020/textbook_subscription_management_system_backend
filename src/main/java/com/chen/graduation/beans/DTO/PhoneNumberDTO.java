@@ -1,9 +1,8 @@
-package com.chen.graduation.model.DTO;
+package com.chen.graduation.beans.DTO;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 

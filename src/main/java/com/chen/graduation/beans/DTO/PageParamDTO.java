@@ -1,4 +1,4 @@
-package com.chen.graduation.model.DTO;
+package com.chen.graduation.beans.DTO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

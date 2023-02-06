@@ -1,20 +1,15 @@
 package com.chen.graduation.controller;
 
-import cn.hutool.captcha.CaptchaUtil;
-import cn.hutool.captcha.LineCaptcha;
-import com.chen.graduation.model.DTO.PhoneNumberDTO;
-import com.chen.graduation.model.VO.AjaxResult;
-import com.chen.graduation.model.VO.CaptchaVO;
+import com.chen.graduation.beans.DTO.PhoneNumberDTO;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.CaptchaVO;
 import com.chen.graduation.service.CaptchaService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * 验证码控制器

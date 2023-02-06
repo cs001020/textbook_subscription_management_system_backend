@@ -1,12 +1,10 @@
-package com.chen.graduation.model.VO;
+package com.chen.graduation.beans.VO;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
-import java.util.HashMap;
 import java.util.Objects;
 
 /**

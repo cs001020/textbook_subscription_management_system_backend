@@ -1,13 +1,10 @@
 package com.chen.graduation.controller;
 
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chen.graduation.constants.RedisConstants;
-import com.chen.graduation.constants.SystemConstants;
-import com.chen.graduation.model.DO.Textbook;
-import com.chen.graduation.model.DTO.PageParamDTO;
-import com.chen.graduation.model.VO.AjaxResult;
+import com.chen.graduation.beans.PO.Textbook;
+import com.chen.graduation.beans.DTO.PageParamDTO;
+import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.service.TextbookService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;

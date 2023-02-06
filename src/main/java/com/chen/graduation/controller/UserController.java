@@ -1,11 +1,8 @@
 package com.chen.graduation.controller;
 
-import com.chen.graduation.model.DTO.PhoneNumberDTO;
-import com.chen.graduation.model.VO.AjaxResult;
-import com.chen.graduation.model.VO.CaptchaVO;
+import com.chen.graduation.beans.VO.AjaxResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
