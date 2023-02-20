@@ -10,3 +10,6 @@ snowflake:
   workerId: 10
   datacenterId: 20
 
+jwt:
+  key: 123456
+

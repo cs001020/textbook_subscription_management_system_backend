@@ -26,11 +26,14 @@ public class User implements Serializable {
     private Long teachingGroupId;
 
     private Long secondaryCollegeId;
+
     private Long gradeId;
 
     private String name;
 
     private String icon;
+
+    private String introduction;
 
     private Integer state;
 

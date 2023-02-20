@@ -31,4 +31,13 @@ public class RedisConstants {
      * 图形验证码缓存时间（毫秒）
      */
     public static final Long SMS_CAPTCHA_TTL=5*60*1000L;
+
+    /**
+     * 用户令牌key
+     */
+    public static final String USER_TOKEN_KEY="user.token.";
+    /**
+     * 用户令牌ttl(分钟)
+     */
+    public static final Long USER_TOKEN_TTL=30L;
 }
