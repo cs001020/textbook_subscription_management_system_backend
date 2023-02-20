@@ -13,4 +13,19 @@ snowflake:
 jwt:
   key: 123456
   hand: Authentication
+  requestWhiteList:
+#    knife4j接口
+    - "/doc.html"
+    - "/swagger-ui.html"
+    - "/index.html"
+    - "/webjars/**"
+    - "/static/**"
+    - "/swagger-resources"
+    - "/favicon.ico"
+    - "/error"
+#    自定义
+    - "/captcha/img"
+    - "/captcha/sms"
+    - "/user/login/account"
+    - "/user/login/sms"
 

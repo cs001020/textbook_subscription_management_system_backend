@@ -7,6 +7,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.chen.graduation.interceptor.LoginAuthenticationInterceptor;
 import com.chen.graduation.interceptor.RefreshTokenInterceptor;
 import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -35,12 +36,18 @@ import java.util.List;
 public class WebMvcConfiguration implements WebMvcConfigurer {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
-    private  String hand;
-    private  String key;
+    private List<String> requestWhiteList;
+    private String hand;
+    private String key;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        //登陆拦截器
+        registry.addInterceptor(new LoginAuthenticationInterceptor())
+                .excludePathPatterns(requestWhiteList)
+                .order(1);
         //Token续命拦截器
-        registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate,hand,key))
+        registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate, hand, key))
                 .addPathPatterns("/**")
                 .order(0);
     }

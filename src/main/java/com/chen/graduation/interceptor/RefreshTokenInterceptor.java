@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.jwt.JWT;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
  * @author CHEN
  * @date 2023/02/20
  */
+@Slf4j
 public class RefreshTokenInterceptor implements HandlerInterceptor {
     private final StringRedisTemplate stringRedisTemplate;
     private final String tokenRequestHand;
@@ -58,6 +60,7 @@ public class RefreshTokenInterceptor implements HandlerInterceptor {
         //hash转UserDTO存入ThreadLocal
         UserHolderContext.saveUserId(userId);
         //token续命
+        log.info("RefreshTokenInterceptor.preHandle业务结束，结果:{}用户token续命成功",userId);
         stringRedisTemplate.expire(RedisConstants.USER_TOKEN_KEY + userId, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
         return true;
     }

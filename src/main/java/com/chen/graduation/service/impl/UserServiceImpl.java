@@ -133,7 +133,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Long userId = UserHolderContext.getUserId();
         //查询数据可
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        lambdaQuery().eq(User::getId, userId);
+        wrapper.eq(User::getId, userId);
         User user = getOne(wrapper);
         //封装vo
         SimpleUserInfoVO simpleUserInfoVO = new SimpleUserInfoVO();
