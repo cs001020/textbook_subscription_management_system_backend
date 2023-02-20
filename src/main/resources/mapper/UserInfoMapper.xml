@@ -2,11 +2,11 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.chen.graduation.mapper.StudentInfoMapper">
+<mapper namespace="com.chen.graduation.mapper.UserInfoMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.StudentInfo">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.UserInfo">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="userStudentId" column="user_student_id" jdbcType="BIGINT"/>
+            <result property="userFacultyId" column="user_faculty_id" jdbcType="BIGINT"/>
             <result property="sex" column="sex" jdbcType="SMALLINT"/>
             <result property="birthday" column="birthday" jdbcType="TIMESTAMP"/>
             <result property="address" column="address" jdbcType="VARCHAR"/>
@@ -17,7 +17,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,user_student_id,sex,
+        id,user_faculty_id,sex,
         birthday,address,email,
         create_time,update_time,is_deleted
     </sql>

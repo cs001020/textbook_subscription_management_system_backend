@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.chen.graduation.mapper.UserFacultyMapper">
+<mapper namespace="com.chen.graduation.mapper.UserMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.UserFaculty">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.User">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="account" column="account" jdbcType="VARCHAR"/>
             <result property="password" column="password" jdbcType="VARCHAR"/>

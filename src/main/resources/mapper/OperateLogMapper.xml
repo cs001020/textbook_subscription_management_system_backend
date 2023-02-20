@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.graduation.mapper.OperateLogMapper">
+
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.OperateLog">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="title" column="title" jdbcType="VARCHAR"/>
+            <result property="businessType" column="business_type" jdbcType="VARCHAR"/>
+            <result property="method" column="method" jdbcType="VARCHAR"/>
+            <result property="requestMethod" column="request_method" jdbcType="VARCHAR"/>
+            <result property="operatorName" column="operator_name" jdbcType="VARCHAR"/>
+            <result property="operateUrl" column="operate_url" jdbcType="VARCHAR"/>
+            <result property="operateIp" column="operate_ip" jdbcType="VARCHAR"/>
+            <result property="operateParam" column="operate_param" jdbcType="VARCHAR"/>
+            <result property="jsonResult" column="json_result" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="SMALLINT"/>
+            <result property="errorMsg" column="error_msg" jdbcType="VARCHAR"/>
+            <result property="operateTime" column="operate_time" jdbcType="TIMESTAMP"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,title,business_type,
+        method,request_method,operator_name,
+        operate_url,operate_ip,operate_param,
+        json_result,status,error_msg,
+        operate_time,create_time,update_time,
+        is_deleted
+    </sql>
+</mapper>

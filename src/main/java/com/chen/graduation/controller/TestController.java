@@ -1,10 +1,5 @@
 package com.chen.graduation.controller;
 
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.chen.graduation.constants.RedisConstants;
-import com.chen.graduation.beans.PO.Textbook;
-import com.chen.graduation.beans.DTO.PageParamDTO;
-import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.service.TextbookService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -12,13 +7,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * 测试控制器

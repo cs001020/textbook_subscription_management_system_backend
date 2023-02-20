@@ -1,10 +1,7 @@
 package com.chen.graduation;
 
 import cn.hutool.core.util.RandomUtil;
-import com.alibaba.fastjson2.JSON;
 import com.chen.graduation.beans.PO.Textbook;
-import com.chen.graduation.beans.VO.AjaxResult;
-import com.chen.graduation.enums.TextbookStateEnums;
 import com.chen.graduation.service.TextbookService;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;

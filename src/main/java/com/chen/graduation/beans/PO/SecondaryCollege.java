@@ -1,5 +1,7 @@
 package com.chen.graduation.beans.PO;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
@@ -11,6 +13,7 @@ import lombok.Data;
 @TableName(value ="tb_secondary_college")
 @Data
 public class SecondaryCollege implements Serializable {
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private String name;

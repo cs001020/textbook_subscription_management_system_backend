@@ -1,9 +1,9 @@
 package com.chen.graduation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.beans.PO.FacultyInfo;
-import com.chen.graduation.service.FacultyInfoService;
-import com.chen.graduation.mapper.FacultyInfoMapper;
+import com.chen.graduation.beans.PO.UserInfo;
+import com.chen.graduation.service.UserInfoService;
+import com.chen.graduation.mapper.UserInfoMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-01-27 17:06:37
 */
 @Service
-public class FacultyInfoServiceImpl extends ServiceImpl<FacultyInfoMapper, FacultyInfo>
-    implements FacultyInfoService{
+public class UserInfoServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo>
+    implements UserInfoService {
 
 }
 

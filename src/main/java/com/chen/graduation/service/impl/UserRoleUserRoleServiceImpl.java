@@ -1,9 +1,9 @@
 package com.chen.graduation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.beans.PO.FacultyRole;
-import com.chen.graduation.service.FacultyRoleService;
-import com.chen.graduation.mapper.FacultyRoleMapper;
+import com.chen.graduation.beans.PO.UserRole;
+import com.chen.graduation.service.UserRoleService;
+import com.chen.graduation.mapper.UserRoleMapper;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-01-27 17:06:37
 */
 @Service
-public class FacultyRoleServiceImpl extends ServiceImpl<FacultyRoleMapper, FacultyRole>
-    implements FacultyRoleService{
+public class UserRoleUserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
+    implements UserRoleService {
 
 }
 

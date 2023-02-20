@@ -1,6 +1,6 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.beans.PO.FacultyRole;
+import com.chen.graduation.beans.PO.UserRole;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -8,6 +8,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
 * @description 针对表【tb_faculty_role(角色权限)】的数据库操作Service
 * @createDate 2023-01-27 17:06:37
 */
-public interface FacultyRoleService extends IService<FacultyRole> {
+public interface UserRoleService extends IService<UserRole> {
 
 }

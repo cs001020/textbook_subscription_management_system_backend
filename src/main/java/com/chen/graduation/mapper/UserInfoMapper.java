@@ -1,6 +1,6 @@
 package com.chen.graduation.mapper;
 
-import com.chen.graduation.beans.PO.FacultyInfo;
+import com.chen.graduation.beans.PO.UserInfo;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2023-01-27 17:06:37
 * @Entity com.chen.graduation.domain.FacultyInfo
 */
-public interface FacultyInfoMapper extends BaseMapper<FacultyInfo> {
+public interface UserInfoMapper extends BaseMapper<UserInfo> {
 
 }
 

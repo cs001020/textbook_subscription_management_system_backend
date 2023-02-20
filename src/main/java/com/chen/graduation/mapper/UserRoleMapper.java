@@ -1,6 +1,6 @@
 package com.chen.graduation.mapper;
 
-import com.chen.graduation.beans.PO.FacultyRole;
+import com.chen.graduation.beans.PO.UserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @createDate 2023-01-27 17:06:37
 * @Entity com.chen.graduation.domain.FacultyRole
 */
-public interface FacultyRoleMapper extends BaseMapper<FacultyRole> {
+public interface UserRoleMapper extends BaseMapper<UserRole> {
 
 }
 

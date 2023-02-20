@@ -1,16 +1,20 @@
 package com.chen.graduation.beans.PO;
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 import lombok.Data;
 
 /**
- * @TableName tb_faculty_info
+ * @TableName tb_user_info
  */
-@TableName(value ="tb_faculty_info")
+@TableName(value ="tb_user_info")
 @Data
-public class FacultyInfo implements Serializable {
+public class UserInfo implements Serializable {
+
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     private Long userFacultyId;

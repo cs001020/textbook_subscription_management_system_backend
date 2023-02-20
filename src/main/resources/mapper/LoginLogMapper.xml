@@ -2,19 +2,23 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.chen.graduation.mapper.FacultyRoleMapper">
+<mapper namespace="com.chen.graduation.mapper.LoginLogMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.FacultyRole">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.LoginLog">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="facultyId" column="faculty_id" jdbcType="BIGINT"/>
-            <result property="roleId" column="role_id" jdbcType="BIGINT"/>
+            <result property="account" column="account" jdbcType="VARCHAR"/>
+            <result property="ip" column="ip" jdbcType="VARCHAR"/>
+            <result property="state" column="state" jdbcType="SMALLINT"/>
+            <result property="message" column="message" jdbcType="VARCHAR"/>
+            <result property="accessTime" column="access_time" jdbcType="TIMESTAMP"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,faculty_id,role_id,
+        id,account,ip,
+        state,message,access_time,
         create_time,update_time,is_deleted
     </sql>
 </mapper>
