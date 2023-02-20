@@ -1,5 +1,6 @@
 package com.chen.graduation.beans.DTO;
 
+import com.chen.graduation.constants.SystemConstants;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -15,7 +16,7 @@ import javax.validation.constraints.Pattern;
 @Data
 public class PhoneNumberDTO {
     @ApiModelProperty(value = "手机号，需要输入正确格式",required = true,example = "17612341234")
-    @Pattern(regexp = "0?(13|14|15|18|17)[0-9]{9}",message = "手机号格式错误")
+    @Pattern(regexp = SystemConstants.PHONE_REGEXP,message = "手机号格式错误")
     @NotNull
     private String phoneNumber;
 }
