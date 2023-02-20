@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chen.graduation.mapper.FacultyInfoMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.FacultyInfo">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.FacultyInfo">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="userFacultyId" column="user_faculty_id" jdbcType="BIGINT"/>
             <result property="sex" column="sex" jdbcType="SMALLINT"/>

@@ -1,8 +1,8 @@
 package com.chen.graduation.controller;
 
-import com.chen.graduation.model.DTO.PhoneNumberDTO;
-import com.chen.graduation.model.VO.AjaxResult;
-import com.chen.graduation.model.VO.CaptchaVO;
+import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.SimpleUserInfoVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -19,31 +19,17 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
-    @ApiOperation("获取图片验证码")
-    @GetMapping("/captcha")
-    public AjaxResult<CaptchaVO> captcha() {
-        // TODO: 2023/2/1 获取图片验证码 for cs
-        return AjaxResult.success();
+    @ApiOperation("账号密码登陆")
+    @GetMapping("/login/account")
+    public AjaxResult<SimpleUserInfoVO> accountLogin(@Validated @RequestBody AccountLoginDTO accountLoginDTO) {
+        // TODO: 2023/2/1 账号密码登陆 for cs
+        return null;
     }
 
-    @ApiOperation("发送短信验证码")
-    @PostMapping("/smsCaptcha")
-    public AjaxResult<Object> smsCaptcha(@Validated @RequestBody PhoneNumberDTO phoneNumberDTO) {
-        // TODO: 2023/2/1 发送短信验证码 for cs
-        return AjaxResult.success(phoneNumberDTO);
-    }
-
-    @ApiOperation("教职工登陆")
-    @GetMapping("/faculty/login")
-    public AjaxResult<Object> facultyLogin() {
-        // TODO: 2023/2/1 教职工登陆 for cs
-        return AjaxResult.success();
-    }
-
-    @ApiOperation("学生登陆")
-    @GetMapping("/student/login")
-    public AjaxResult<Object> studentLogin() {
-        // TODO: 2023/2/1 学生登陆 for cs
+    @ApiOperation("短信验证码登陆")
+    @GetMapping("/login/sms")
+    public AjaxResult<Object> smsLogin() {
+        // TODO: 2023/2/1 短信验证码登陆 for cs
         return AjaxResult.success();
     }
 

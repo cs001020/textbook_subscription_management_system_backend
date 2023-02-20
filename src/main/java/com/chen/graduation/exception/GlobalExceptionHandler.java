@@ -1,6 +1,6 @@
 package com.chen.graduation.exception;
 
-import com.chen.graduation.model.VO.AjaxResult;
+import com.chen.graduation.beans.VO.AjaxResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class GlobalExceptionHandler{
     /**
      * z自定义参数校验异常
      *
@@ -46,6 +46,19 @@ public class GlobalExceptionHandler {
         String requestUri = request.getRequestURI();
         log.error("请求地址'{}',不支持'{}'请求", requestUri, e.getMethod());
         return AjaxResult.error("请求地址'"+requestUri+"',不支持'"+e.getMethod()+"'请求");
+    }
+
+    /**
+     * 业务异常
+     *
+     * @param e e
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    @ExceptionHandler(ServiceException.class)
+    public AjaxResult<Object> handleServiceException(ServiceException e) {
+        String message = e.getMessage();
+        log.error(message, e);
+        return AjaxResult.error(message);
     }
 
 

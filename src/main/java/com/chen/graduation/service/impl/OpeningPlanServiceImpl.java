@@ -1,7 +1,7 @@
 package com.chen.graduation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.model.DO.OpeningPlan;
+import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.service.OpeningPlanService;
 import com.chen.graduation.mapper.OpeningPlanMapper;
 import org.springframework.stereotype.Service;

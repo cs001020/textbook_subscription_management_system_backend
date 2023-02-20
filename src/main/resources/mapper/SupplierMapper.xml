@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chen.graduation.mapper.SupplierMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.Supplier">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.Supplier">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>

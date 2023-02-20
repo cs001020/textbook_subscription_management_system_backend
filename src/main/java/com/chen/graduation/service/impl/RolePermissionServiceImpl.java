@@ -1,7 +1,7 @@
 package com.chen.graduation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.model.DO.RolePermission;
+import com.chen.graduation.beans.PO.RolePermission;
 import com.chen.graduation.service.RolePermissionService;
 import com.chen.graduation.mapper.RolePermissionMapper;
 import org.springframework.stereotype.Service;

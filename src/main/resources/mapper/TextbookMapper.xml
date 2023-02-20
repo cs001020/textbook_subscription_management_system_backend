@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chen.graduation.mapper.TextbookMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.Textbook">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.Textbook">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="bookName" column="book_name" jdbcType="VARCHAR"/>
             <result property="isbn" column="isbn" jdbcType="VARCHAR"/>

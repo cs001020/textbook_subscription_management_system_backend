@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chen.graduation.mapper.SecondaryCollegeMapper">
 
-    <resultMap id="BaseResultMap" type="com.chen.graduation.model.DO.SecondaryCollege">
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.SecondaryCollege">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

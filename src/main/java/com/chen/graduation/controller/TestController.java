@@ -1,13 +1,10 @@
 package com.chen.graduation.controller;
 
-import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson2.JSON;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chen.graduation.constants.RedisConstants;
-import com.chen.graduation.constants.SystemConstants;
-import com.chen.graduation.model.DO.Textbook;
-import com.chen.graduation.model.DTO.PageParamDTO;
-import com.chen.graduation.model.VO.AjaxResult;
+import com.chen.graduation.beans.PO.Textbook;
+import com.chen.graduation.beans.DTO.PageParamDTO;
+import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.service.TextbookService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -68,19 +65,4 @@ public class TestController {
         return res.toString();
     }
 
-    @PostMapping("/page")
-    @ApiOperation("教材数据分页查询")
-    @Cacheable(value = RedisConstants.TEXTBOOK_PAGE_CACHE_KET,key = "#pageParamDTO.page+'-'+#pageParamDTO.size")
-    public AjaxResult<List<Textbook>> get(@RequestBody @Validated PageParamDTO pageParamDTO){
-        //String json = stringRedisTemplate.opsForValue().get("test."+pageParamDTO.getPage()+pageParamDTO.getSize());
-        //if (StrUtil.isNotEmpty(json)){
-        //    return JSON.parseObject(json,AjaxResult.class);
-        //}
-        Page<Textbook> page = textbookService.page(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()));
-        AjaxResult<List<Textbook>> success = AjaxResult.success(page.getRecords());
-        success.setTotal(page.getTotal());
-        log.info("TestController.get业务结束，结果:{}",success);
-        //stringRedisTemplate.opsForValue().set("test.1", JSON.toJSONString(success));
-        return success;
-    }
 }

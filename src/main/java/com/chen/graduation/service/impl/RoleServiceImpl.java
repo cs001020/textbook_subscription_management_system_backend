@@ -1,7 +1,7 @@
 package com.chen.graduation.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.model.DO.Role;
+import com.chen.graduation.beans.PO.Role;
 import com.chen.graduation.service.RoleService;
 import com.chen.graduation.mapper.RoleMapper;
 import org.springframework.stereotype.Service;

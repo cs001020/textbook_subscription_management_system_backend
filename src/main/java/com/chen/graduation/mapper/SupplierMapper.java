@@ -1,6 +1,6 @@
 package com.chen.graduation.mapper;
 
-import com.chen.graduation.model.DO.Supplier;
+import com.chen.graduation.beans.PO.Supplier;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 /**
