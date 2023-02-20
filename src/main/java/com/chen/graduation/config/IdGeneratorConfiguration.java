@@ -21,11 +21,11 @@ public class IdGeneratorConfiguration {
     /**
      * 终端id
      */
-    private Long workerId= (long) RandomUtil.randomInt(10,100);
+    private Long workerId = (long) RandomUtil.randomInt(10, 100);
     /**
      * 数据中心id
      */
-    private Long datacenterId=(long) RandomUtil.randomInt(10,100);
+    private Long datacenterId = (long) RandomUtil.randomInt(10, 100);
 
     /**
      * 雪花id生成器
@@ -33,7 +33,7 @@ public class IdGeneratorConfiguration {
      * @return {@link Snowflake}
      */
     @Bean
-    public Snowflake snowflake(){
+    public Snowflake snowflake() {
         return IdUtil.getSnowflake(workerId, datacenterId);
     }
 }

@@ -12,4 +12,5 @@ snowflake:
 
 jwt:
   key: 123456
+  hand: Authentication
 

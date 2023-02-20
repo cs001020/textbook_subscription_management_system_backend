@@ -42,8 +42,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private StringRedisTemplate stringRedisTemplate;
 
     @Value("${jwt.key}")
-    private String jwtKet;
+    private String jwtKey;
 
+    @Value("${jwt.hand}")
+    private String requestHand;
+
+    // TODO: 2023/2/20 登陆日志
     @Override
     public AjaxResult<TokenVO> accountLogin(AccountLoginDTO accountLoginDTO) {
         //验证码校验
@@ -79,12 +83,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //生成token
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
-                .setKey(jwtKet.getBytes())
+                .setKey(jwtKey.getBytes())
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
         log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功",user.getName());
-        return AjaxResult.success(new TokenVO(token));
+        return AjaxResult.success(new TokenVO(token,requestHand));
     }
 
     @Override
@@ -115,12 +119,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //生成token
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
-                .setKey(jwtKet.getBytes())
+                .setKey(jwtKey.getBytes())
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
         log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功",user.getName());
-        return AjaxResult.success(new TokenVO(token));
+        return AjaxResult.success(new TokenVO(token,requestHand));
     }
 
     @Override

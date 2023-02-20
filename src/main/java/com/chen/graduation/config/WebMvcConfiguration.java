@@ -1,27 +1,49 @@
 package com.chen.graduation.config;
 
+
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.chen.graduation.interceptor.LoginAuthenticationInterceptor;
+import com.chen.graduation.interceptor.RefreshTokenInterceptor;
+import lombok.Setter;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- * 自定义消息转换器
+ * web mvc配置
  *
  * @author CHEN
- * @date 2023/01/28
+ * @date 2023/02/21
  */
-@Deprecated
-public class FastJsonHttpMessageConverterConfiguration extends WebMvcConfigurationSupport {
+@Setter
+@Configuration
+@ConfigurationProperties(prefix = "jwt")
+public class WebMvcConfiguration implements WebMvcConfigurer {
+    @Resource
+    private StringRedisTemplate stringRedisTemplate;
+    private  String hand;
+    private  String key;
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        //Token续命拦截器
+        registry.addInterceptor(new RefreshTokenInterceptor(stringRedisTemplate,hand,key))
+                .addPathPatterns("/**")
+                .order(0);
+    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -58,5 +80,4 @@ public class FastJsonHttpMessageConverterConfiguration extends WebMvcConfigurati
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/META-INF/resources/static/");
     }
-
 }

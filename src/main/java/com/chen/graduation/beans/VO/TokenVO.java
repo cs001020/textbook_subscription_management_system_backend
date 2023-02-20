@@ -17,4 +17,7 @@ import lombok.Data;
 public class TokenVO {
     @ApiModelProperty("token")
     private String token;
+
+    @ApiModelProperty("请将token携带于该请求头上")
+    private String requestHand;
 }
