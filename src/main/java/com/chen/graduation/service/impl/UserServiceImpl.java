@@ -14,6 +14,7 @@ import com.chen.graduation.beans.VO.SimpleUserInfoVO;
 import com.chen.graduation.beans.VO.TokenVO;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
+import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.UserService;
@@ -55,13 +56,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //数据库查询用户
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        lambdaQuery().eq(User::getAccount, accountLoginDTO.getAccount());
+        wrapper.eq(User::getAccount, accountLoginDTO.getAccount());
         User user = getOne(wrapper);
         //判断是否存在用户
         if (Objects.isNull(user)) {
             //用户不存在
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("用户名或密码错误");
+        }
+        //判断用户是否被封禁
+        if (UserStateEnums.BAN.equals(user.getState())){
+            log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
+            throw new ServiceException("当前用户已被封禁");
         }
         //判断密码是否正确
         String encodePassword = SecureUtil.md5(accountLoginDTO.getPassword() + SystemConstants.PASSWORD_MD5_SALT);
@@ -77,6 +83,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
+        log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功",user.getName());
         return AjaxResult.success(new TokenVO(token));
     }
 
@@ -92,13 +99,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //数据库查询用户
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
-        lambdaQuery().eq(User::getPhoneNumber, smsLoginDTO.getPhoneNumber());
+        wrapper.eq(User::getPhoneNumber, smsLoginDTO.getPhoneNumber());
         User user = getOne(wrapper);
         //判断是否存在用户
         if (Objects.isNull(user)) {
             //用户不存在
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("用户名或密码错误");
+        }
+        //判断用户是否被封禁
+        if (UserStateEnums.BAN.equals(user.getState())){
+            log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
+            throw new ServiceException("当前用户已被封禁");
         }
         //生成token
         String token = JWT.create()
@@ -107,6 +119,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
+        log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功",user.getName());
         return AjaxResult.success(new TokenVO(token));
     }
 
@@ -125,6 +138,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         simpleUserInfoVO.setIntroduction(user.getIntroduction());
         simpleUserInfoVO.setRoles(Collections.singletonList("[admin]"));
         //响应结果
+        log.info("UserServiceImpl.info业务结束，结果:{}",simpleUserInfoVO);
         return AjaxResult.success(simpleUserInfoVO);
     }
 }

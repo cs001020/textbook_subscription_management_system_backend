@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.UserStateEnums;
 import lombok.Data;
 
 /**
@@ -35,7 +37,7 @@ public class User implements Serializable {
 
     private String introduction;
 
-    private Integer state;
+    private UserStateEnums state;
 
     private Date createTime;
 
