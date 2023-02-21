@@ -1,12 +1,11 @@
 package com.chen.graduation;
 
 import cn.hutool.core.util.RandomUtil;
-import com.chen.graduation.beans.PO.OpeningPlan;
-import com.chen.graduation.beans.PO.Supplier;
-import com.chen.graduation.beans.PO.Textbook;
-import com.chen.graduation.beans.PO.User;
+import com.chen.graduation.beans.PO.*;
+import com.chen.graduation.beans.VO.TextbookFeedbackVO;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.mapper.OpeningPlanMapper;
+import com.chen.graduation.mapper.TextbookFeedbackMapper;
 import com.chen.graduation.service.SupplierService;
 import com.chen.graduation.service.TextbookService;
 import com.chen.graduation.service.UserService;
@@ -24,13 +23,12 @@ import java.util.Locale;
 class TextbookSubscriptionManagementSystemBackendApplicationTests {
     @Resource
     TextbookService textbookService;
-
     @Resource
     private UserService userService;
-
     @Resource
     private OpeningPlanMapper openingPlanMapper;
-
+    @Resource
+    private TextbookFeedbackMapper textbookFeedbackMapper;
     @Resource
     private SupplierService supplierService;
 
@@ -89,5 +87,11 @@ class TextbookSubscriptionManagementSystemBackendApplicationTests {
             supplier.setAddress(faker.address().fullAddress());
             supplierService.save(supplier);
         }
+    }
+
+    @Test
+    void feedbackTest() {
+        List<TextbookFeedback> feedbackByTextbookId = textbookFeedbackMapper.getFeedbackByTextbookId(1742L);
+        feedbackByTextbookId.forEach(System.out::println);
     }
 }

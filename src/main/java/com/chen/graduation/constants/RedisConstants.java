@@ -46,4 +46,8 @@ public class RedisConstants {
      * 供应商列表key
      */
     public static final String SUPPLIER_CACHE_KEY="supplier";
+    /**
+     * 教科书反馈缓存key
+     */
+    public static final String TEXTBOOK_FEEDBACK_CACHE_KEY="textbook.feedback";
 }

@@ -1,11 +1,16 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.beans.DTO.TextbookFeedbackInsertDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.TextbookFeedbackVO;
+import com.chen.graduation.service.TextbookFeedbackService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 教科书反馈控制器
@@ -17,31 +22,24 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/feedback")
 public class TextbookFeedbackController {
-    @ApiOperation("增")
+
+    @Resource
+    private TextbookFeedbackService textbookFeedbackService;
+    @ApiOperation("添加教材反馈")
     @PostMapping("/add")
-    public AjaxResult<Object> add(){
-        // TODO: 2023/2/1 增 for ylf
-        return AjaxResult.success();
+    public AjaxResult<Object> addFeedback(@Validated @RequestBody TextbookFeedbackInsertDTO textbookFeedbackInsertDTO){
+        return textbookFeedbackService.addFeedback(textbookFeedbackInsertDTO);
     }
 
-    @ApiOperation("删")
-    @PostMapping("/delete")
-    public AjaxResult<Object> delete(){
-        // TODO: 2023/2/1 删 for ylf
-        return AjaxResult.success();
+    @ApiOperation("根据id删除教材反馈")
+    @PostMapping("/delete/{id}")
+    public AjaxResult<Object> deleteById(@PathVariable Long id){
+        return textbookFeedbackService.deleteById(id);
     }
 
-    @ApiOperation("改")
-    @PostMapping("/update")
-    public AjaxResult<Object> update(){
-        // TODO: 2023/2/1 改 for ylf
-        return AjaxResult.success();
-    }
-
-    @ApiOperation("查")
-    @PostMapping("/get")
-    public AjaxResult<Object> get(){
-        // TODO: 2023/2/1 查 for ylf
-        return AjaxResult.success();
+    @ApiOperation("根据教材id获得反馈信息")
+    @GetMapping("/get/{textbookId}")
+    public AjaxResult<List<TextbookFeedbackVO>> getFeedbackByTextbookId(@PathVariable("textbookId") Long textbookId){
+        return textbookFeedbackService.getFeedbackByTextbookId(textbookId);
     }
 }

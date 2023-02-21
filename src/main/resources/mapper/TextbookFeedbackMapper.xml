@@ -10,15 +10,34 @@
             <result property="textbookId" column="textbook_id" jdbcType="BIGINT"/>
             <result property="images" column="images" jdbcType="VARCHAR"/>
             <result property="message" column="message" jdbcType="VARCHAR"/>
-            <result property="type" column="type" jdbcType="SMALLINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
 
+    <resultMap id="feedbackWithUser" type="com.chen.graduation.beans.PO.TextbookFeedback" extends="BaseResultMap">
+        <association property="user" >
+            <result property="name" column="name"/>
+            <result property="icon" column="icon"/>
+        </association>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,student_id,textbook_id,
-        images,message,type,
+        images,message,
         create_time,update_time,is_deleted
     </sql>
+
+    <select id="getFeedbackByTextbookId" resultMap="feedbackWithUser">
+        select tb_textbook_feedback.id,
+               textbook_id,
+               images,
+               message,
+               tb_textbook_feedback.create_time,
+               name,
+               icon
+        from tb_textbook_feedback
+                 join tb_user tu on tu.id = tb_textbook_feedback.student_id
+        where textbook_id = #{id} and  tb_textbook_feedback.is_deleted=0;
+    </select>
 </mapper>
