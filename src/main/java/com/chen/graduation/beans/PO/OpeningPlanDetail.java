@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import lombok.Data;
 
 /**
@@ -34,22 +36,22 @@ public class OpeningPlanDetail implements Serializable {
     /**
      * 学分
      */
-    private Object credit;
+    private Integer credit;
 
     /**
      * 总课时
      */
-    private Object teachingHours;
+    private Integer teachingHours;
 
     /**
      * 教学周数
      */
-    private Object weeksTeach;
+    private Integer weeksTeach;
 
     /**
      * 类型 0(考试) 1(考察)
      */
-    private Integer type;
+    private OpenPlanDetailsTypeEnums type;
 
     /**
      * 创建时间，默认为当前时间，不需要手动设置

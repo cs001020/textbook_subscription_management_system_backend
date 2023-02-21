@@ -16,6 +16,7 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.Resource;
@@ -33,7 +34,7 @@ import java.util.List;
 @Setter
 @Configuration
 @ConfigurationProperties(prefix = "jwt")
-public class WebMvcConfiguration implements WebMvcConfigurer {
+public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     private List<String> requestWhiteList;

@@ -2,6 +2,10 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chen.graduation.beans.PO.User;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author CHEN
@@ -11,6 +15,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface OpeningPlanMapper extends BaseMapper<OpeningPlan> {
 
+    /**
+     * 根据用户获取开课计划
+     *
+     * @param user 用户
+     * @return {@link List}<{@link OpeningPlan}>
+     */
+    List<OpeningPlan> getPlanByUser(@Param("user") User user);
 }
 
 

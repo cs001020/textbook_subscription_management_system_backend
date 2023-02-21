@@ -6,6 +6,9 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
+
+import com.chen.graduation.enums.OpenPlanStateEnums;
 import lombok.Data;
 
 /**
@@ -42,9 +45,9 @@ public class OpeningPlan implements Serializable {
     private Long teachingGroupId;
 
     /**
-     * 状态 0(等待教师选定教材) 1(已经选定教材，等待审批) 3(审批完成，close)
+     * 状态 0(等待教师选定教材) 1(已经选定教材，等待审批) 2(审批完成，close)
      */
-    private Integer state;
+    private OpenPlanStateEnums state;
 
     /**
      * 创建时间，默认为当前时间，不需要手动设置
@@ -60,6 +63,9 @@ public class OpeningPlan implements Serializable {
      * 逻辑删除标志位，默认为0代表未删除，删除标志建议为主键id
      */
     private Long isDeleted;
+
+    @TableField(exist = false)
+    private List<OpeningPlanDetail> openingPlanDetails;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
