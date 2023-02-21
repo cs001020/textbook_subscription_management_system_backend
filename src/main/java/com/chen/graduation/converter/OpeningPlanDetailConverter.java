@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.OpeningPlanDetailDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
 import com.chen.graduation.beans.VO.OpeningPlanDetailVO;
@@ -29,10 +30,26 @@ public interface OpeningPlanDetailConverter {
     OpeningPlanDetailVO po2vo(OpeningPlanDetail openingPlanDetail);
 
     /**
+     * dto2po
+     *
+     * @param openingPlanDetailDTO 开放计划细节dto
+     * @return {@link OpeningPlan}
+     */
+    OpeningPlan dto2po(OpeningPlanDetailDTO openingPlanDetailDTO);
+
+    /**
      * pos2vos
      *
      * @param openingPlanDetails 开放计划细节
      * @return {@link List}<{@link OpeningPlanDetailVO}>
      */
     List<OpeningPlanDetailVO> pos2vos(List<OpeningPlanDetail> openingPlanDetails);
+
+    /**
+     * dto2po
+     *
+     * @param openingPlanDetailDTO 开放计划细节dto
+     * @return {@link OpeningPlan}
+     */
+    List<OpeningPlanDetail>  dto2pos(List<OpeningPlanDetailDTO> openingPlanDetailDTO);
 }

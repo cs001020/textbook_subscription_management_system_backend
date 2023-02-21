@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.OpeningPlanDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
@@ -30,6 +31,17 @@ public interface OpeningPlanConverter {
             @Mapping(target = "openingPlanDetails", expression = "java(org.mapstruct.factory.Mappers.getMapper(OpeningPlanDetailConverter.class).pos2vos(openingPlan.getOpeningPlanDetails()))")
     })
     OpeningPlanVO po2vo(OpeningPlan openingPlan);
+
+    /**
+     * dto2po
+     *
+     * @param openingPlanDTO 开放计划dto
+     * @return {@link OpeningPlan}
+     */
+    @Mappings(value = {
+            @Mapping(target = "openingPlanDetails", expression = "java(org.mapstruct.factory.Mappers.getMapper(OpeningPlanDetailConverter.class).dto2pos(openingPlanDTO.getOpeningPlanDetailDTOList()))")
+    })
+    OpeningPlan dto2po(OpeningPlanDTO openingPlanDTO);
 
     /**
      * pos2vos
