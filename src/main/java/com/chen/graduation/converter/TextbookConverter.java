@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.TextbookVO;
 import org.mapstruct.Mapper;
@@ -25,10 +26,26 @@ public interface TextbookConverter {
     TextbookVO po2vo(Textbook textbook);
 
     /**
+     * dto2po
+     *
+     * @param textbookDTO 教科书dto
+     * @return {@link Textbook}
+     */
+    Textbook dto2po(TextbookDTO textbookDTO);
+
+    /**
      * pos2vos
      *
      * @param textbookList 教科书列表
      * @return {@link List}<{@link Textbook}>
      */
     List<TextbookVO> pos2vos(List<Textbook> textbookList);
+
+    /**
+     * dto2vos
+     *
+     * @param textbookDTOList 教科书dtolist
+     * @return {@link List}<{@link Textbook}>
+     */
+    List<Textbook> dto2vos(List<TextbookDTO> textbookDTOList);
 }

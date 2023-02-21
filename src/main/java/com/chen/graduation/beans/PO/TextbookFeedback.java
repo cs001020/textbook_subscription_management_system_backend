@@ -1,6 +1,7 @@
 package com.chen.graduation.beans.PO;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -24,13 +25,14 @@ public class TextbookFeedback implements Serializable {
 
     private String message;
 
-    private Integer type;
-
     private Date createTime;
 
     private Date updateTime;
 
     private Long isDeleted;
+
+    @TableField(exist = false)
+    private User user;
 
     private static final long serialVersionUID = 1L;
 }

@@ -61,6 +61,18 @@ public class GlobalExceptionHandler{
         return AjaxResult.error(message);
     }
 
+    /**
+     * 业务异常
+     *
+     * @param e e
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    @ExceptionHandler(UnAuthenticationException.class)
+    public AjaxResult<Object> handleUnAuthenticationException(UnAuthenticationException e) {
+        log.error("未登录异常",e);
+        return new AjaxResult<>(AjaxResult.ResponseType.UN_AUTH,"尚未登录，请登录",null);
+    }
+
 
     /**
      * 拦截未知的运行时异常

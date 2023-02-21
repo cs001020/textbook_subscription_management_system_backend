@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chen.graduation.mapper.OpeningPlanDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.OpeningPlanDetail">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="openingPlanId" column="opening_plan_id" jdbcType="BIGINT"/>
+            <result property="courseName" column="course_name" jdbcType="VARCHAR"/>
+            <result property="credit" column="credit" jdbcType="OTHER"/>
+            <result property="teachingHours" column="teaching_hours" jdbcType="OTHER"/>
+            <result property="weeksTeach" column="weeks_teach" jdbcType="OTHER"/>
+            <result property="type" column="type" jdbcType="SMALLINT"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,opening_plan_id,course_name,
+        credit,teaching_hours,weeks_teach,
+        type,create_time,update_time,
+        is_deleted
+    </sql>
+</mapper>

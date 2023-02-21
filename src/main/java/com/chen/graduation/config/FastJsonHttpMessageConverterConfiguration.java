@@ -20,7 +20,7 @@ import java.util.List;
  * @author CHEN
  * @date 2023/01/28
  */
-@Configuration
+@Deprecated
 public class FastJsonHttpMessageConverterConfiguration extends WebMvcConfigurationSupport {
 
     @Override
@@ -53,7 +53,7 @@ public class FastJsonHttpMessageConverterConfiguration extends WebMvcConfigurati
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("swagger-ui.html","index.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("swagger-ui.html", "index.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("doc.html").addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/META-INF/resources/static/");

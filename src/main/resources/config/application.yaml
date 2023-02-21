@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: knife4j,postgres,redis,mybatis
+    active: knife4j,postgres,redis,mybatis,file
 
 timing:
   warning-time: 200
@@ -9,4 +9,23 @@ timing:
 snowflake:
   workerId: 10
   datacenterId: 20
+
+jwt:
+  key: 123456
+  hand: Authentication
+  requestWhiteList:
+#    knife4j接口
+    - "/doc.html"
+    - "/swagger-ui.html"
+    - "/index.html"
+    - "/webjars/**"
+    - "/static/**"
+    - "/swagger-resources"
+    - "/favicon.ico"
+    - "/error"
+#    自定义
+    - "/captcha/img"
+    - "/captcha/sms"
+    - "/user/login/account"
+    - "/user/login/sms"
 

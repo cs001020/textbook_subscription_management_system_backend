@@ -56,7 +56,11 @@ public class AjaxResult<T> implements Serializable {
         /**
          * 错误
          */
-        ERROR(500);
+        ERROR(500),
+        /**
+         * 未认证
+         */
+        UN_AUTH(401);
         private final int value;
 
         ResponseType(int value) {
@@ -89,6 +93,17 @@ public class AjaxResult<T> implements Serializable {
         }
     }
 
+    /**
+     * 返回成功消息
+     *
+     * @return 成功消息
+     */
+    public static AjaxResult<Object> success(boolean isSuccess) {
+        if (isSuccess){
+            return new AjaxResult<>(ResponseType.SUCCESS, "操作成功", null);
+        }
+        return new AjaxResult<>(ResponseType.ERROR, "操作失败", null);
+    }
     /**
      * 返回成功消息
      *

@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * 图形验证码VO
  *
@@ -12,9 +14,11 @@ import lombok.Data;
  */
 @Data
 @ApiModel("图形验证码")
-public class CaptchaVO {
+public class CaptchaVO implements Serializable {
     @ApiModelProperty("图片验证码唯一id")
     private Long uid;
     @ApiModelProperty("图片验证码base64格式")
     private String captcha;
+
+    private static final long serialVersionUID = 1L;
 }

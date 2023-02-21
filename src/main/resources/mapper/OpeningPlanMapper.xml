@@ -5,20 +5,56 @@
 <mapper namespace="com.chen.graduation.mapper.OpeningPlanMapper">
 
     <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.OpeningPlan">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
-            <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
-            <result property="gradeId" column="grade_id" jdbcType="BIGINT"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="state" column="state" jdbcType="SMALLINT"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="secondaryCollegeId" column="secondary_college_id" jdbcType="BIGINT"/>
+        <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
+        <result property="gradeId" column="grade_id" jdbcType="BIGINT"/>
+        <result property="teachingGroupId" column="teaching_group_id" jdbcType="BIGINT"/>
+        <result property="state" column="state" jdbcType="SMALLINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <resultMap id="openPlanWithDetails" extends="BaseResultMap" type="com.chen.graduation.beans.PO.OpeningPlan">
+        <collection property="openingPlanDetails" ofType="com.chen.graduation.beans.PO.OpeningPlanDetail">
+            <id column="id2" property="id"/>
+            <result column="course_name" property="courseName"/>
+            <result column="credit" property="credit"/>
+            <result column="teaching_hours" property="teachingHours"/>
+            <result column="weeks_teach" property="weeksTeach"/>
+            <result column="type" property="type"/>
+        </collection>
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,description,teacher_id,
-        grade_id,name,state,
+        id
+        ,secondary_college_id,teacher_id,
+        grade_id,teaching_group_id,state,
         create_time,update_time,is_deleted
     </sql>
+
+    <select id="getPlanByUser" resultMap="openPlanWithDetails">
+        select
+        top.*,
+        topd.id as id2,
+        topd.course_name,
+        topd.credit,
+        topd.teaching_hours,
+        topd.weeks_teach,
+        topd.type
+        from tb_opening_plan top
+        left join tb_opening_plan_detail topd on top.id = topd.opening_plan_id
+        <where>
+            <if test="user.id!=null">
+                teacher_id = #{user.id}
+            </if>
+            <if test="user.gradeId!=null">
+                or grade_id = #{user.gradeId}
+            </if>
+            and top.is_deleted=0
+            and topd.is_deleted=0
+        </where>
+    </select>
+
 </mapper>

@@ -1,12 +1,17 @@
 package com.chen.graduation.controller;
 
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.SimpleUserInfoVO;
+import com.chen.graduation.beans.VO.TokenVO;
+import com.chen.graduation.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 登录控制器
@@ -19,32 +24,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/user")
 public class UserController {
 
+    @Resource
+    private UserService userService;
+
     @ApiOperation("账号密码登陆")
-    @GetMapping("/login/account")
-    public AjaxResult<SimpleUserInfoVO> accountLogin(@Validated @RequestBody AccountLoginDTO accountLoginDTO) {
-        // TODO: 2023/2/1 账号密码登陆 for cs
-        return null;
+    @PostMapping("/login/account")
+    public AjaxResult<TokenVO> accountLogin(@Validated @RequestBody AccountLoginDTO accountLoginDTO) {
+        return userService.accountLogin(accountLoginDTO);
     }
 
     @ApiOperation("短信验证码登陆")
-    @GetMapping("/login/sms")
-    public AjaxResult<Object> smsLogin() {
-        // TODO: 2023/2/1 短信验证码登陆 for cs
-        return AjaxResult.success();
+    @PostMapping("/login/sms")
+    public AjaxResult<TokenVO> smsLogin(@Validated @RequestBody SmsLoginDTO smsLoginDTO) {
+        return userService.smsLogin(smsLoginDTO);
     }
 
-    @ApiOperation("教职工信息")
-    @GetMapping("/faculty/me")
-    public AjaxResult<Object> facultyInfo() {
-        // TODO: 2023/2/1 教职工信息 for cs
-        return AjaxResult.success();
+    @ApiOperation("个人简易信息")
+    @GetMapping("/info")
+    public AjaxResult<SimpleUserInfoVO> getUserInfo() {
+        return userService.info();
     }
 
-    @ApiOperation("学生信息")
-    @GetMapping("/student/me")
-    public AjaxResult<Object> studentInfo() {
-        // TODO: 2023/2/1 学生信息 for cs
-        return AjaxResult.success();
-    }
 
 }

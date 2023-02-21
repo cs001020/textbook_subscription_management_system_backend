@@ -38,11 +38,11 @@ public class Textbook implements Serializable {
 
     private String publishingHouse;
 
-    private Object pageNumber;
+    private String pageNumber;
 
     private String issueNumber;
 
-    private Object prePacketNumber;
+    private String prePacketNumber;
 
     private Date publicationDate;
 

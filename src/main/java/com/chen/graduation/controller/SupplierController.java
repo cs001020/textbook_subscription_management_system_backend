@@ -1,11 +1,19 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.beans.DTO.SupplierDTO;
+import com.chen.graduation.beans.DTO.group.SupplierDtoAddGroup;
+import com.chen.graduation.beans.DTO.group.SupplierDtoUpdateGroup;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.SupplierVO;
+import com.chen.graduation.service.SupplierService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 供应商控制器
@@ -17,31 +25,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/supplier")
 public class SupplierController {
-    @ApiOperation("增")
+
+    @Resource
+    private SupplierService supplierService;
+
+    @ApiOperation("添加供应商")
     @PostMapping("/add")
-    public AjaxResult<Object> add(){
-        // TODO: 2023/2/1 增 for ylf
-        return AjaxResult.success();
+    public AjaxResult<Object> addSupplier(@Validated(value = SupplierDtoAddGroup.class) @RequestBody SupplierDTO supplierDTO) {
+        return supplierService.addSupplier(supplierDTO);
     }
 
-    @ApiOperation("删")
-    @PostMapping("/delete")
-    public AjaxResult<Object> delete(){
-        // TODO: 2023/2/1 删 for ylf
-        return AjaxResult.success();
+    @ApiOperation("根据id删除供应商")
+    @DeleteMapping("/delete/{id}")
+    public AjaxResult<Object> deleteById(@PathVariable("id") Long id) {
+        return supplierService.deleteById(id);
     }
 
-    @ApiOperation("改")
-    @PostMapping("/update")
-    public AjaxResult<Object> update(){
-        // TODO: 2023/2/1 改 for ylf
-        return AjaxResult.success();
+    @ApiOperation("根据id更新供应商")
+    @PutMapping("/update/{id}")
+    public AjaxResult<Object> updateSupplier(@Validated(value = SupplierDtoUpdateGroup.class) @RequestBody SupplierDTO supplierDTO, @PathVariable("id") Long id) {
+        return supplierService.updateSupplierById(supplierDTO, id);
     }
 
-    @ApiOperation("查")
-    @PostMapping("/get")
-    public AjaxResult<Object> get(){
-        // TODO: 2023/2/1 查 for ylf
-        return AjaxResult.success();
+    @ApiOperation("获取供应商列表")
+    @GetMapping("/list")
+    public AjaxResult<List<SupplierVO>> getList() {
+        return supplierService.getList();
     }
 }

@@ -27,4 +27,5 @@ public class PageParamDTO implements Serializable {
     @Range(min = 1, max = 50, message = "分页参数异常")
     @NotNull(message = "分页参数异常")
     private Integer size;
+
 }
