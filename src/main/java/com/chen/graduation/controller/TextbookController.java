@@ -1,6 +1,8 @@
 package com.chen.graduation.controller;
 
 import com.chen.graduation.beans.DTO.PageParamDTO;
+import com.chen.graduation.beans.DTO.TextbookDTO;
+import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.service.TextbookService;
@@ -8,10 +10,7 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,24 +30,17 @@ public class TextbookController {
     @Resource
     private TextbookService textbookService;
 
-    @ApiOperation("分页查询教材信息")
-    @GetMapping("/page")
-    public AjaxResult<List<TextbookVO>> pageQuery(@Validated PageParamDTO pageParamDTO) {
-        return textbookService.pageQuery(pageParamDTO);
+    @ApiOperation("搜索教材信息")
+    @GetMapping("/search")
+    public AjaxResult<List<TextbookVO>> pageQuery(@Validated TextbookSearchDTO textbookSearchDTO) {
+        return textbookService.search(textbookSearchDTO);
     }
 
-    @ApiOperation("搜索教材信息")
-    @PostMapping("/search")
-    public AjaxResult<Object> search() {
-        // TODO: 2023/2/1 搜索教材信息 for cs
-        return AjaxResult.success();
-    }
 
     @ApiOperation("添加待审核教材")
-    @PostMapping("/add")
-    public AjaxResult<Object> add() {
-        // TODO: 2023/2/1 添加待审核教材 for cs
-        return AjaxResult.success();
+    @PostMapping("/addTextBook")
+    public AjaxResult<Object> addTextBook(@Validated @RequestBody TextbookDTO textbookDTO) {
+        return textbookService.addTextBook(textbookDTO);
     }
 
     @ApiOperation("教材入库")

@@ -32,7 +32,7 @@ public class TextbookFeedbackController {
     }
 
     @ApiOperation("根据id删除教材反馈")
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/delete/{id}")
     public AjaxResult<Object> deleteById(@PathVariable Long id){
         return textbookFeedbackService.deleteById(id);
     }
