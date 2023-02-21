@@ -9,12 +9,12 @@ import java.util.Date;
 import lombok.Data;
 
 /**
- * 开课计划
- * @TableName tb_opening_plan
+ * 开课计划详情
+ * @TableName tb_opening_plan_detail
  */
-@TableName(value ="tb_opening_plan")
+@TableName(value ="tb_opening_plan_detail")
 @Data
-public class OpeningPlan implements Serializable {
+public class OpeningPlanDetail implements Serializable {
     /**
      * 主键id
      */
@@ -22,29 +22,34 @@ public class OpeningPlan implements Serializable {
     private Long id;
 
     /**
-     * 二级院校id
+     * 开课计划id
      */
-    private Long secondaryCollegeId;
+    private Long openingPlanId;
 
     /**
-     * 教师id
+     * 课程名
      */
-    private Long teacherId;
+    private String courseName;
 
     /**
-     * 班级id
+     * 学分
      */
-    private Long gradeId;
+    private Object credit;
 
     /**
-     * 教学组id
+     * 总课时
      */
-    private Long teachingGroupId;
+    private Object teachingHours;
 
     /**
-     * 状态 0(等待教师选定教材) 1(已经选定教材，等待审批) 3(审批完成，close)
+     * 教学周数
      */
-    private Integer state;
+    private Object weeksTeach;
+
+    /**
+     * 类型 0(考试) 1(考察)
+     */
+    private Integer type;
 
     /**
      * 创建时间，默认为当前时间，不需要手动设置

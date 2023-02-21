@@ -6,10 +6,10 @@
 
     <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.OpeningPlan">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="secondaryCollegeId" column="secondary_college_id" jdbcType="BIGINT"/>
             <result property="teacherId" column="teacher_id" jdbcType="BIGINT"/>
             <result property="gradeId" column="grade_id" jdbcType="BIGINT"/>
-            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="teachingGroupId" column="teaching_group_id" jdbcType="BIGINT"/>
             <result property="state" column="state" jdbcType="SMALLINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -17,8 +17,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,description,teacher_id,
-        grade_id,name,state,
+        id,secondary_college_id,teacher_id,
+        grade_id,teaching_group_id,state,
         create_time,update_time,is_deleted
     </sql>
 </mapper>
