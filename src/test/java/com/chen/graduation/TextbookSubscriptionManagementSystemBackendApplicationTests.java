@@ -2,18 +2,22 @@ package com.chen.graduation;
 
 import cn.hutool.core.util.RandomUtil;
 import com.chen.graduation.beans.PO.OpeningPlan;
+import com.chen.graduation.beans.PO.Supplier;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.mapper.OpeningPlanMapper;
+import com.chen.graduation.service.SupplierService;
 import com.chen.graduation.service.TextbookService;
 import com.chen.graduation.service.UserService;
+import com.github.javafaker.Faker;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Locale;
 
 @SpringBootTest
 @Slf4j
@@ -26,6 +30,9 @@ class TextbookSubscriptionManagementSystemBackendApplicationTests {
 
     @Resource
     private OpeningPlanMapper openingPlanMapper;
+
+    @Resource
+    private SupplierService supplierService;
 
     @Test
     void contextLoads() {
@@ -68,5 +75,19 @@ class TextbookSubscriptionManagementSystemBackendApplicationTests {
             openingPlan.getOpeningPlanDetails().forEach(System.out::println);
         });
         log.info("TextbookSubscriptionManagementSystemBackendApplicationTests.openingPlanTest业务结束，结果:{}",planByUser.size());
+    }
+
+    @Test
+    void addSupplier() {
+        Faker faker = new Faker(Locale.CHINA);
+        for (int i = 1; i < 11; i++) {
+            Supplier supplier = new Supplier();
+            supplier.setName("供应商"+faker.name().fullName());
+            supplier.setDescription("这是供应商"+i);
+            supplier.setContactNumber(faker.phoneNumber().cellPhone());
+            supplier.setEmail(supplier.getContactNumber()+"@gmail.com");
+            supplier.setAddress(faker.address().fullAddress());
+            supplierService.save(supplier);
+        }
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Date;
  */
 @Data
 @ApiModel("开课计划详情")
-public class OpeningPlanDetailVO {
+public class OpeningPlanDetailVO implements Serializable {
     @ApiModelProperty("id")
     private Long id;
     @ApiModelProperty("课程名")
@@ -30,5 +31,7 @@ public class OpeningPlanDetailVO {
     private Integer weeksTeach;
     @ApiModelProperty("类型")
     private String type;
+
+    private static final long serialVersionUID = 1L;
 
 }

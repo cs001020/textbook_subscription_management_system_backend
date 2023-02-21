@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 public class TextbookSubscriptionManagementSystemBackendApplication {
-    // TODO: 2023/2/21 鉴权 
+    // TODO: 2023/2/21 鉴权
     public static void main(String[] args) {
         SpringApplication.run(TextbookSubscriptionManagementSystemBackendApplication.class, args);
     }

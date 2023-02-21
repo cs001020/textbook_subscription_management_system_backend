@@ -53,7 +53,7 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         return AjaxResult.success(openingPlanVOList);
     }
 
-    // TODO: 2023/2/21 各种id校验 
+    // TODO: 2023/2/21 各种id校验
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> addPlan(OpeningPlanDTO openingPlanDTO) {

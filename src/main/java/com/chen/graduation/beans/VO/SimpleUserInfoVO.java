@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -14,7 +15,7 @@ import java.util.List;
  */
 @Data
 @ApiModel("简易用户信息")
-public class SimpleUserInfoVO {
+public class SimpleUserInfoVO implements Serializable {
 
     @ApiModelProperty("昵称")
     private String name;
@@ -24,4 +25,6 @@ public class SimpleUserInfoVO {
     private String introduction;
     @ApiModelProperty("角色列表")
     private List<Object> roles;
+
+    private static final long serialVersionUID = 1L;
 }

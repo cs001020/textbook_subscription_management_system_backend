@@ -40,4 +40,10 @@ public class RedisConstants {
      * 用户令牌ttl(分钟)
      */
     public static final Long USER_TOKEN_TTL=30L;
+
+
+    /**
+     * 供应商列表key
+     */
+    public static final String SUPPLIER_CACHE_KEY="supplier";
 }
