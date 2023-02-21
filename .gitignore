@@ -37,3 +37,4 @@ build/
 #**/config/*.yaml
 ##忽略所有配置文件
 #**/*.yaml
+**/config/application-file.yaml

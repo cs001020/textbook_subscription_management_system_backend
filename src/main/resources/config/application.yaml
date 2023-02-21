@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: knife4j,postgres,redis,mybatis
+    active: knife4j,postgres,redis,mybatis,file
 
 timing:
   warning-time: 200
