@@ -2,6 +2,7 @@ package com.chen.graduation.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
@@ -10,6 +11,7 @@ import com.chen.graduation.beans.PO.Approval;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.converter.ApprovalConverter;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.ApprovalStateEnums;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
@@ -39,6 +41,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     private TextbookService textbookService;
     @Resource
     private TextbookConverter textbookConverter;
+    @Resource
+    private ApprovalConverter approvalConverter;
 
     // FIXME: 2023/2/22 图书id校验
     @Override
@@ -154,9 +158,18 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     @Override
     public AjaxResult<List<ApprovalVO>> getUnApproval() {
         //条件构造器
-
-        return null;
+        LambdaQueryWrapper<Approval> queryWrapper=new LambdaQueryWrapper<>();
+        queryWrapper.ne(Approval::getState,ApprovalTotalStateEnums.ADOPT);
+        //查询
+        List<Approval> approvalList = list(queryWrapper);
+        //转换
+        List<ApprovalVO> approvalVOList = approvalConverter.po2vos(approvalList);
+        //打印日志
+        log.info("ApprovalServiceImpl.getUnApproval业务结束，结果:{}",approvalVOList);
+        //响应
+        return AjaxResult.success(approvalVOList);
     }
+
 }
 
 
