@@ -1,22 +1,21 @@
-package com.chen.graduation.beans.PO;
+package com.chen.graduation.beans.VO;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.io.Serializable;
-import java.util.Date;
-
 import com.chen.graduation.enums.ApprovalStateEnums;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
 import lombok.Data;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * @TableName tb_approval
  */
 @TableName(value = "tb_approval")
 @Data
-public class Approval implements Serializable {
+public class ApprovalVO implements Serializable {
 
     @TableId(type = IdType.AUTO)
     private Long id;

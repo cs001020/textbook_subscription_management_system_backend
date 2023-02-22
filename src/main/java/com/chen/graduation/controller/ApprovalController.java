@@ -1,11 +1,17 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.beans.DTO.ApprovalDTO;
+import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.service.ApprovalService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 审批控制器
@@ -18,38 +24,36 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/approval")
 public class ApprovalController {
 
+    @Resource
+    private ApprovalService approvalService;
+
     @ApiOperation("教学组审批")
-    @PostMapping("/group")
-    public AjaxResult<Object> teachingGroup(){
-        // TODO: 2023/2/1 教学组审批 for cs
-        return AjaxResult.success();
+    @PostMapping("/teachingGroup/{id}")
+    public AjaxResult<Object> teachingGroupApproval(@PathVariable Long id, @Validated @RequestBody ApprovalDTO approvalDTO) {
+        return approvalService.teachingGroupApproval(id, approvalDTO);
     }
 
     @ApiOperation("二级学院审批")
-    @PostMapping("/second")
-    public AjaxResult<Object> secondaryCollege(){
-        // TODO: 2023/2/1 二级学院审批 for cs
-        return AjaxResult.success();
+    @PostMapping("/secondaryCollege/{id}")
+    public AjaxResult<Object> secondaryCollegeApproval(@PathVariable Long id, @Validated @RequestBody ApprovalDTO approvalDTO) {
+        return approvalService.secondaryCollegeApproval(id, approvalDTO);
     }
 
     @ApiOperation("教务处审批")
-    @PostMapping("/affairs")
-    public AjaxResult<Object> academicAffairsOffice(){
-        // TODO: 2023/2/1 教务处审批 for cs
-        return AjaxResult.success();
+    @PostMapping("/academicAffairsOffice/{id}")
+    public AjaxResult<Object> academicAffairsOfficeApproval(@PathVariable Long id, @Validated @RequestBody ApprovalDTO approvalDTO) {
+        return approvalService.academicAffairsOfficeApproval(id, approvalDTO);
     }
 
-    @ApiOperation("查看审批请客")
-    @PostMapping("/query")
-    public AjaxResult<Object> query(){
-        // TODO: 2023/2/1 查看审批请客 for cs
-        return AjaxResult.success();
+    @ApiOperation("查看待审批申请")
+    @GetMapping("/unApproval")
+    public AjaxResult<List<ApprovalVO>> getUnApproval() {
+        return approvalService.getUnApproval();
     }
 
     @ApiOperation("提交申请")
-    @PostMapping("/add")
-    public AjaxResult<Object> add(){
-        // TODO: 2023/2/1 提交申请 for cs
-        return AjaxResult.success();
+    @PostMapping("/submit")
+    public AjaxResult<Object> submit(@Validated @RequestBody ApprovalInsertDTO approvalInsertDTO) {
+        return approvalService.submit(approvalInsertDTO);
     }
 }
