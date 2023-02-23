@@ -22,11 +22,11 @@ import java.util.List;
 @Slf4j
 public class SecondaryCollegeServiceImpl extends ServiceImpl<SecondaryCollegeMapper, SecondaryCollege>
     implements SecondaryCollegeService{
-    
+
     @Resource
     private SecondaryCollegeConverter secondaryCollegeConverter;
 
-    // TODO: 2023/2/23 缓存 
+    // TODO: 2023/2/23 缓存
     @Override
     public AjaxResult<List<SecondaryCollegeVO>> getList() {
         List<SecondaryCollege> list = this.list();
