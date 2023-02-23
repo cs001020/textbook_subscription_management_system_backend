@@ -22,11 +22,11 @@ import java.util.List;
 @Slf4j
 public class MajorServiceImpl extends ServiceImpl<MajorMapper, Major>
     implements MajorService{
-    
+
     @Resource
     private MajorConverter majorConverter;
 
-    // TODO: 2023/2/23 缓存 注释 
+    // TODO: 2023/2/23 缓存 注释
     @Override
     public AjaxResult<List<MajorVO>> listBySecondaryId(Long id) {
         List<Major> list = lambdaQuery().eq(Major::getSecondaryCollegeId, id).list();
