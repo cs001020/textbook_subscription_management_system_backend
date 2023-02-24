@@ -63,7 +63,14 @@ public class OpeningPlan implements Serializable {
      * 逻辑删除标志位，默认为0代表未删除，删除标志建议为主键id
      */
     private Long isDeleted;
-
+    @TableField(exist = false)
+    private String secondaryCollege;
+    @TableField(exist = false)
+    private String teacher;
+    @TableField(exist = false)
+    private String teachingGroup;
+    @TableField(exist = false)
+    private String grade;
     @TableField(exist = false)
     private List<OpeningPlanDetail> openingPlanDetails;
 

@@ -48,7 +48,7 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         //封装结果
         List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
         //打印日志
-        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanList);
+        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
         //返回结果
         return AjaxResult.success(openingPlanVOList);
     }
