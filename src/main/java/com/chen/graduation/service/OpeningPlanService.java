@@ -29,4 +29,11 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> addPlan(OpeningPlanDTO openingPlanDTO);
+
+    /**
+     * 得到所有开课计划
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link OpeningPlanVO}>>
+     */
+    AjaxResult<List<OpeningPlanVO>> getAllPlanList();
 }

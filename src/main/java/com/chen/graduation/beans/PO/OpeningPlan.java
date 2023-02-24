@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.chen.graduation.beans.VO.TeacherVO;
 import com.chen.graduation.enums.OpenPlanStateEnums;
 import lombok.Data;
 
@@ -66,7 +67,7 @@ public class OpeningPlan implements Serializable {
     @TableField(exist = false)
     private String secondaryCollege;
     @TableField(exist = false)
-    private String teacher;
+    private TeacherVO teacher;
     @TableField(exist = false)
     private String teachingGroup;
     @TableField(exist = false)

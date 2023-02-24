@@ -27,7 +27,7 @@ public class OpeningPlanVO implements Serializable {
     @ApiModelProperty("二级学院")
     private String secondaryCollege;
     @ApiModelProperty("教师")
-    private String teacher;
+    private TeacherVO teacher;
     @ApiModelProperty("班级")
     private String grade;
     @ApiModelProperty("状态")

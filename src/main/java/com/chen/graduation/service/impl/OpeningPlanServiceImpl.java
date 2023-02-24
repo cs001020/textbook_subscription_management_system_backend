@@ -47,6 +47,9 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         List<OpeningPlan> openingPlanList = baseMapper.getPlanByUser(user);
         //封装结果
         List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
+        openingPlanVOList.forEach(openingPlanVO -> {
+            openingPlanVO.setCanAddApproval(openingPlanVO.getTeacher().getName().equals(user.getName()));
+        });
         //打印日志
         log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
         //返回结果
@@ -77,6 +80,21 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
             return AjaxResult.success();
         }
         return AjaxResult.error();
+    }
+
+    @Override
+    public AjaxResult<List<OpeningPlanVO>> getAllPlanList() {
+        //查询开课计划
+        List<OpeningPlan> openingPlanList = baseMapper.getPlanByUser(new User());
+        //封装结果
+        List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
+        openingPlanVOList.forEach(openingPlanVO -> {
+            openingPlanVO.setCanAddApproval(false);
+        });
+        //打印日志
+        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
+        //返回结果
+        return AjaxResult.success(openingPlanVOList);
     }
 }
 
