@@ -19,7 +19,7 @@ import javax.annotation.Resource;
  * @date 2023/01/27
  */
 @Slf4j
-@Api(tags = "测试")
+@Api(tags = "测试",hidden = true)
 @ApiSupport(author = "1006596474@qq.com")
 @RestController
 @RequestMapping("/test")

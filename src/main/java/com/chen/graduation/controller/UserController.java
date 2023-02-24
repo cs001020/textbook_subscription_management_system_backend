@@ -4,6 +4,7 @@ import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.SimpleUserInfoVO;
+import com.chen.graduation.beans.VO.TeacherVO;
 import com.chen.graduation.beans.VO.TokenVO;
 import com.chen.graduation.service.UserService;
 import io.swagger.annotations.Api;
@@ -12,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 登录控制器
@@ -45,5 +47,9 @@ public class UserController {
         return userService.info();
     }
 
-
+    @ApiOperation("教师列表")
+    @GetMapping("/teacher")
+    public AjaxResult<List<TeacherVO>> getTeacher() {
+        return userService.teacher();
+    }
 }

@@ -17,7 +17,15 @@
     </resultMap>
 
     <resultMap id="openPlanWithDetails" extends="BaseResultMap" type="com.chen.graduation.beans.PO.OpeningPlan">
-        <collection property="openingPlanDetails" ofType="com.chen.graduation.beans.PO.OpeningPlanDetail">
+        <result property="secondaryCollege" column="secondaryCollege" jdbcType="VARCHAR"/>
+        <result property="teachingGroup" column="teachingGroup" jdbcType="VARCHAR"/>
+        <result property="grade" column="grade" jdbcType="VARCHAR"/>
+        <association property="teacher" >
+            <result property="id" column="teacherId"/>
+            <result property="name" column="teacherName"/>
+            <result property="avatar" column="teacherIcon"/>
+        </association>
+        <collection property="openingPlanDetails" ofType="com.chen.graduation.beans.PO.OpeningPlanDetail" >
             <id column="id2" property="id"/>
             <result column="course_name" property="courseName"/>
             <result column="credit" property="credit"/>
@@ -35,8 +43,13 @@
     </sql>
 
     <select id="getPlanByUser" resultMap="openPlanWithDetails">
-        select
-        top.*,
+        select top.*,
+        tsc.name as secondaryCollege,
+        tu.id    as teacherId,
+        tu.name    as teacherName,
+        tu.icon    as teacherIcon,
+        ttg.name as teachingGroup,
+        grade.name as grade,
         topd.id as id2,
         topd.course_name,
         topd.credit,
@@ -45,15 +58,26 @@
         topd.type
         from tb_opening_plan top
         left join tb_opening_plan_detail topd on top.id = topd.opening_plan_id
+        left join tb_secondary_college tsc on top.secondary_college_id = tsc.id
+        left join tb_user tu on top.teacher_id = tu.id
+        left join tb_teaching_group ttg on top.teaching_group_id = ttg.id
+        left join (select tb_grade.id as id, concat(tm.name, tb_grade.year, '级', tb_grade.number, '班') as name
+        from tb_grade
+        left join tb_major tm on tb_grade.major_id = tm.id
+        where tb_grade.is_deleted = 0
+        and tm.is_deleted = 0) grade on top.grade_id = grade.id
         <where>
             <if test="user.id!=null">
-                teacher_id = #{user.id}
+                top.teacher_id = #{user.id}
             </if>
             <if test="user.gradeId!=null">
-                or grade_id = #{user.gradeId}
+                or top.grade_id = #{user.gradeId}
             </if>
             and top.is_deleted=0
             and topd.is_deleted=0
+            and tsc.is_deleted=0
+            and tu.is_deleted=0
+            and ttg.is_deleted=0
         </where>
     </select>
 

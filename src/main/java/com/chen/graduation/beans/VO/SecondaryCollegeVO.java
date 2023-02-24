@@ -8,20 +8,21 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+
 /**
- * 图形验证码VO
+ * 二级学院签证官
  *
  * @author CHEN
- * @date 2023/02/01
+ * @date 2023/02/23
  */
 @Data
-@ApiModel("图形验证码")
-public class CaptchaVO implements Serializable {
-    @ApiModelProperty("图片验证码唯一id")
+@ApiModel("二级学院VO")
+public class SecondaryCollegeVO implements Serializable {
+    @ApiModelProperty("id")
     @JSONField(serializeUsing = ToStringSerializer.class)
-    private Long uid;
-    @ApiModelProperty("图片验证码base64格式")
-    private String captcha;
+    private Long id;
+    @ApiModelProperty("学院名")
+    private String name;
 
     private static final long serialVersionUID = 1L;
 }

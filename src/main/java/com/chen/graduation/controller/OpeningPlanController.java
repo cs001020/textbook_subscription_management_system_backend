@@ -34,7 +34,11 @@ public class OpeningPlanController {
 
     @ApiOperation("查看开课计划(属于当前登录用户的开课计划)")
     @GetMapping("/getPlan")
-    public AjaxResult<List<OpeningPlanVO>> getPlan() {
+    public AjaxResult<List<OpeningPlanVO>> getPlanByUser() {
         return openingPlanService.getPlan();
+    }@ApiOperation("查看所有开课计划")
+    @GetMapping("/list")
+    public AjaxResult<List<OpeningPlanVO>> getAllPlanList() {
+        return openingPlanService.getAllPlanList();
     }
 }

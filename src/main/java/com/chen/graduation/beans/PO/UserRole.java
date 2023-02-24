@@ -16,7 +16,7 @@ public class UserRole implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
 
-    private Long facultyId;
+    private Long userId;
 
     private Long roleId;
 

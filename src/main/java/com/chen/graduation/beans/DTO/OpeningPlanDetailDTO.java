@@ -26,7 +26,7 @@ public class OpeningPlanDetailDTO {
     @NotNull(message = "参数异常")
     private Integer credit;
     @ApiModelProperty("总课时")
-    @Range(max = 10,message = "总课时异常")
+    @Range(max = 50,message = "总课时异常")
     @NotNull(message = "参数异常")
     private Integer teachingHours;
     @ApiModelProperty("教学周数")

@@ -2,6 +2,10 @@ package com.chen.graduation.service;
 
 import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.SecondaryCollegeVO;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -10,4 +14,10 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface SecondaryCollegeService extends IService<SecondaryCollege> {
 
+    /**
+     * 得到列表
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollegeVO}>>
+     */
+    AjaxResult<List<SecondaryCollegeVO>> getList();
 }

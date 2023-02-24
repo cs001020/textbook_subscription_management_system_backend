@@ -25,4 +25,9 @@
         name,icon,state,
         create_time,update_time,is_deleted
     </sql>
+    <select id="getTeacherList" resultType="com.chen.graduation.beans.PO.User">
+        select distinct tb_user.id,tb_user.name,tb_user.icon
+        from tb_user left join tb_user_role tur on tb_user.id = tur.user_id
+        where tur.role_id=1 and tb_user.is_deleted=0 and tb_user.state=0 and tur.is_deleted=0;
+    </select>
 </mapper>
