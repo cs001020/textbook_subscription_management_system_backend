@@ -1,5 +1,6 @@
 package com.chen.graduation.service.impl;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.digest.MD5;
@@ -11,9 +12,11 @@ import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.SimpleUserInfoVO;
+import com.chen.graduation.beans.VO.TeacherVO;
 import com.chen.graduation.beans.VO.TokenVO;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
+import com.chen.graduation.converter.UserConverter;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
@@ -25,8 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,10 +42,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private UserConverter userConverter;
 
     @Value("${jwt.key}")
     private String jwtKey;
-
     @Value("${jwt.hand}")
     private String requestHand;
 
@@ -69,7 +72,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new ServiceException("用户名或密码错误");
         }
         //判断用户是否被封禁
-        if (UserStateEnums.BAN.equals(user.getState())){
+        if (UserStateEnums.BAN.equals(user.getState())) {
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("当前用户已被封禁");
         }
@@ -84,11 +87,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
                 .setKey(jwtKey.getBytes())
+                .setPayload("hello", IdUtil.simpleUUID())
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
-        log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功",user.getName());
-        return AjaxResult.success(new TokenVO(token,requestHand));
+        log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功", user.getName());
+        return AjaxResult.success(new TokenVO(token, requestHand));
     }
 
     @Override
@@ -112,19 +116,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new ServiceException("用户名或密码错误");
         }
         //判断用户是否被封禁
-        if (UserStateEnums.BAN.equals(user.getState())){
+        if (UserStateEnums.BAN.equals(user.getState())) {
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("当前用户已被封禁");
         }
         //生成token
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
+                .setPayload("hello", IdUtil.simpleUUID())
                 .setKey(jwtKey.getBytes())
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
-        log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功",user.getName());
-        return AjaxResult.success(new TokenVO(token,requestHand));
+        log.info("UserServiceImpl.accountLogin业务结束，结果:{}，登陆成功", user.getName());
+        return AjaxResult.success(new TokenVO(token, requestHand));
     }
 
     @Override
@@ -142,8 +147,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         simpleUserInfoVO.setIntroduction(user.getIntroduction());
         simpleUserInfoVO.setRoles(Collections.singletonList("[admin]"));
         //响应结果
-        log.info("UserServiceImpl.info业务结束，结果:{}",simpleUserInfoVO);
+        log.info("UserServiceImpl.info业务结束，结果:{}", simpleUserInfoVO);
         return AjaxResult.success(simpleUserInfoVO);
+    }
+
+    @Override
+    public AjaxResult<List<TeacherVO>> teacher() {
+        //数据库查询
+        List<User> teachList = baseMapper.getTeacherList();
+        //转换对象
+        List<TeacherVO> teacherVOList = userConverter.po2teachers(teachList);
+        //打印日志
+        log.info("UserServiceImpl.teacher业务结束，结果:{}",teacherVOList);
+        //响应
+        return AjaxResult.success(teacherVOList);
     }
 }
 

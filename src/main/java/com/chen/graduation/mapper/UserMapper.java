@@ -3,6 +3,8 @@ package com.chen.graduation.mapper;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
+import java.util.List;
+
 /**
 * @author 10065
 * @description 针对表【tb_user_faculty(教职工用户)】的数据库操作Mapper
@@ -11,6 +13,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface UserMapper extends BaseMapper<User> {
 
+    /**
+     * 得到老师名单
+     *
+     * @return {@link List}<{@link User}>
+     */
+    List<User> getTeacherList();
 }
 
 

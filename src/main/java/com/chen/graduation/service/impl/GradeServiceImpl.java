@@ -26,6 +26,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade>
     @Resource
     private GradeConverter gradeConverter;
 
+    // TODO: 2023/2/23 缓存 日志
     @Override
     public AjaxResult<List<GradeVO>> listByMajorId(Long id) {
         List<Grade> list = lambdaQuery().eq(Grade::getMajorId, id).list();

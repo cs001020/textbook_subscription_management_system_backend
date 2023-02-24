@@ -6,7 +6,10 @@ import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.SimpleUserInfoVO;
+import com.chen.graduation.beans.VO.TeacherVO;
 import com.chen.graduation.beans.VO.TokenVO;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -37,4 +40,11 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link SimpleUserInfoVO}>
      */
     AjaxResult<SimpleUserInfoVO> info();
+
+    /**
+     * 老师
+     *
+     * @return {@link AjaxResult}
+     */
+    AjaxResult<List<TeacherVO>>  teacher();
 }
