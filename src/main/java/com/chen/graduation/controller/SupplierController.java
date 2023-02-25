@@ -6,6 +6,7 @@ import com.chen.graduation.beans.DTO.group.SupplierDtoUpdateGroup;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.SupplierVO;
 import com.chen.graduation.service.SupplierService;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,6 +23,7 @@ import java.util.List;
  * @date 2023/02/01
  */
 @Api(tags = "供应商")
+@ApiSupport(author = "1006596474@qq.com",order = 6)
 @RestController
 @RequestMapping("/supplier")
 public class SupplierController {

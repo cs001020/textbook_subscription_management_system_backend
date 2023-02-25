@@ -1,10 +1,10 @@
 package com.chen.graduation.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.PO.Textbook;
@@ -19,11 +19,12 @@ import com.chen.graduation.service.TextbookService;
 import com.chen.graduation.mapper.TextbookMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author 10065
@@ -47,11 +48,13 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         lambdaQueryWrapper.orderByDesc(SortableEnums.DESC.equals(textbookSearchDTO.getOrderByStock()), Textbook::getStock);
         lambdaQueryWrapper.orderByDesc(SortableEnums.DESC.equals(textbookSearchDTO.getOrderByPrice()), Textbook::getPrice);
         String keyWord = textbookSearchDTO.getKeyWord();
-        lambdaQueryWrapper
-                .like(StrUtil.isNotBlank(keyWord), Textbook::getBookName, keyWord).or()
-                .like(StrUtil.isNotBlank(keyWord), Textbook::getDescription, keyWord).or()
-                .like(StrUtil.isNotBlank(keyWord), Textbook::getAuthor, keyWord).or()
-                .like(StrUtil.isNotBlank(keyWord), Textbook::getPublishingHouse, keyWord);
+        if (StrUtil.isNotBlank(keyWord)) {
+            lambdaQueryWrapper
+                    .like(Textbook::getBookName, keyWord).or()
+                    .like(Textbook::getDescription, keyWord).or()
+                    .like(Textbook::getAuthor, keyWord).or()
+                    .like(Textbook::getPublishingHouse, keyWord);
+        }
         lambdaQueryWrapper.eq(Textbook::getState, TextbookStateEnums.NORMAL);
         //查询
         Page<Textbook> page = page(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()), lambdaQueryWrapper);
@@ -64,6 +67,7 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         return success;
     }
 
+    // TODO: 2023/2/25 好像用不上
     @Override
     @CacheEvict(value = RedisConstants.TEXTBOOK_PAGE_CACHE_KET, allEntries = true)
     public AjaxResult<Object> addTextBook(TextbookDTO textbookDTO) {
@@ -78,6 +82,27 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
             throw new ServiceException("插入异常");
         }
         return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult<List<TextbookVO>> getByIds(String ids) {
+        //获取id列表
+        List<Long> collect = null;
+        try {
+            collect = Arrays.stream(ids.split(",")).map(Long::valueOf).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new ServiceException("参数异常");
+        }
+        //参数校验
+        if (CollectionUtil.isEmpty(collect)) {
+            throw new ServiceException("参数异常");
+        }
+        //数据库查询
+        List<Textbook> textbookList = baseMapper.getByIds(collect);
+        //转换成VO
+        List<TextbookVO> textbookVOList = textbookConverter.pos2vos(textbookList);
+        log.info("TextbookServiceImpl.getByIds业务结束，结果:{}", textbookVOList);
+        return AjaxResult.success(textbookVOList);
     }
 }
 

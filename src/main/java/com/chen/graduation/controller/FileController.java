@@ -24,7 +24,7 @@ import java.util.Objects;
  * @date 2023/02/21
  */
 @Api(tags = "文件")
-@ApiSupport(author = "1006596474@qq.com")
+@ApiSupport(author = "1006596474@qq.com",order = 8)
 @RestController
 @RequestMapping("/file")
 @Slf4j

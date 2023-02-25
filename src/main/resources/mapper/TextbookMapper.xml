@@ -27,6 +27,9 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
+    <resultMap id="textBookWithFeedbackCount" type="com.chen.graduation.beans.PO.Textbook" extends="BaseResultMap">
+        <result property="feedbackCount" column="feedbackCount"/>
+    </resultMap>
 
     <sql id="Base_Column_List">
         id,book_name,isbn,
@@ -37,4 +40,13 @@
         img_url,description,state,
         create_time,update_time,is_deleted
     </sql>
+    <select id="getByIds" resultMap="textBookWithFeedbackCount">
+        select tb_textbook.*,count(ttf.id) as feedbackCount
+        from tb_textbook left join tb_textbook_feedback ttf on tb_textbook.id = ttf.textbook_id
+        where tb_textbook.id in
+        <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+        group by tb_textbook.id
+    </select>
 </mapper>

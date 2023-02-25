@@ -6,6 +6,7 @@ import com.chen.graduation.beans.PO.Approval;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.enums.ApprovalTotalStateEnums;
 
 import java.util.List;
 
@@ -45,10 +46,20 @@ public interface ApprovalService extends IService<Approval> {
      */
     AjaxResult<Object> academicAffairsOfficeApproval(Long id, ApprovalDTO approvalDTO);
 
+
     /**
-     * 查看待审批列表
+     * 根据状态获取审核列表
+     * 如果不传参，则会查询所有
+     *
+     * @param approvalTotalStateEnums 总批准状态枚举
+     * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
+     */
+    AjaxResult<List<ApprovalVO>> getApprovalByState(ApprovalTotalStateEnums approvalTotalStateEnums);
+
+    /**
+     * 获得用户教材申请
      *
      * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
      */
-    AjaxResult<List<ApprovalVO>> getUnApproval();
+    AjaxResult<List<ApprovalVO>> getApprovalByUser();
 }

@@ -1,6 +1,5 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.PO.Textbook;
@@ -32,4 +31,12 @@ public interface TextbookService extends IService<Textbook> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> addTextBook(TextbookDTO textbookDTO);
+
+    /**
+     * 通过id
+     *
+     * @param ids id
+     * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
+     */
+    AjaxResult<List<TextbookVO>> getByIds(String ids);
 }

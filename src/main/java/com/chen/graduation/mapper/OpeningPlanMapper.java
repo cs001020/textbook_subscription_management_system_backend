@@ -22,6 +22,21 @@ public interface OpeningPlanMapper extends BaseMapper<OpeningPlan> {
      * @return {@link List}<{@link OpeningPlan}>
      */
     List<OpeningPlan> getPlanByUser(@Param("user") User user);
+
+    /**
+     * 通过id获取计划
+     *
+     * @param id id
+     * @return {@link List}<{@link OpeningPlan}>
+     */
+    OpeningPlan getPlanById(@Param("id")Long id);
+
+    /**
+     * 得到所有计划列表
+     *
+     * @return {@link List}<{@link OpeningPlan}>
+     */
+    List<OpeningPlan> getAllPlanList();
 }
 
 

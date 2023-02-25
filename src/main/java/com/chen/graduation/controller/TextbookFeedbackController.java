@@ -4,6 +4,7 @@ import com.chen.graduation.beans.DTO.TextbookFeedbackInsertDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookFeedbackVO;
 import com.chen.graduation.service.TextbookFeedbackService;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -19,6 +20,7 @@ import java.util.List;
  * @date 2023/02/01
  */
 @Api(tags = "教材反馈")
+@ApiSupport(author = "1006596474@qq.com",order = 5)
 @RestController
 @RequestMapping("/feedback")
 public class TextbookFeedbackController {

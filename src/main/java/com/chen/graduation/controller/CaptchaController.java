@@ -7,6 +7,7 @@ import com.chen.graduation.service.CaptchaService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,7 +19,7 @@ import javax.annotation.Resource;
  * @date 2023/02/03
  */
 @Api(tags = "验证码")
-@ApiSupport(author = "1006596474@qq.com")
+@ApiSupport(author = "1006596474@qq.com",order = 0)
 @RestController
 @RequestMapping("/captcha")
 public class CaptchaController {
@@ -33,7 +34,7 @@ public class CaptchaController {
 
     @ApiOperation("发送短信验证码")
     @GetMapping("/sms")
-    public AjaxResult<Object> smsCaptcha(PhoneNumberDTO phoneNumberDTO) {
+    public AjaxResult<Object> smsCaptcha(@Validated PhoneNumberDTO phoneNumberDTO) {
         return captchaService.sendSmsCaptcha(phoneNumberDTO.getPhoneNumber());
     }
 
