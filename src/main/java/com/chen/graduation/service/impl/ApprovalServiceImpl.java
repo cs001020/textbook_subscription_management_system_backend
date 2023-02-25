@@ -8,6 +8,7 @@ import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.PO.Approval;
+import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.ApprovalVO;
@@ -16,8 +17,10 @@ import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.ApprovalStateEnums;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
 import com.chen.graduation.exception.ServiceException;
+import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.ApprovalService;
 import com.chen.graduation.mapper.ApprovalMapper;
+import com.chen.graduation.service.OpeningPlanService;
 import com.chen.graduation.service.TextbookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     private TextbookConverter textbookConverter;
     @Resource
     private ApprovalConverter approvalConverter;
+    @Resource
+    private OpeningPlanService openingPlanService;
 
     // FIXME: 2023/2/22 图书id校验
     @Override
@@ -110,6 +115,7 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> secondaryCollegeApproval(Long id, ApprovalDTO approvalDTO) {
         //参数校验
         if (ApprovalStateEnums.UNAPPROVED.equals(approvalDTO.getApprovalStateEnums())) {
@@ -135,6 +141,7 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> academicAffairsOfficeApproval(Long id, ApprovalDTO approvalDTO) {
         //参数校验
         if (ApprovalStateEnums.UNAPPROVED.equals(approvalDTO.getApprovalStateEnums())) {
@@ -160,14 +167,32 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         return AjaxResult.success();
     }
 
-    // TODO: 2023/2/22 详细
+    // TODO: 2023/2/26 教学组的id 匹配
     @Override
-    public AjaxResult<List<ApprovalVO>> getUnApproval() {
+    public AjaxResult<List<ApprovalVO>> getApprovalByState(ApprovalTotalStateEnums approvalTotalStateEnums) {
         //条件构造器
         LambdaQueryWrapper<Approval> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.ne(Approval::getState, ApprovalTotalStateEnums.ADOPT);
+        queryWrapper.eq(!Objects.isNull(approvalTotalStateEnums),Approval::getState, approvalTotalStateEnums);
         //查询
         List<Approval> approvalList = list(queryWrapper);
+        //转换
+        List<ApprovalVO> approvalVOList = approvalConverter.po2vos(approvalList);
+        //打印日志
+        log.info("ApprovalServiceImpl.getUnApproval业务结束，结果:{}", approvalVOList);
+        //响应
+        return AjaxResult.success(approvalVOList);
+    }
+
+    @Override
+    public AjaxResult<List<ApprovalVO>> getApprovalByUser() {
+        //获取用户
+        Long userId = UserHolderContext.getUserId();
+        //获取用户的开课计划
+        List<OpeningPlan> openingPlanList = openingPlanService.lambdaQuery().eq(OpeningPlan::getTeacherId, userId).list();
+        //获取开课计划id列表
+        List<Long> openingPlanIdList = openingPlanList.stream().map(OpeningPlan::getId).collect(Collectors.toList());
+        //查询申请
+        List<Approval> approvalList = this.lambdaQuery().in(Approval::getOpeningPlanId, openingPlanIdList).list();
         //转换
         List<ApprovalVO> approvalVOList = approvalConverter.po2vos(approvalList);
         //打印日志
