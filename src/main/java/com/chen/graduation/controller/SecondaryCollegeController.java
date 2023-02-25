@@ -23,7 +23,7 @@ import java.util.List;
  */
 @Slf4j
 @Api(tags = "二级学院")
-@ApiSupport(author = "1006596474@qq.com")
+@ApiSupport(author = "1006596474@qq.com",order = 7)
 @RestController
 @RequestMapping("/secondaryCollege")
 public class SecondaryCollegeController {

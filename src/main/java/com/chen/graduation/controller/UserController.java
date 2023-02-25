@@ -7,6 +7,7 @@ import com.chen.graduation.beans.VO.SimpleUserInfoVO;
 import com.chen.graduation.beans.VO.TeacherVO;
 import com.chen.graduation.beans.VO.TokenVO;
 import com.chen.graduation.service.UserService;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -22,6 +23,7 @@ import java.util.List;
  * @date 2023/02/01
  */
 @Api(tags = "用户")
+@ApiSupport(author = "1006596474@qq.com",order = 1)
 @RestController
 @RequestMapping("/user")
 public class UserController {

@@ -25,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @Api(tags = "专业")
-@ApiSupport(author = "1006596474@qq.com")
+@ApiSupport(author = "1006596474@qq.com",order = 7)
 @RestController
 @RequestMapping("/major")
 public class MajorController {

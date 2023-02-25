@@ -5,6 +5,7 @@ import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.ApprovalVO;
 import com.chen.graduation.service.ApprovalService;
+import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
@@ -20,6 +21,7 @@ import java.util.List;
  * @date 2023/02/01
  */
 @Api(tags = "审批")
+@ApiSupport(author = "1006596474@qq.com",order = 3)
 @RestController
 @RequestMapping("/approval")
 public class ApprovalController {
