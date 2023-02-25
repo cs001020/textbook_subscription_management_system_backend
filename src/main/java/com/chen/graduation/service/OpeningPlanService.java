@@ -43,5 +43,5 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @param id id
      * @return {@link AjaxResult}<{@link List}<{@link OpeningPlanVO}>>
      */
-    AjaxResult<List<OpeningPlanVO>> getPlanById(Long id);
+    AjaxResult<OpeningPlanVO>  getPlanById(Long id);
 }

@@ -29,7 +29,7 @@ public interface OpeningPlanMapper extends BaseMapper<OpeningPlan> {
      * @param id id
      * @return {@link List}<{@link OpeningPlan}>
      */
-    List<OpeningPlan> getPlanById(@Param("id")Long id);
+    OpeningPlan getPlanById(@Param("id")Long id);
 
     /**
      * 得到所有计划列表

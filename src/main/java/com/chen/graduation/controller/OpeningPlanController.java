@@ -48,7 +48,7 @@ public class OpeningPlanController {
 
     @ApiOperation("根据id查看开课计划")
     @GetMapping("/{id}")
-    public AjaxResult<List<OpeningPlanVO>> getPlanById(@PathVariable Long id) {
+    public AjaxResult<OpeningPlanVO> getPlanById(@PathVariable Long id) {
         return openingPlanService.getPlanById(id);
     }
 }

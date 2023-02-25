@@ -22,7 +22,7 @@ import java.util.List;
  * @date 2023/02/01
  */
 @Api(tags = "教材")
-@ApiSupport(author = "1006596474@qq.com",order = 4)
+@ApiSupport(author = "1006596474@qq.com", order = 4)
 @RestController
 @RequestMapping("/textbook")
 public class TextbookController {
@@ -34,6 +34,12 @@ public class TextbookController {
     @GetMapping("/search")
     public AjaxResult<List<TextbookVO>> pageQuery(@Validated TextbookSearchDTO textbookSearchDTO) {
         return textbookService.search(textbookSearchDTO);
+    }
+
+    @ApiOperation("更具id列表获取教材信息")
+    @GetMapping("/byIds")
+    public AjaxResult<List<TextbookVO>> getByIds(String ids) {
+        return textbookService.getByIds(ids);
     }
 
 

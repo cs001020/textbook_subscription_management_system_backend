@@ -1,6 +1,6 @@
 package com.chen.graduation.beans.VO;
 
-import com.chen.graduation.enums.TextbookStateEnums;
+
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -49,6 +49,8 @@ public class TextbookVO implements Serializable {
     private String state;
     @ApiModelProperty("库存")
     private Integer stock;
+    @ApiModelProperty("反馈数量")
+    private Integer feedbackCount;
 
     private static final long serialVersionUID = 1L;
 }

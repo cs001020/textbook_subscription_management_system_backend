@@ -48,7 +48,12 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         //封装结果
         List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
         openingPlanVOList.forEach(openingPlanVO -> {
-            openingPlanVO.setCanAddApproval(openingPlanVO.getTeacher().getName().equals(user.getName()));
+            openingPlanVO
+                    .setCanAddApproval(
+                            openingPlanVO.getTeacher().getName().equals(user.getName())
+                                    &&
+                                    OpenPlanStateEnums.TEXTBOOKS_TO_BE_SELECT.getStateName().equals(openingPlanVO.getState())
+                    );
         });
         //打印日志
         log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
@@ -76,7 +81,7 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         //打印日志
         log.info("OpeningPlanServiceImpl.addPlan业务结束，结果:{}", success);
         //返回结果
-        if (success){
+        if (success) {
             return AjaxResult.success();
         }
         return AjaxResult.error();
@@ -88,9 +93,6 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         List<OpeningPlan> openingPlanList = baseMapper.getAllPlanList();
         //封装结果
         List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
-        openingPlanVOList.forEach(openingPlanVO -> {
-            openingPlanVO.setCanAddApproval(false);
-        });
         //打印日志
         log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
         //返回结果
@@ -98,18 +100,15 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
     }
 
     @Override
-    public AjaxResult<List<OpeningPlanVO>> getPlanById(Long id) {
+    public AjaxResult<OpeningPlanVO> getPlanById(Long id) {
         //查询开课计划
-        List<OpeningPlan> openingPlanList = baseMapper.getPlanById(id);
+        OpeningPlan planById = baseMapper.getPlanById(id);
         //封装结果
-        List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
-        openingPlanVOList.forEach(openingPlanVO -> {
-            openingPlanVO.setCanAddApproval(false);
-        });
+        OpeningPlanVO planVO = openingPlanConverter.po2vo(planById);
         //打印日志
-        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
+        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", planVO);
         //返回结果
-        return AjaxResult.success(openingPlanVOList);
+        return AjaxResult.success(planVO);
     }
 }
 
