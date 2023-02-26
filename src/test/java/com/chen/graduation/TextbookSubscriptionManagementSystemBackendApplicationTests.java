@@ -1,8 +1,11 @@
 package com.chen.graduation;
 
+import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.jwt.JWT;
 import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.TextbookFeedbackVO;
+import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.mapper.OpeningPlanMapper;
 import com.chen.graduation.mapper.TextbookFeedbackMapper;
@@ -31,6 +34,21 @@ class TextbookSubscriptionManagementSystemBackendApplicationTests {
     private TextbookFeedbackMapper textbookFeedbackMapper;
     @Resource
     private SupplierService supplierService;
+
+    @Test
+    void tokenTest() {
+        String token1 = JWT.create()
+                .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, 2L)
+                .setPayload("hello", IdUtil.simpleUUID())
+                .setKey("123456".getBytes())
+                .sign();
+        String token2 = JWT.create()
+                .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, 2L)
+                .setPayload("hello", IdUtil.simpleUUID())
+                .setKey("123456".getBytes())
+                .sign();
+        log.info("TextbookSubscriptionManagementSystemBackendApplicationTests.tokenTest业务结束，结果:{}",token1.equals(token2));
+    }
 
     @Test
     void contextLoads() {

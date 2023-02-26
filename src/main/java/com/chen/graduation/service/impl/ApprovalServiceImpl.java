@@ -3,6 +3,7 @@ package com.chen.graduation.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
@@ -16,6 +17,7 @@ import com.chen.graduation.converter.ApprovalConverter;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.ApprovalStateEnums;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
+import com.chen.graduation.enums.OpenPlanStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.ApprovalService;
@@ -157,8 +159,13 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setDeansOfficeState(approvalDTO.getApprovalStateEnums());
         approval.setDeansOfficeMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.ADOPT);
-        //插入
+        //更新开课计划
+        LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
+        updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
+        openingPlanService.update(updateWrapper);
+        //更新
         boolean b = this.updateById(approval);
+        // TODO: 2023/2/26 教材订单
         log.info("ApprovalServiceImpl.teachingGroupApproval业务结束，结果:{}", b);
         if (!b) {
             throw new ServiceException("操作失败");

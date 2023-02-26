@@ -53,6 +53,7 @@ public class TextbookDTO implements Serializable {
     @ApiModelProperty("出版日期")
     private Date publicationDate;
     @ApiModelProperty("封面图片地址")
+    @NotBlank(message = "参数异常")
     private String imgUrl;
     @ApiModelProperty("描述")
     @NotBlank(message = "参数异常")

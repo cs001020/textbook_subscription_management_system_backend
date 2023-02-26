@@ -86,8 +86,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //生成token
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
-                .setKey(jwtKey.getBytes())
                 .setPayload("hello", IdUtil.simpleUUID())
+                .setKey(jwtKey.getBytes())
                 .sign();
         //存入redis
         stringRedisTemplate.opsForValue().set(RedisConstants.USER_TOKEN_KEY + user.getId(), token, RedisConstants.USER_TOKEN_TTL, TimeUnit.MINUTES);
