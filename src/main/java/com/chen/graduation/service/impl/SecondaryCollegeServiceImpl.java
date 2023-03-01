@@ -8,6 +8,7 @@ import com.chen.graduation.converter.SecondaryCollegeConverter;
 import com.chen.graduation.service.SecondaryCollegeService;
 import com.chen.graduation.mapper.SecondaryCollegeMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -28,6 +29,7 @@ public class SecondaryCollegeServiceImpl extends ServiceImpl<SecondaryCollegeMap
 
     // TODO: 2023/2/23 缓存
     @Override
+    @Cacheable(value = "second.list")
     public AjaxResult<List<SecondaryCollegeVO>> getList() {
         List<SecondaryCollege> list = this.list();
         List<SecondaryCollegeVO> secondaryCollegeVOList = secondaryCollegeConverter.po2vos(list);

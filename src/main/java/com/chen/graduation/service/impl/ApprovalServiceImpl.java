@@ -80,6 +80,10 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setTextbookIds(join);
         //插入
         boolean save = this.save(approval);
+        //更新开课计划
+        LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
+        updateWrapper.eq(OpeningPlan::getId,approvalInsertDTO.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.WAITING_FOR_APPROVAL);
+        openingPlanService.update(updateWrapper);
         //打印日志
         log.info("ApprovalServiceImpl.submit业务结束，结果:{}", save);
         //响应
@@ -159,6 +163,7 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setDeansOfficeState(approvalDTO.getApprovalStateEnums());
         approval.setDeansOfficeMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.ADOPT);
+        // TODO: 2023/2/27 优化
         //更新开课计划
         LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
         updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
