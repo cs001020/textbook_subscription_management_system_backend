@@ -2,6 +2,9 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.Permission;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -11,6 +14,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface PermissionMapper extends BaseMapper<Permission> {
 
+    /**
+     * 通过用户id获取权
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link Permission}>
+     */
+    List<Permission> getPermissionByUserId(@Param("userId") Long userId);
 }
 
 

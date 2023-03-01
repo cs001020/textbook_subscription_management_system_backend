@@ -1,6 +1,10 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.beans.PO.Permission;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.service.PermissionService;
 import com.chen.graduation.service.TextbookService;
+import com.chen.graduation.utils.PermissionUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -8,9 +12,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * 测试控制器
@@ -28,6 +34,8 @@ public class TestController {
     private TextbookService textbookService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private PermissionService permissionService;
 
     @GetMapping("/hello1")
     @ApiOperation(value = "hello测试接口1")

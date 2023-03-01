@@ -9,19 +9,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
+import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.PO.User;
-import com.chen.graduation.beans.VO.AjaxResult;
-import com.chen.graduation.beans.VO.SimpleUserInfoVO;
-import com.chen.graduation.beans.VO.TeacherVO;
-import com.chen.graduation.beans.VO.TokenVO;
+import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.converter.UserConverter;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
+import com.chen.graduation.service.PermissionService;
 import com.chen.graduation.service.UserService;
 import com.chen.graduation.mapper.UserMapper;
+import com.chen.graduation.utils.RouterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -40,6 +40,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
+    @Resource
+    private PermissionService permissionService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -136,16 +138,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     public AjaxResult<SimpleUserInfoVO> info() {
         //获取用户id
         Long userId = UserHolderContext.getUserId();
-        //查询数据可
+        //查询数据
         LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
         wrapper.eq(User::getId, userId);
         User user = getOne(wrapper);
+        //查询权限
+        List<Permission> permissionList= permissionService.getPermissionByUserId(userId);
         //封装vo
         SimpleUserInfoVO simpleUserInfoVO = new SimpleUserInfoVO();
         simpleUserInfoVO.setName(user.getName());
         simpleUserInfoVO.setAvatar(user.getIcon());
         simpleUserInfoVO.setIntroduction(user.getIntroduction());
         simpleUserInfoVO.setRoles(Collections.singletonList("[admin]"));
+        simpleUserInfoVO.setRouters(RouterUtils.buildRouterTree(permissionList));
         //响应结果
         log.info("UserServiceImpl.info业务结束，结果:{}", simpleUserInfoVO);
         return AjaxResult.success(simpleUserInfoVO);

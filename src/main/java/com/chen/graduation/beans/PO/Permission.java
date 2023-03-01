@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import com.chen.graduation.enums.PermissionStateEnums;
 import com.chen.graduation.enums.PermissionTypeEnums;
@@ -83,6 +84,9 @@ public class Permission implements Serializable {
      * 逻辑删除标志位，默认为0代表未删除，删除标志建议为主键id
      */
     private Long isDeleted;
+
+    @TableField(exist = false)
+    List<Permission> children;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

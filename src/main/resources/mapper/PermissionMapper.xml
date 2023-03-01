@@ -27,4 +27,17 @@
         state,create_time,update_time,
         is_deleted
     </sql>
+    <select id="getPermissionByUserId" resultType="com.chen.graduation.beans.PO.Permission">
+        select tp.*
+        from tb_user
+                 left join tb_user_role tur on tb_user.id = tur.user_id
+                 left join tb_role_permission trp on tur.role_id = trp.role_id
+                 left join tb_permission tp on trp.permission_id = tp.id
+        where tb_user.id = #{userId}
+          and tb_user.is_deleted = 0
+          and tur.is_deleted = 0
+          and trp.is_deleted = 0
+          and tp.is_deleted = 0
+        order by tp.id;
+    </select>
 </mapper>
