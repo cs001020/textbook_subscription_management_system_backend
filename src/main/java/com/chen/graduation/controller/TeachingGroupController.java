@@ -1,9 +1,17 @@
 package com.chen.graduation.controller;
 
+import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chen.graduation.beans.DTO.TeachingGroupDTO;
+import com.chen.graduation.beans.PO.Major;
+import com.chen.graduation.beans.PO.OpeningPlan;
+import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
+import com.chen.graduation.service.MajorService;
+import com.chen.graduation.service.OpeningPlanService;
 import com.chen.graduation.service.TeachingGroupService;
+import com.chen.graduation.service.UserService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +30,7 @@ import java.util.List;
  */
 @Slf4j
 @Api(tags = "教学组")
-@ApiSupport(author = "1006596474@qq.com",order = 7)
+@ApiSupport(author = "1006596474@qq.com", order = 7)
 @RestController
 @RequestMapping("/teachingGroup")
 public class TeachingGroupController {
@@ -50,6 +58,6 @@ public class TeachingGroupController {
     @PutMapping("/update/{id}")
     @ApiOperation(value = "根据id跟新教学组")
     public AjaxResult<Object> updateById(@Validated @RequestBody TeachingGroupDTO teachingGroupDTO, @PathVariable Long id) {
-        return teachingGroupService.updateById(teachingGroupDTO,id);
+        return teachingGroupService.updateById(teachingGroupDTO, id);
     }
 }

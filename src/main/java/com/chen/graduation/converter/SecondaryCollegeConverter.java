@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.SecondaryCollegeDTO;
 import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.VO.SecondaryCollegeVO;
 import org.mapstruct.Mapper;
@@ -34,4 +35,11 @@ public interface SecondaryCollegeConverter {
      */
     List<SecondaryCollegeVO> po2vos(List<SecondaryCollege> secondaryCollegeList);
 
+    /**
+     * dto2po
+     *
+     * @param secondaryCollegeDTO 二级学院dto
+     * @return {@link SecondaryCollege}
+     */
+    SecondaryCollege dto2po(SecondaryCollegeDTO secondaryCollegeDTO);
 }

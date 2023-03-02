@@ -2,6 +2,9 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.Major;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chen.graduation.beans.VO.MajorVO;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -11,6 +14,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface MajorMapper extends BaseMapper<Major> {
 
+    /**
+     * 列表
+     *
+     * @return {@link List}<{@link MajorVO}>
+     */
+    List<MajorVO> list();
 }
 
 

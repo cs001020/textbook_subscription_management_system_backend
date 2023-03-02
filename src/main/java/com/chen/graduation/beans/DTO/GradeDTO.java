@@ -19,7 +19,7 @@ import java.io.Serializable;
  * @date 2023/02/23
  */
 @Data
-@ApiModel("专业VO")
+@ApiModel("班级DTO")
 public class GradeDTO implements Serializable {
     @ApiModelProperty("专业id")
     @NotNull(message = "参数异常", groups = {GradeInsterGroup.class})

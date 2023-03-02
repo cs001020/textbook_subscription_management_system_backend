@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 
 /**
@@ -23,6 +24,8 @@ public class SecondaryCollegeVO implements Serializable {
     private Long id;
     @ApiModelProperty("学院名")
     private String name;
+    @ApiModelProperty("创建时间")
+    private Date createTime;
 
     private static final long serialVersionUID = 1L;
 }

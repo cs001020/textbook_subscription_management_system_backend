@@ -1,5 +1,6 @@
 package com.chen.graduation.service;
 
+import com.chen.graduation.beans.DTO.SecondaryCollegeDTO;
 import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
@@ -20,4 +21,29 @@ public interface SecondaryCollegeService extends IService<SecondaryCollege> {
      * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollegeVO}>>
      */
     AjaxResult<List<SecondaryCollegeVO>> getList();
+
+    /**
+     * 删除通过id
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteById(Long id);
+
+    /**
+     * 添加
+     *
+     * @param secondaryCollegeDTO 二级学院dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> add(SecondaryCollegeDTO secondaryCollegeDTO);
+
+    /**
+     * 更新通过id
+     *
+     * @param secondaryCollegeDTO 二级学院dto
+     * @param id                  id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateById(SecondaryCollegeDTO secondaryCollegeDTO, Long id);
 }

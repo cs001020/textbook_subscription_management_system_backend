@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.MajorDTO;
 import com.chen.graduation.beans.PO.Major;
 import com.chen.graduation.beans.VO.MajorVO;
 import org.mapstruct.Mapper;
@@ -34,4 +35,11 @@ public interface MajorConverter {
      */
     List<MajorVO> po2vos(List<Major> majorList);
 
+    /**
+     * dto2po
+     *
+     * @param majorDTO 主要dto
+     * @return {@link Major}
+     */
+    Major dto2po(MajorDTO majorDTO);
 }
