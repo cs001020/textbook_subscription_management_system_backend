@@ -47,4 +47,11 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}
      */
     AjaxResult<List<TeacherVO>>  teacher();
+
+    /**
+     * 注销
+     *
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> logout();
 }

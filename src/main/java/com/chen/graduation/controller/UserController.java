@@ -43,6 +43,12 @@ public class UserController {
         return userService.smsLogin(smsLoginDTO);
     }
 
+    @ApiOperation("登出")
+    @PostMapping("/logout")
+    public AjaxResult<Object> logout() {
+        return userService.logout();
+    }
+
     @ApiOperation("个人简易信息")
     @GetMapping("/info")
     public AjaxResult<SimpleUserInfoVO> getUserInfo() {

@@ -28,16 +28,19 @@
         is_deleted
     </sql>
     <select id="getPermissionByUserId" resultType="com.chen.graduation.beans.PO.Permission">
-        select tp.*
+        select distinct tb_permission.*
         from tb_user
                  left join tb_user_role tur on tb_user.id = tur.user_id
+                 left join tb_role on tur.role_id = tb_role.id
                  left join tb_role_permission trp on tur.role_id = trp.role_id
-                 left join tb_permission tp on trp.permission_id = tp.id
+                 left join tb_permission  on trp.permission_id = tb_permission.id
         where tb_user.id = #{userId}
           and tb_user.is_deleted = 0
           and tur.is_deleted = 0
           and trp.is_deleted = 0
-          and tp.is_deleted = 0
-        order by tp.id;
+          and tb_permission.is_deleted = 0
+          and tb_permission.state = 0
+          and tb_role.state = 0
+        order by tb_permission.id;
     </select>
 </mapper>

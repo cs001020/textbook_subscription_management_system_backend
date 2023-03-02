@@ -167,6 +167,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //响应
         return AjaxResult.success(teacherVOList);
     }
+
+    @Override
+    public AjaxResult<Object> logout() {
+        //获取用户id
+        Long userId = UserHolderContext.getUserId();
+        //删除token
+        stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY + userId);
+        //响应
+        return AjaxResult.success();
+    }
 }
 
 
