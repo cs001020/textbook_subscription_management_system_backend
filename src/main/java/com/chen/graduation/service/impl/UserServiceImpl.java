@@ -58,7 +58,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //验证码校验
         //获取验证码
         String captchaCode = stringRedisTemplate.opsForValue().get(RedisConstants.IMG_CAPTCHA_KEY + accountLoginDTO.getCaptchaUid());
-        if (StrUtil.isBlank(captchaCode) || !captchaCode.equals(accountLoginDTO.getCaptcha())) {
+        if (StrUtil.isBlank(captchaCode)){
+            //验证码过期抛出异常
+            log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "验证码过期");
+            throw new ServiceException("验证码过期，请重新获取");
+        }
+        if ( !captchaCode.equals(accountLoginDTO.getCaptcha())) {
             //验证码错误抛出异常
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "验证码错误");
             throw new ServiceException("验证码错误");
