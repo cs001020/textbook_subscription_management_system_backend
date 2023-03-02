@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.GradeDTO;
 import com.chen.graduation.beans.PO.Grade;
 import com.chen.graduation.beans.VO.GradeVO;
 import org.mapstruct.Mapper;
@@ -26,6 +27,14 @@ public interface GradeConverter {
      */
     @Mapping(target = "name",expression = "java(getName(grade))")
     GradeVO po2vo(Grade grade);
+
+    /**
+     * dto2po
+     *
+     * @param gradeDTO 年级dto
+     * @return {@link Grade}
+     */
+    Grade dto2po(GradeDTO gradeDTO);
 
 
     /**

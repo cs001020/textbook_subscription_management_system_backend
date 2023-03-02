@@ -33,7 +33,7 @@ public class SupplierServiceImpl extends ServiceImpl<SupplierMapper, Supplier>
     @Cacheable(value = RedisConstants.SUPPLIER_CACHE_KEY,key = "'list'")
     public AjaxResult<List<SupplierVO>> getList() {
         //查询
-        List<Supplier> supplierList = this.list();
+        List<Supplier> supplierList = this.lambdaQuery().orderByAsc(Supplier::getId).list();
         //转换vo
         List<SupplierVO> supplierVOList = supplierConverter.pos2vos(supplierList);
         //打印日志
