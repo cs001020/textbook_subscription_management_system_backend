@@ -58,7 +58,7 @@ public class GradeController {
         return gradeService.delete(id);
     }
 
-    @DeleteMapping("/update/{id}")
+    @PutMapping("/update/{id}")
     @ApiOperation(value = "修改班级")
     public AjaxResult<Object> update(@PathVariable Long id, @Validated(GradeUpdateGroup.class) @RequestBody GradeDTO gradeDTO) {
         return gradeService.update(id,gradeDTO);

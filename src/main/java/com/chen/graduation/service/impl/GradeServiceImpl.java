@@ -34,7 +34,6 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade>
 
     @Resource
     private GradeConverter gradeConverter;
-
     @Resource
     private UserService userService;
     @Resource

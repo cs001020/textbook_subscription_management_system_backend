@@ -20,7 +20,7 @@
         is_deleted
     </sql>
     <select id="listAll" resultType="com.chen.graduation.beans.VO.GradeVO">
-        select tb_grade.id, concat(tm.name, tb_grade.year, '级', tb_grade.number, '班') as name
+        select tb_grade.id, concat(tm.name, tb_grade.year, '级', tb_grade.number, '班') as name,tb_grade.create_time
         from tb_grade
                  left join tb_major tm on tb_grade.major_id = tm.id
         where tb_grade.is_deleted = 0

@@ -1,5 +1,6 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.beans.DTO.TeachingGroupDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.service.TeachingGroupService;
@@ -7,9 +8,8 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -33,5 +33,23 @@ public class TeachingGroupController {
     @ApiOperation(value = "获取教学组列表")
     public AjaxResult<List<TeachingGroupVO>> list() {
         return teachingGroupService.getList();
+    }
+
+    @DeleteMapping("/delete/{id}")
+    @ApiOperation(value = "根据id删除教学组")
+    public AjaxResult<Object> deleteById(@PathVariable Long id) {
+        return teachingGroupService.deleteById(id);
+    }
+
+    @PostMapping("/add")
+    @ApiOperation(value = "添加教学组")
+    public AjaxResult<Object> add(@Validated @RequestBody TeachingGroupDTO teachingGroupDTO) {
+        return teachingGroupService.add(teachingGroupDTO);
+    }
+
+    @PutMapping("/update/{id}")
+    @ApiOperation(value = "根据id跟新教学组")
+    public AjaxResult<Object> updateById(@Validated @RequestBody TeachingGroupDTO teachingGroupDTO, @PathVariable Long id) {
+        return teachingGroupService.updateById(teachingGroupDTO,id);
     }
 }
