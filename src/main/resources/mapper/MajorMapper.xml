@@ -7,7 +7,6 @@
     <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.Major">
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
             <result property="secondaryCollegeId" column="secondary_college_id" jdbcType="BIGINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -15,8 +14,15 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,name,description,
+        id,name,
         secondary_college_id,create_time,update_time,
         is_deleted
     </sql>
+    <select id="list" resultType="com.chen.graduation.beans.VO.MajorVO">
+        select  tm.id,concat(tb_secondary_college.name,'|',tm.name) as name ,tm.create_time
+        from tb_major tm left join tb_secondary_college  on tb_secondary_college.id = tm.secondary_college_id
+        where tb_secondary_college.is_deleted=0
+          and tm.is_deleted=0
+        order by tb_secondary_college.id
+    </select>
 </mapper>

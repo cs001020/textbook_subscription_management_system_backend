@@ -6,9 +6,14 @@
 
     <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.Permission">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="url" column="url" jdbcType="VARCHAR"/>
+            <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
+            <result property="path" column="path" jdbcType="VARCHAR"/>
+            <result property="requesturl" column="requesturl" jdbcType="VARCHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
-            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="perms" column="perms" jdbcType="VARCHAR"/>
+            <result property="icon" column="icon" jdbcType="VARCHAR"/>
+            <result property="component" column="component" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="SMALLINT"/>
             <result property="state" column="state" jdbcType="SMALLINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -16,8 +21,26 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,url,name,
-        description,state,create_time,
-        update_time,is_deleted
+        id,parent_id,path,
+        requesturl,name,perms,
+        icon,component,type,
+        state,create_time,update_time,
+        is_deleted
     </sql>
+    <select id="getPermissionByUserId" resultType="com.chen.graduation.beans.PO.Permission">
+        select distinct tb_permission.*
+        from tb_user
+                 left join tb_user_role tur on tb_user.id = tur.user_id
+                 left join tb_role on tur.role_id = tb_role.id
+                 left join tb_role_permission trp on tur.role_id = trp.role_id
+                 left join tb_permission  on trp.permission_id = tb_permission.id
+        where tb_user.id = #{userId}
+          and tb_user.is_deleted = 0
+          and tur.is_deleted = 0
+          and trp.is_deleted = 0
+          and tb_permission.is_deleted = 0
+          and tb_permission.state = 0
+          and tb_role.state = 0
+        order by tb_permission.id;
+    </select>
 </mapper>

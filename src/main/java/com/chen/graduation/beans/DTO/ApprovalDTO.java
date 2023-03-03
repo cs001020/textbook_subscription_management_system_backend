@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
@@ -21,11 +22,11 @@ import java.util.List;
 @ApiModel("申请表DTO")
 public class ApprovalDTO implements Serializable {
     @ApiModelProperty("审批状态")
-    @NotNull(message = "参数异常")
+    @NotNull(message = "状态参数异常")
     private ApprovalStateEnums approvalStateEnums;
 
     @ApiModelProperty("消息")
-    @NotNull(message = "参数异常")
+    @NotBlank(message = "消息参数异常")
     private String message;
     private static final long serialVersionUID = 1L;
 }

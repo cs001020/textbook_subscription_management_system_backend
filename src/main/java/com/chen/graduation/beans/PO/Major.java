@@ -18,8 +18,6 @@ public class Major implements Serializable {
 
     private String name;
 
-    private String description;
-
     private Long secondaryCollegeId;
 
     private Date createTime;

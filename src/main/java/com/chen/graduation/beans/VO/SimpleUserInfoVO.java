@@ -25,6 +25,8 @@ public class SimpleUserInfoVO implements Serializable {
     private String introduction;
     @ApiModelProperty("角色列表")
     private List<Object> roles;
+    @ApiModelProperty("路由列表")
+    private List<RouterVo> routers;
 
     private static final long serialVersionUID = 1L;
 }

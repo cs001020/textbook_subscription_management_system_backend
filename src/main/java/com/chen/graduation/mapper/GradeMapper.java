@@ -2,6 +2,9 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.Grade;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chen.graduation.beans.VO.GradeVO;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -11,6 +14,12 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface GradeMapper extends BaseMapper<Grade> {
 
+    /**
+     * 获取所有班级信息
+     *
+     * @return {@link List}<{@link GradeVO}>
+     */
+    List<GradeVO> listAll();
 }
 
 

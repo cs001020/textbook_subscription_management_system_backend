@@ -26,8 +26,15 @@
         create_time,update_time,is_deleted
     </sql>
     <select id="getTeacherList" resultType="com.chen.graduation.beans.PO.User">
-        select distinct tb_user.id,tb_user.name,tb_user.icon
-        from tb_user left join tb_user_role tur on tb_user.id = tur.user_id
-        where tur.role_id=1 and tb_user.is_deleted=0 and tb_user.state=0 and tur.is_deleted=0;
+        select distinct tb_user.id, tb_user.name, tb_user.icon, tr.name
+        from tb_user
+                 left join tb_user_role tur on tb_user.id = tur.user_id
+                 left join tb_role tr on tur.role_id = tr.id
+        where tr.name like '%teacher%'
+          and tb_user.is_deleted = 0
+          and tb_user.state = 0
+          and tur.is_deleted = 0
+          and tr.is_deleted = 0
+          and tr.state = 0
     </select>
 </mapper>

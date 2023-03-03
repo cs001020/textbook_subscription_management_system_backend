@@ -1,5 +1,6 @@
 package com.chen.graduation.converter;
 
+import com.chen.graduation.beans.DTO.TeachingGroupDTO;
 import com.chen.graduation.beans.PO.TeachingGroup;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
 import org.mapstruct.Mapper;
@@ -23,6 +24,14 @@ public interface TeachingGroupConverter {
      * @return {@link TeachingGroupVO}
      */
     TeachingGroupVO po2vo(TeachingGroup teachingGroup);
+
+    /**
+     * dto2po
+     *
+     * @param teachingGroupDTO 教学组dto
+     * @return {@link TeachingGroup}
+     */
+    TeachingGroup dto2po(TeachingGroupDTO teachingGroupDTO);
 
     /**
      * po2vos

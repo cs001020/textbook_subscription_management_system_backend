@@ -1,6 +1,7 @@
 package com.chen.graduation.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
+import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -8,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.PO.Textbook;
+import com.chen.graduation.beans.PO.TextbookFeedback;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.constants.RedisConstants;
@@ -15,6 +17,7 @@ import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.SortableEnums;
 import com.chen.graduation.enums.TextbookStateEnums;
 import com.chen.graduation.exception.ServiceException;
+import com.chen.graduation.service.TextbookFeedbackService;
 import com.chen.graduation.service.TextbookService;
 import com.chen.graduation.mapper.TextbookMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,8 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
 
     @Resource
     private TextbookConverter textbookConverter;
+    @Resource
+    private TextbookFeedbackService textbookFeedbackService;
 
     @Override
     public AjaxResult<List<TextbookVO>> search(TextbookSearchDTO textbookSearchDTO) {
@@ -60,6 +65,11 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         Page<Textbook> page = page(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()), lambdaQueryWrapper);
         //po转换成vo
         List<TextbookVO> textbookVOList = textbookConverter.pos2vos(page.getRecords());
+        // TODO: 2023/2/26 优化 
+        textbookVOList.forEach(textbookVO -> {
+            Long count = textbookFeedbackService.lambdaQuery().eq(TextbookFeedback::getTextbookId, textbookVO.getId()).count();
+            textbookVO.setFeedbackCount(Math.toIntExact(count));
+        });
         //封装响应
         AjaxResult<List<TextbookVO>> success = AjaxResult.success(textbookVOList);
         success.setTotal(page.getTotal());

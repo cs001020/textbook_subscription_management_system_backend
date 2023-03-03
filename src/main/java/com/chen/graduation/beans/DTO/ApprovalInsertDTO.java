@@ -25,7 +25,7 @@ public class ApprovalInsertDTO implements Serializable {
 
     @ApiModelProperty("教材ids(从教材库选取的)")
     private List<Long> textBookIds;
-    @ApiModelProperty("教材列表")
+    @ApiModelProperty("新教材列表")
     @Valid
     private List<TextbookDTO> textbookDTOList;
 
