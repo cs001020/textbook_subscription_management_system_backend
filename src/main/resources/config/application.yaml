@@ -24,6 +24,7 @@ jwt:
     - "/favicon.ico"
     - "/error"
 #    自定义
+    - "/test/**"
     - "/captcha/img"
     - "/captcha/sms"
     - "/user/login/account"

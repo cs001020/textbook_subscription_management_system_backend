@@ -1,10 +1,12 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.SupplierDTO;
 import com.chen.graduation.beans.DTO.group.SupplierDtoAddGroup;
 import com.chen.graduation.beans.DTO.group.SupplierDtoUpdateGroup;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.SupplierVO;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.SupplierService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -33,18 +35,21 @@ public class SupplierController {
 
     @ApiOperation("添加供应商")
     @PostMapping("/add")
+    @Log(title = "供应商模块",businessTypeEnums = BusinessTypeEnums.INSERT)
     public AjaxResult<Object> addSupplier(@Validated(value = SupplierDtoAddGroup.class) @RequestBody SupplierDTO supplierDTO) {
         return supplierService.addSupplier(supplierDTO);
     }
 
     @ApiOperation("根据id删除供应商")
     @DeleteMapping("/delete/{id}")
+    @Log(title = "供应商模块",businessTypeEnums = BusinessTypeEnums.DELETE)
     public AjaxResult<Object> deleteById(@PathVariable("id") Long id) {
         return supplierService.deleteById(id);
     }
 
     @ApiOperation("根据id更新供应商")
     @PutMapping("/update/{id}")
+    @Log(title = "供应商模块",businessTypeEnums = BusinessTypeEnums.UPDATE)
     public AjaxResult<Object> updateSupplier(@Validated(value = SupplierDtoUpdateGroup.class) @RequestBody SupplierDTO supplierDTO, @PathVariable("id") Long id) {
         return supplierService.updateSupplierById(supplierDTO, id);
     }
