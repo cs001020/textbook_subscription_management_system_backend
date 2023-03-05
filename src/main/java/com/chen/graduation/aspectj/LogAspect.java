@@ -84,6 +84,9 @@ public class LogAspect {
             operateLog.setStatus(OperateLogStateEnums.SUCCESS);
             // 请求的地址
             String ip = ServletUtil.getClientIP(request);
+            if ("0:0:0:0:0:0:0:1".equals(ip)){
+                ip="127.0.0.1";
+            }
             operateLog.setOperateIp(ip);
             operateLog.setOperateUrl(StrUtil.sub(request.getRequestURI(), 0, 255));
             if (userId != null) {

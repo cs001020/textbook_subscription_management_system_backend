@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.LoginLogStateEnums;
 import lombok.Data;
 
 /**
@@ -32,9 +34,24 @@ public class LoginLog implements Serializable {
     private String ip;
 
     /**
+     * 浏览器
+     */
+    private String browser;
+
+    /**
+     * 操作系统
+     */
+    private String os;
+
+    /**
+     * 登陆地点
+     */
+    private String loginLocation;
+
+    /**
      * 登录状态 0成功 1失败
      */
-    private Integer state;
+    private LoginLogStateEnums state;
 
     /**
      * 提示信息
