@@ -1,7 +1,10 @@
 package com.chen.graduation.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chen.graduation.beans.DTO.OperateLogSearchDTO;
 import com.chen.graduation.beans.PO.OperateLog;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author CHEN
@@ -11,6 +14,15 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface OperateLogMapper extends BaseMapper<OperateLog> {
 
+
+    /**
+     * 查询操作日志列表
+     *
+     * @param objectPage          对象页面
+     * @param operateLogSearchDTO 操作日志搜索dto
+     * @return {@link Page}<{@link OperateLog}>
+     */
+    Page<OperateLog> selectOperLogList(Page<Object> objectPage, @Param("search") OperateLogSearchDTO operateLogSearchDTO);
 }
 
 

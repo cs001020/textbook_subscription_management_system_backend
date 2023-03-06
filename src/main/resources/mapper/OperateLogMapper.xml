@@ -31,4 +31,29 @@
         operate_time,create_time,update_time,
         is_deleted
     </sql>
+    <select id="selectOperLogList" resultType="com.chen.graduation.beans.VO.OperateLogVO" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from db_textbook_subscription_system.public.tb_operate_log
+        <where>
+            <if test="search.title != null and search.title != ''">
+                AND title like concat('%', #{search.title}, '%')
+            </if>
+            <if test="search.businessType != null">
+                AND business_type = #{search.businessType}
+            </if>
+            <if test="search.status != null">
+                AND status = #{search.status}
+            </if>
+            <if test="search.operatorName != null and search.operatorName != ''">
+                AND operator_name like concat('%', #{search.operatorName}, '%')
+            </if>
+            <if test="search.beginTime != null and search.beginTime != ''"><!-- 开始时间检索 -->
+                AND operate_time &gt;= #{search.beginTime}::timestamp
+            </if>
+            <if test="search.endTime != null and search.endTime != ''"><!-- 结束时间检索 -->
+                AND operate_time &lt;= #{search.endTime}::timestamp
+            </if>
+        </where>
+        order by id desc
+    </select>
 </mapper>

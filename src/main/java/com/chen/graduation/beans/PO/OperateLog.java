@@ -6,6 +6,10 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.BusinessTypeEnums;
+import com.chen.graduation.enums.OpenPlanStateEnums;
+import com.chen.graduation.enums.OperateLogStateEnums;
 import lombok.Data;
 
 /**
@@ -29,7 +33,7 @@ public class OperateLog implements Serializable {
     /**
      * 业务类型（0其它 1新增 2修改 3删除）
      */
-    private String businessType;
+    private BusinessTypeEnums businessType;
 
     /**
      * 方法名称
@@ -69,7 +73,7 @@ public class OperateLog implements Serializable {
     /**
      * 操作状态（0正常 1异常）
      */
-    private Integer status;
+    private OperateLogStateEnums status;
 
     /**
      * 错误消息

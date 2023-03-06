@@ -2,6 +2,7 @@ package com.chen.graduation;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.jwt.JWT;
 import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.TextbookFeedbackVO;
@@ -20,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.annotation.Resource;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ScheduledExecutorService;
 
 @SpringBootTest
 @Slf4j
@@ -111,5 +113,11 @@ class TextbookSubscriptionManagementSystemBackendApplicationTests {
     void feedbackTest() {
         List<TextbookFeedback> feedbackByTextbookId = textbookFeedbackMapper.getFeedbackByTextbookId(1742L);
         feedbackByTextbookId.forEach(System.out::println);
+    }
+
+    @Test
+    void name() {
+        Object scheduledExecutorService1 = SpringUtil.getBean("scheduledExecutorService");
+        System.out.println(scheduledExecutorService1);
     }
 }

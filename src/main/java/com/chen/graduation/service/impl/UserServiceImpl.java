@@ -1,5 +1,6 @@
 package com.chen.graduation.service.impl;
 
+import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
@@ -15,12 +16,15 @@ import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.converter.UserConverter;
+import com.chen.graduation.enums.LoginLogStateEnums;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.PermissionService;
 import com.chen.graduation.service.UserService;
 import com.chen.graduation.mapper.UserMapper;
+import com.chen.graduation.utils.AsyncFactory;
+import com.chen.graduation.utils.AsyncManager;
 import com.chen.graduation.utils.RouterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,12 +62,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //验证码校验
         //获取验证码
         String captchaCode = stringRedisTemplate.opsForValue().get(RedisConstants.IMG_CAPTCHA_KEY + accountLoginDTO.getCaptchaUid());
-        if (StrUtil.isBlank(captchaCode)){
+        if (StrUtil.isBlank(captchaCode)) {
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(accountLoginDTO.getAccount(), LoginLogStateEnums.FAIL, "验证码过期"));
             //验证码过期抛出异常
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "验证码过期");
             throw new ServiceException("验证码过期，请重新获取");
         }
-        if ( !captchaCode.equals(accountLoginDTO.getCaptcha())) {
+        if (!captchaCode.equals(accountLoginDTO.getCaptcha())) {
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(accountLoginDTO.getAccount(), LoginLogStateEnums.FAIL, "验证码错误"));
             //验证码错误抛出异常
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "验证码错误");
             throw new ServiceException("验证码错误");
@@ -74,22 +82,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = getOne(wrapper);
         //判断是否存在用户
         if (Objects.isNull(user)) {
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(accountLoginDTO.getAccount(), LoginLogStateEnums.FAIL, "用户名或密码错误"));
             //用户不存在
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("用户名或密码错误");
         }
         //判断用户是否被封禁
         if (UserStateEnums.BAN.equals(user.getState())) {
-            log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(accountLoginDTO.getAccount(), LoginLogStateEnums.FAIL, "当前用户已被封禁"));
+            //当前用户已被封禁
+            log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "当前用户已被封禁");
             throw new ServiceException("当前用户已被封禁");
         }
         //判断密码是否正确
         String encodePassword = SecureUtil.md5(accountLoginDTO.getPassword() + SystemConstants.PASSWORD_MD5_SALT);
         if (!encodePassword.equals(user.getPassword())) {
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(accountLoginDTO.getAccount(), LoginLogStateEnums.FAIL, "用户名或密码错误"));
             //密码错误
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "密码错误");
             throw new ServiceException("用户名或密码错误");
         }
+        //异步登陆日志
+        AsyncManager.me().execute(AsyncFactory.recordLoginLog(accountLoginDTO.getAccount(), LoginLogStateEnums.SUCCESS, "登陆成功"));
         //生成token
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
@@ -107,7 +124,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //验证码校验
         //获取验证码
         String smsCode = stringRedisTemplate.opsForValue().get(RedisConstants.SMS_CAPTCHA_KEY + smsLoginDTO.getPhoneNumber());
-        if (StrUtil.isBlank(smsCode) || !smsCode.equals(smsLoginDTO.getCode())) {
+        if (StrUtil.isBlank(smsCode)||!smsCode.equals(smsLoginDTO.getCode())) {
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(DesensitizedUtil.mobilePhone(smsLoginDTO.getPhoneNumber()), LoginLogStateEnums.FAIL, "验证码错误"));
             //验证码错误抛出异常
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "验证码错误");
             throw new ServiceException("验证码错误");
@@ -118,15 +136,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = getOne(wrapper);
         //判断是否存在用户
         if (Objects.isNull(user)) {
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(DesensitizedUtil.mobilePhone(smsLoginDTO.getPhoneNumber()), LoginLogStateEnums.FAIL, "用户不存在"));
             //用户不存在
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("用户名或密码错误");
         }
         //判断用户是否被封禁
         if (UserStateEnums.BAN.equals(user.getState())) {
+            //异步登陆日志
+            AsyncManager.me().execute(AsyncFactory.recordLoginLog(DesensitizedUtil.mobilePhone(smsLoginDTO.getPhoneNumber()), LoginLogStateEnums.FAIL, "当前用户已被封禁"));
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "用户不存在");
             throw new ServiceException("当前用户已被封禁");
         }
+        //异步登陆日志
+        AsyncManager.me().execute(AsyncFactory.recordLoginLog(DesensitizedUtil.mobilePhone(smsLoginDTO.getPhoneNumber()), LoginLogStateEnums.SUCCESS, "登陆成功"));
         //生成token
         String token = JWT.create()
                 .setPayload(SystemConstants.JWT_ID_PAYLOAD_KEY, user.getId())
@@ -148,7 +172,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         wrapper.eq(User::getId, userId);
         User user = getOne(wrapper);
         //查询权限
-        List<Permission> permissionList= permissionService.getPermissionByUserId(userId);
+        List<Permission> permissionList = permissionService.getPermissionByUserId(userId);
         //封装vo
         SimpleUserInfoVO simpleUserInfoVO = new SimpleUserInfoVO();
         simpleUserInfoVO.setName(user.getName());
@@ -168,7 +192,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //转换对象
         List<TeacherVO> teacherVOList = userConverter.po2teachers(teachList);
         //打印日志
-        log.info("UserServiceImpl.teacher业务结束，结果:{}",teacherVOList);
+        log.info("UserServiceImpl.teacher业务结束，结果:{}", teacherVOList);
         //响应
         return AjaxResult.success(teacherVOList);
     }
@@ -182,6 +206,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //响应
         return AjaxResult.success();
     }
+
 }
 
 
