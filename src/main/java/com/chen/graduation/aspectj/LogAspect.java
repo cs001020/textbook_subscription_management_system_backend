@@ -27,6 +27,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -162,6 +163,9 @@ public class LogAspect {
         Map<String,Object> map=new HashMap<>(16);
         if (paramsArray != null) {
             for (int i = 0; i < paramsArray.length; i++)  {
+                if (paramsArray[i] instanceof HttpServletRequest||paramsArray[i] instanceof HttpServletResponse){
+                    continue;
+                }
                 if (!Objects.isNull(paramsArray[i])) {
                        map.put(parameterNames[i],paramsArray[i]);
                 }
