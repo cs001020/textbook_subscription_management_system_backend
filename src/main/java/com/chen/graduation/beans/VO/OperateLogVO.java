@@ -3,17 +3,10 @@ package com.chen.graduation.beans.VO;
 import com.alibaba.excel.annotation.ExcelProperty;
 import com.alibaba.excel.annotation.format.DateTimeFormat;
 import com.alibaba.excel.annotation.write.style.ColumnWidth;
-import com.chen.graduation.enums.BusinessTypeEnums;
-import com.chen.graduation.enums.OperateLogStateEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.io.Serializable;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 
 

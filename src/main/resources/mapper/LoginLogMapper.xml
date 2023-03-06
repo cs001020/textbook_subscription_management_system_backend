@@ -17,8 +17,31 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,account,ip,
-        state,message,access_time,
-        create_time,update_time,is_deleted
+        id,account,ip,state,message,access_time,create_time,update_time,is_deleted,
+        browser,os,login_location
     </sql>
+
+    <select id="selectLoginLogList" resultType="com.chen.graduation.beans.PO.LoginLog">
+        select
+        <include refid="Base_Column_List"/>
+        from tb_login_log
+        <where>
+            <if test="search.ip != null and search.ip != ''">
+                AND ip like concat('%', #{search.ip}, '%')
+            </if>
+            <if test="search.status != null">
+                AND state = #{search.status}
+            </if>
+            <if test="search.name != null and search.name != ''">
+                AND account like concat('%', #{search.name}, '%')
+            </if>
+            <if test="search.beginTime != null and search.beginTime != ''"><!-- 开始时间检索 -->
+                and access_time &gt;= #{search.beginTime}::timestamp
+            </if>
+            <if test="search.endTime != null and search.endTime != ''"><!-- 结束时间检索 -->
+                and access_time &lt;=  #{search.endTime}::timestamp
+            </if>
+        </where>
+        order by id desc
+    </select>
 </mapper>

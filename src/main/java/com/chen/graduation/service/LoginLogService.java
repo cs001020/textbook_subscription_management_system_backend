@@ -1,7 +1,12 @@
 package com.chen.graduation.service;
 
+import com.chen.graduation.beans.DTO.LoginLogSearchDTO;
 import com.chen.graduation.beans.PO.LoginLog;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.LoginLogVO;
+
+import java.util.List;
 
 /**
 * @author CHEN
@@ -10,4 +15,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface LoginLogService extends IService<LoginLog> {
 
+    /**
+     * 查询登录日志列表
+     *
+     * @param loginLogSearchDTO 登录日志搜索dto
+     * @return {@link AjaxResult}<{@link List}<{@link LoginLogVO}>>
+     */
+    AjaxResult<List<LoginLogVO>> selectLoginLogList(LoginLogSearchDTO loginLogSearchDTO);
 }
