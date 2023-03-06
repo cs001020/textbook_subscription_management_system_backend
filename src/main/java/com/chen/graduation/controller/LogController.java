@@ -5,6 +5,7 @@ import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.OperateLogSearchDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OperateLogVO;
 import com.chen.graduation.enums.BusinessTypeEnums;
@@ -45,19 +46,26 @@ public class LogController {
 
     @ApiOperation("操作日志查询")
     @GetMapping("/operate/list")
-    public AjaxResult<List<OperateLogVO>> list(@Validated OperateLogSearchDTO operateLogSearchDTO) {
+    public AjaxResult<List<OperateLogVO>> operateLogList(@Validated OperateLogSearchDTO operateLogSearchDTO) {
         //查询日志
         return operateLogService.selectOperLogList(operateLogSearchDTO);
     }
 
-    @ApiOperation("操作日志导出")
+    /**
+     * 导出日志
+     * 注意 请勿使用swagger2接口文档调试 存在bug
+     * 请使用postman或者浏览器访问
+     *
+     * @param response 响应
+     */
+    @ApiOperation("操作日志导出(请勿使用swagger调试，存在bug，请使用postman等工具调试)")
     @Log(title = "操作日志", businessTypeEnums = BusinessTypeEnums.EXPORT)
     @PostMapping("/operate/export")
-    public void export(HttpServletResponse response,@Validated  @RequestBody OperateLogSearchDTO operateLogSearchDTO) {
+    public void operateLogExport(HttpServletResponse response,@RequestBody @Validated OperateLogSearchDTO operateLogSearchDTO) {
         //查询日志
         AjaxResult<List<OperateLogVO>> listAjaxResult = operateLogService.selectOperLogList(operateLogSearchDTO);
         List<OperateLogVO> listAjaxResultData = listAjaxResult.getData();
-        //通过工具类创建writer
+        //导出日志
         try {
             ExcelUtils.exportOperateLog(response,listAjaxResultData);
         } catch (IOException e) {

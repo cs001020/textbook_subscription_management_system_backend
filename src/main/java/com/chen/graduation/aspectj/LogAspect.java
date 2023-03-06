@@ -71,6 +71,7 @@ public class LogAspect {
     public void doAfterThrowing(JoinPoint joinPoint, Log controllerLog, Exception e) {
         handleLog(joinPoint, controllerLog, e, null);
     }
+    // FIXME: 2023/3/6 用户信息查询占用主线程
 
     protected void handleLog(final JoinPoint joinPoint, Log controllerLog, final Exception e, Object jsonResult) {
         try {
