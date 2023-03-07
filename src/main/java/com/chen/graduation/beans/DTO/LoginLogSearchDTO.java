@@ -7,6 +7,7 @@ import com.chen.graduation.enums.OperateLogStateEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.Range;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -32,10 +33,14 @@ public class LoginLogSearchDTO implements Serializable {
     private String beginTime;
     @ApiModelProperty("结束时间,请输入正确格式(yyyy-MM-dd)")
     private String endTime;
-    @ApiModelProperty("分页参数")
+    @ApiModelProperty(value = "页号", allowableValues = "range[1,infinity]", example = "1")
+    @Range(min = 1, message = "分页参数异常")
     @NotNull(message = "分页参数异常")
-    @Valid
-    private PageParamDTO pageParamDTO;
+    private Integer page;
+    @ApiModelProperty(value = "页码", allowableValues = "range[1,50]", example = "10")
+    @Range(min = 1, max = 50, message = "分页参数异常")
+    @NotNull(message = "分页参数异常")
+    private Integer size;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

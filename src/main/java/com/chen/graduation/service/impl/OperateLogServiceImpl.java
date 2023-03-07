@@ -31,10 +31,8 @@ public class OperateLogServiceImpl extends ServiceImpl<OperateLogMapper, Operate
 
     @Override
     public AjaxResult<List<OperateLogVO>> selectOperLogList(OperateLogSearchDTO operateLogSearchDTO) {
-        //获取分页参数
-        PageParamDTO pageParamDTO = operateLogSearchDTO.getPageParamDTO();
         //查询数据库
-        Page<OperateLog> operateLogPage = baseMapper.selectOperLogList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()), operateLogSearchDTO);
+        Page<OperateLog> operateLogPage = baseMapper.selectOperLogList(new Page<>(operateLogSearchDTO.getPage(), operateLogSearchDTO.getSize()), operateLogSearchDTO);
         //转换对象
         List<OperateLogVO> operateLogVOList = operateLogConverter.po2vos(operateLogPage.getRecords());
         //封装返回对象

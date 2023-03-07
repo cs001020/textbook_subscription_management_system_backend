@@ -29,10 +29,8 @@ public class LoginLogServiceImpl extends ServiceImpl<LoginLogMapper, LoginLog>
 
     @Override
     public AjaxResult<List<LoginLogVO>> selectLoginLogList(LoginLogSearchDTO loginLogSearchDTO) {
-        //获取分页参数
-        PageParamDTO pageParamDTO = loginLogSearchDTO.getPageParamDTO();
         //查询
-        Page<LoginLog> page = baseMapper.selectLoginLogList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()), loginLogSearchDTO);
+        Page<LoginLog> page = baseMapper.selectLoginLogList(new Page<>(loginLogSearchDTO.getPage(), loginLogSearchDTO.getSize()), loginLogSearchDTO);
         //转换对象
         List<LoginLogVO> loginLogVOList = loginLogConverter.po2vos(page.getRecords());
         //封装响应结果
