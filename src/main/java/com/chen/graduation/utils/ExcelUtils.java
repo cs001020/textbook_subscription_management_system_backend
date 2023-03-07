@@ -1,18 +1,14 @@
 package com.chen.graduation.utils;
 
-import cn.hutool.core.io.IORuntimeException;
-import cn.hutool.core.io.IoUtil;
-import cn.hutool.poi.excel.BigExcelWriter;
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
+import com.alibaba.excel.EasyExcel;
+import com.chen.graduation.beans.VO.LoginLogVO;
 import com.chen.graduation.beans.VO.OperateLogVO;
-import org.apache.poi.xssf.streaming.SXSSFSheet;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -22,22 +18,27 @@ import java.util.List;
  * @date 2023/03/06
  */
 public class ExcelUtils {
-    // FIXME: 2023/3/6 导出乱码
     public static void exportOperateLog(HttpServletResponse response, List<OperateLogVO> operateLogVOList) throws IOException {
-        ExcelWriter writer = null;
-        ServletOutputStream out = null;
-        try {
-            writer = ExcelUtil.getWriter(true);
-            writer.write(operateLogVOList, true);
-            response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8");
-            response.setHeader("Content-Disposition", "attachment;filename=test.xlsx");
-            out = response.getOutputStream();
+        //设置响应参数
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("_yyyy-MM-dd_HH-mm-ss"));
+        String fileName = URLEncoder.encode("OperateLog" + now, "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        //写出文件
+        EasyExcel.write(response.getOutputStream(), OperateLogVO.class).sheet("操作日志").doWrite(operateLogVOList);
+    }
 
-            writer.flush(out, true);
-        } finally {
-            assert writer != null;
-            writer.close();
-            IoUtil.close(out);
-        }
+    public static void exportLoginLog(HttpServletResponse response, List<LoginLogVO> listAjaxResultData) throws IOException {
+        //设置响应参数
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setCharacterEncoding("utf-8");
+        // 这里URLEncoder.encode可以防止中文乱码 当然和easyexcel没有关系
+        String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("_yyyy-MM-dd_HH-mm-ss"));
+        String fileName = URLEncoder.encode("LoginLog" + now, "UTF-8").replaceAll("\\+", "%20");
+        response.setHeader("Content-disposition", "attachment;filename*=utf-8''" + fileName + ".xlsx");
+        //写出文件
+        EasyExcel.write(response.getOutputStream(), LoginLogVO.class).sheet("操作日志").doWrite(listAjaxResultData);
     }
 }

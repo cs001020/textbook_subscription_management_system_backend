@@ -3,6 +3,8 @@ package com.chen.graduation.converter;
 import com.chen.graduation.beans.PO.OperateLog;
 import com.chen.graduation.beans.VO.OperateLogVO;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 import java.util.List;
 
@@ -23,6 +25,10 @@ public interface OperateLogConverter {
      * @param grade 年级
      * @return {@link OperateLogVO}
      */
+    @Mappings({
+            @Mapping(target = "businessType",expression = "java(grade.getBusinessType().getStateName())"),
+            @Mapping(target = "status",expression = "java(grade.getStatus().getStateName())")
+    })
     OperateLogVO po2vo(OperateLog grade);
 
     /**
