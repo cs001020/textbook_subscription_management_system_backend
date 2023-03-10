@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import com.chen.graduation.enums.UserStateEnums;
+import com.chen.graduation.enums.UserTypeEnums;
 import lombok.Data;
 
 /**
@@ -38,7 +39,7 @@ public class User implements Serializable {
     private String introduction;
 
     private UserStateEnums state;
-
+    private UserTypeEnums type;
     private Date createTime;
 
     private Date updateTime;

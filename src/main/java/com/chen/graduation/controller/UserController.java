@@ -2,10 +2,9 @@ package com.chen.graduation.controller;
 
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
-import com.chen.graduation.beans.VO.AjaxResult;
-import com.chen.graduation.beans.VO.SimpleUserInfoVO;
-import com.chen.graduation.beans.VO.TeacherVO;
-import com.chen.graduation.beans.VO.TokenVO;
+import com.chen.graduation.beans.DTO.UserSearchDTO;
+import com.chen.graduation.beans.PO.User;
+import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.service.UserService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -23,7 +22,7 @@ import java.util.List;
  * @date 2023/02/01
  */
 @Api(tags = "用户")
-@ApiSupport(author = "1006596474@qq.com",order = 1)
+@ApiSupport(author = "1006596474@qq.com", order = 1)
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -55,9 +54,15 @@ public class UserController {
         return userService.info();
     }
 
-    @ApiOperation("教师列表")
+    @ApiOperation("获取教师列表(未被封禁的教师用户)")
     @GetMapping("/teacher")
     public AjaxResult<List<TeacherVO>> getTeacher() {
         return userService.teacher();
+    }
+
+    @ApiOperation("获取用户列表")
+    @GetMapping("/list")
+    public AjaxResult<List<UserVO>> list(@Validated UserSearchDTO userSearchDTO) {
+        return userService.selectUserList(userSearchDTO);
     }
 }

@@ -2,12 +2,10 @@ package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
+import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.chen.graduation.beans.VO.AjaxResult;
-import com.chen.graduation.beans.VO.SimpleUserInfoVO;
-import com.chen.graduation.beans.VO.TeacherVO;
-import com.chen.graduation.beans.VO.TokenVO;
+import com.chen.graduation.beans.VO.*;
 
 import java.util.List;
 
@@ -54,4 +52,12 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> logout();
+
+    /**
+     * 获取用户列表
+     *
+     * @param userSearchDTO 用户搜索dto
+     * @return {@link AjaxResult}<{@link List}<{@link UserVO}>>
+     */
+    AjaxResult<List<UserVO>> selectUserList(UserSearchDTO userSearchDTO);
 }
