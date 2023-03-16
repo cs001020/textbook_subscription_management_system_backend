@@ -39,7 +39,7 @@ public class Textbook implements Serializable {
 
     private String publishingHouse;
 
-    private String pageNumber;
+    private Integer pageNumber;
 
     private String issueNumber;
 

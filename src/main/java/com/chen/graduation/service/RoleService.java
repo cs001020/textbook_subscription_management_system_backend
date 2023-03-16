@@ -1,7 +1,11 @@
 package com.chen.graduation.service;
 
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.VO.AjaxResult;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -10,4 +14,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface RoleService extends IService<Role> {
 
+    /**
+     * 角色分页查询
+     *
+     * @param pageParamDTO 页面参数dto
+     * @return {@link AjaxResult}<{@link List}<{@link Role}>>
+     */
+    AjaxResult<List<Role>> pageQuery(PageParamDTO pageParamDTO);
 }

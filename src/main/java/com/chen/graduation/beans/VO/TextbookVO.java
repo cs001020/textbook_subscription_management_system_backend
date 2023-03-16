@@ -38,7 +38,7 @@ public class TextbookVO implements Serializable {
     @ApiModelProperty("出版社")
     private String publishingHouse;
     @ApiModelProperty("页数")
-    private Object pageNumber;
+    private Integer pageNumber;
     @ApiModelProperty("出版日期")
     private Date publicationDate;
     @ApiModelProperty("封面图片地址(前缀https://kodo.warframe.top/book/)")

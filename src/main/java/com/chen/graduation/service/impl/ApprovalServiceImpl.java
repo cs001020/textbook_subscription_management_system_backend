@@ -23,6 +23,7 @@ import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.ApprovalService;
 import com.chen.graduation.mapper.ApprovalMapper;
 import com.chen.graduation.service.OpeningPlanService;
+import com.chen.graduation.service.TextbookOrderService;
 import com.chen.graduation.service.TextbookService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -51,6 +52,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     private ApprovalConverter approvalConverter;
     @Resource
     private OpeningPlanService openingPlanService;
+    @Resource
+    private TextbookOrderService textbookOrderService;
 
     // FIXME: 2023/2/22 图书id校验
     @Override
@@ -164,18 +167,20 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setDeansOfficeMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.ADOPT);
         // TODO: 2023/2/27 优化
-        //更新开课计划
-        LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
-        updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
-        openingPlanService.update(updateWrapper);
+        //教务处审核通过 更新开课计划
+        if (ApprovalStateEnums.ADOPT.equals(approvalDTO.getApprovalStateEnums())) {
+            LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
+            updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
+            openingPlanService.update(updateWrapper);
+            // TODO: 2023/2/26 教材订单
+            textbookOrderService.generateTextbooksOrderByApproval(approval);
+        }
         //更新
         boolean b = this.updateById(approval);
-        // TODO: 2023/2/26 教材订单
         log.info("ApprovalServiceImpl.teachingGroupApproval业务结束，结果:{}", b);
         if (!b) {
             throw new ServiceException("操作失败");
         }
-        // FIXME: 2023/2/22 教材order
         return AjaxResult.success();
     }
 

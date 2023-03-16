@@ -20,7 +20,7 @@ import java.util.List;
  * @date 2023/03/02
  */
 @Slf4j
-@Api(tags = "测试")
+@Api(tags = "权限")
 @ApiSupport(author = "1006596474@qq.com",order = 7)
 @RestController
 @RequestMapping("/permission")
