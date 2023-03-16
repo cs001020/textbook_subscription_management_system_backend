@@ -15,13 +15,6 @@ import java.util.Map;
 */
 public interface TextbookOrderMapper extends BaseMapper<TextbookOrder> {
 
-    /**
-     * 查询id和年级教科书通过批准id数
-     *
-     * @param approvalId 批准id
-     * @return {@link Map}<{@link String}, {@link Integer}>
-     */
-    TextbookIdsAndGradePeople queryTextbookIdAndGradeNumberByApprovalId(@Param("approvalId") Long approvalId);
 }
 
 

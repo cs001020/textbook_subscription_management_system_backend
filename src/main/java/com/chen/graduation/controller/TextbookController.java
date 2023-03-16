@@ -48,6 +48,11 @@ public class TextbookController {
     public AjaxResult<Object> addTextBook(@Validated @RequestBody TextbookDTO textbookDTO) {
         return textbookService.addTextBook(textbookDTO);
     }
+    @ApiOperation("我的教材")
+    @GetMapping("/me")
+    public AjaxResult<List<TextbookVO>> me() {
+        return textbookService.me();
+    }
 
     @ApiOperation("教材入库")
     @PostMapping("/storage")

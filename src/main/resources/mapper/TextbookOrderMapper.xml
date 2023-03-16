@@ -6,8 +6,8 @@
 
     <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.TextbookOrder">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="approvalId" column="approval_id" jdbcType="BIGINT"/>
-            <result property="supplierId" column="supplier_id" jdbcType="BIGINT"/>
+            <result property="gradeId" column="grade_id" jdbcType="BIGINT"/>
+            <result property="textbookIds" column="textbook_ids" jdbcType="BIGINT"/>
             <result property="state" column="state" jdbcType="SMALLINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -15,20 +15,8 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,approval_id,supplier_id,
+        id,grade_id,textbook_ids,
         state,create_time,update_time,
         is_deleted
     </sql>
-    <select id="queryTextbookIdAndGradeNumberByApprovalId" resultType="com.chen.graduation.beans.TextbookIdsAndGradePeople">
-        select tb_approval.textbook_ids                                                                                 as textbook_ids,
-               (select count(tb_user.id)
-                from tb_user
-                where top.grade_id = tb_user.grade_id
-                  and tb_user.is_deleted = 0)                                                                           as grade_people
-        from tb_approval
-                 left join tb_opening_plan top on top.id = tb_approval.opening_plan_id
-        where tb_approval.id = #{approvalId}
-          and tb_approval.is_deleted = 0
-          and top.is_deleted = 0
-    </select>
 </mapper>

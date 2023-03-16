@@ -17,10 +17,8 @@ import lombok.Data;
 public class TextbookOrder implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
-
-    private Long approvalId;
-
-    private Long supplierId;
+    private Long gradeId;
+    private String textbookIds;
 
     private TextbookOrderStateEnums state;
 

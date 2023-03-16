@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -206,6 +207,10 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         Long userId = UserHolderContext.getUserId();
         //获取用户的开课计划
         List<OpeningPlan> openingPlanList = openingPlanService.lambdaQuery().eq(OpeningPlan::getTeacherId, userId).list();
+        //如果不存在开课计划 返回空列表
+        if (CollectionUtil.isEmpty(openingPlanList)){
+            return AjaxResult.success(Collections.emptyList());
+        }
         //获取开课计划id列表
         List<Long> openingPlanIdList = openingPlanList.stream().map(OpeningPlan::getId).collect(Collectors.toList());
         //查询申请
