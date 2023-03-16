@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.RoleStateEnums;
 import lombok.Data;
 
 /**
@@ -20,7 +22,7 @@ public class Role implements Serializable {
 
     private String description;
 
-    private Integer state;
+    private RoleStateEnums state;
 
     private Date createTime;
 

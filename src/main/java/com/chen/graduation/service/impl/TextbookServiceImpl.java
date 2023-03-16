@@ -1,32 +1,32 @@
 package com.chen.graduation.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
-import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
-import com.chen.graduation.beans.PO.Textbook;
-import com.chen.graduation.beans.PO.TextbookFeedback;
+import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.SortableEnums;
+import com.chen.graduation.enums.TextbookOrderStateEnums;
 import com.chen.graduation.enums.TextbookStateEnums;
+import com.chen.graduation.enums.UserTypeEnums;
 import com.chen.graduation.exception.ServiceException;
-import com.chen.graduation.service.TextbookFeedbackService;
-import com.chen.graduation.service.TextbookService;
+import com.chen.graduation.interceptor.UserHolderContext;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.TextbookMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +43,11 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
     private TextbookConverter textbookConverter;
     @Resource
     private TextbookFeedbackService textbookFeedbackService;
+    @Resource
+    @Lazy
+    private TextbookOrderService textbookOrderService;
+    @Resource
+    private UserService userService;
 
     @Override
     public AjaxResult<List<TextbookVO>> search(TextbookSearchDTO textbookSearchDTO) {
@@ -65,7 +70,7 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         Page<Textbook> page = page(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()), lambdaQueryWrapper);
         //po转换成vo
         List<TextbookVO> textbookVOList = textbookConverter.pos2vos(page.getRecords());
-        // TODO: 2023/2/26 优化 
+        // TODO: 2023/2/26 优化
         textbookVOList.forEach(textbookVO -> {
             Long count = textbookFeedbackService.lambdaQuery().eq(TextbookFeedback::getTextbookId, textbookVO.getId()).count();
             textbookVO.setFeedbackCount(Math.toIntExact(count));
@@ -113,6 +118,33 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         List<TextbookVO> textbookVOList = textbookConverter.pos2vos(textbookList);
         log.info("TextbookServiceImpl.getByIds业务结束，结果:{}", textbookVOList);
         return AjaxResult.success(textbookVOList);
+    }
+
+    // FIXME: 2023/3/16 优化
+    @Override
+    public AjaxResult<List<TextbookVO>> me() {
+        //查询当前用户
+        Long userId = UserHolderContext.getUserId();
+        User user = userService.getById(userId);
+        //异常判断
+        if (Objects.isNull(user)||Objects.isNull(user.getGradeId())||!UserTypeEnums.STUDENT.equals(user.getType())){
+            throw new ServiceException("发生未知异常,请稍后再试");
+        }
+        //根据学生班级id查询已经发放教材订单
+        List<TextbookOrder> textbookOrderList = textbookOrderService.lambdaQuery().eq(TextbookOrder::getGradeId, user.getGradeId()).eq(TextbookOrder::getState, TextbookOrderStateEnums.GRANTED).list();
+        if (CollectionUtil.isEmpty(textbookOrderList)){
+            return AjaxResult.success(Collections.emptyList());
+        }
+        //获取审核ids
+        List<String> collect1 = textbookOrderList.stream().map(TextbookOrder::getTextbookIds).collect(Collectors.toList());
+        //获取教材ids
+        List<Long> textBookIds=new ArrayList<>();
+        collect1.forEach(ids->{
+            List<Long> collect = Arrays.stream(ids.split(",")).map(Long::valueOf).collect(Collectors.toList());
+            textBookIds.addAll(collect);
+        });
+        //数据库查询
+        return this.getByIds(StrUtil.join(",", textBookIds));
     }
 }
 

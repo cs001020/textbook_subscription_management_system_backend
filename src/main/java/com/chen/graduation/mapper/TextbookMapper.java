@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.PO.Textbook;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chen.graduation.beans.PO.User;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,6 +24,7 @@ public interface TextbookMapper extends BaseMapper<Textbook> {
      * @return {@link List}<{@link Textbook}>
      */
     List<Textbook> getByIds(@Param("ids") List<Long> ids);
+
 
 }
 

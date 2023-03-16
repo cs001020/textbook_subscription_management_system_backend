@@ -39,4 +39,11 @@ public interface TextbookService extends IService<Textbook> {
      * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
      */
     AjaxResult<List<TextbookVO>> getByIds(String ids);
+
+    /**
+     * 学生查询属于自己的教材
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
+     */
+    AjaxResult<List<TextbookVO>> me();
 }

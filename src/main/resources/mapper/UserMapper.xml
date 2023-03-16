@@ -23,18 +23,32 @@
         id,account,password,
         phone_number,teaching_group_id,secondary_college_id,
         name,icon,state,
-        create_time,update_time,is_deleted
+        create_time,update_time,is_deleted,type
     </sql>
     <select id="getTeacherList" resultType="com.chen.graduation.beans.PO.User">
-        select distinct tb_user.id, tb_user.name, tb_user.icon, tr.name
+        select *
         from tb_user
-                 left join tb_user_role tur on tb_user.id = tur.user_id
-                 left join tb_role tr on tur.role_id = tr.id
-        where tr.name like '%teacher%'
-          and tb_user.is_deleted = 0
-          and tb_user.state = 0
-          and tur.is_deleted = 0
-          and tr.is_deleted = 0
-          and tr.state = 0
+        where type=1
+          and is_deleted=0
+          and state=0;
+    </select>
+    <select id="selectUserList" resultType="com.chen.graduation.beans.PO.User">
+        select <include refid="Base_Column_List"/>
+            from tb_user
+        <where>
+            is_deleted=0
+            <if test="dto.account !=null and dto.account !=''">
+               and account like concat('%',#{dto.account},'%')
+            </if>
+            <if test="dto.phoneNumber !=null and dto.phoneNumber !=''">
+               and phone_number like concat('%',#{dto.phoneNumber},'%')
+            </if>
+            <if test="dto.state != null">
+                and state=#{dto.state}
+            </if>
+            <if test="dto.type != null">
+                and state=#{dto.type}
+            </if>
+        </where>
     </select>
 </mapper>

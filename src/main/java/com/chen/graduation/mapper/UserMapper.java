@@ -1,7 +1,10 @@
 package com.chen.graduation.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -19,6 +22,16 @@ public interface UserMapper extends BaseMapper<User> {
      * @return {@link List}<{@link User}>
      */
     List<User> getTeacherList();
+
+
+    /**
+     * 获取用户列表
+     *
+     * @param userPage      用户页面
+     * @param userSearchDTO 用户搜索dto
+     * @return {@link Page}<{@link User}>
+     */
+    Page<User> selectUserList(Page<User> userPage, @Param("dto") UserSearchDTO userSearchDTO);
 }
 
 

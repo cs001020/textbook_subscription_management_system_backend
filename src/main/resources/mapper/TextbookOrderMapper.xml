@@ -6,8 +6,8 @@
 
     <resultMap id="BaseResultMap" type="com.chen.graduation.beans.PO.TextbookOrder">
             <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="textbookId" column="textbook_id" jdbcType="BIGINT"/>
-            <result property="supplierId" column="supplier_id" jdbcType="BIGINT"/>
+            <result property="gradeId" column="grade_id" jdbcType="BIGINT"/>
+            <result property="textbookIds" column="textbook_ids" jdbcType="BIGINT"/>
             <result property="state" column="state" jdbcType="SMALLINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
@@ -15,7 +15,7 @@
     </resultMap>
 
     <sql id="Base_Column_List">
-        id,textbook_id,supplier_id,
+        id,grade_id,textbook_ids,
         state,create_time,update_time,
         is_deleted
     </sql>

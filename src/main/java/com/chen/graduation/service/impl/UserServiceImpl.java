@@ -7,9 +7,11 @@ import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.digest.MD5;
 import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
+import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.*;
@@ -124,7 +126,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //验证码校验
         //获取验证码
         String smsCode = stringRedisTemplate.opsForValue().get(RedisConstants.SMS_CAPTCHA_KEY + smsLoginDTO.getPhoneNumber());
-        if (StrUtil.isBlank(smsCode)||!smsCode.equals(smsLoginDTO.getCode())) {
+        if (StrUtil.isBlank(smsCode) || !smsCode.equals(smsLoginDTO.getCode())) {
             AsyncManager.me().execute(AsyncFactory.recordLoginLog(DesensitizedUtil.mobilePhone(smsLoginDTO.getPhoneNumber()), LoginLogStateEnums.FAIL, "验证码错误"));
             //验证码错误抛出异常
             log.info("UserServiceImpl.accountLogin业务结束，结果:{}", "验证码错误");
@@ -205,6 +207,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY + userId);
         //响应
         return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult<List<UserVO>> selectUserList(UserSearchDTO userSearchDTO) {
+        //查询数据库
+        Page<User> userPageList = baseMapper.selectUserList(new Page<User>(userSearchDTO.getPage(), userSearchDTO.getSize()), userSearchDTO);
+        //转换对象
+        List<UserVO> userVOList = userConverter.po2vos(userPageList.getRecords());
+        //封装结果
+        AjaxResult<List<UserVO>> success = AjaxResult.success(userVOList);
+        success.setTotal(userPageList.getTotal());
+        //响应
+        return success;
     }
 
 }

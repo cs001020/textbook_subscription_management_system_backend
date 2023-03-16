@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.chen.graduation.enums.TextbookOrderStateEnums;
 import lombok.Data;
 
 /**
@@ -15,12 +17,10 @@ import lombok.Data;
 public class TextbookOrder implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
+    private Long gradeId;
+    private String textbookIds;
 
-    private Long textbookId;
-
-    private Long supplierId;
-
-    private Integer state;
+    private TextbookOrderStateEnums state;
 
     private Date createTime;
 
