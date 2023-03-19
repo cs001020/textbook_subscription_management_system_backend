@@ -68,29 +68,44 @@ public class UserController {
         return userService.selectUserList(userSearchDTO);
     }
 
-    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改用户状态")
     @PutMapping("/changeState")
-    public AjaxResult<Object> changeState(@RequestBody User user){
+    public AjaxResult<Object> changeState(@RequestBody User user) {
         return userService.changeState(user);
     }
+
     @ApiOperation("根据id获取详细用户信息")
     @GetMapping("/userInfo/{id}")
-    public AjaxResult<User> userInfo(@PathVariable Long id){
+    public AjaxResult<User> userInfo(@PathVariable Long id) {
         return AjaxResult.success(userService.getById(id));
     }
-    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改用户")
     @PutMapping("/update")
-    public AjaxResult<Object> updateUser(@RequestBody User user){
+    public AjaxResult<Object> updateUser(@RequestBody User user) {
         return userService.updateUser(user);
     }
-    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.DELETE)
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.DELETE)
     @ApiOperation("删除用户")
     @DeleteMapping("/delete/{id}")
-    public AjaxResult<Object> delete(@PathVariable Long id){
+    public AjaxResult<Object> delete(@PathVariable Long id) {
         return userService.deleteUser(id);
     }
-    // TODO: 2023/3/11 重置密码
-    // TODO: 2023/3/11 分配角色
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("重置密码")
+    @PutMapping("/resetPwd")
+    public AjaxResult<Object> resetPwd(@RequestBody User user) {
+        return userService.resetPwd(user);
+    }
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("分配角色")
+    @PutMapping("/authRole/{userId}")
+    public AjaxResult<Object> insertAuthRole(@PathVariable Long userId, Long[] roleIds) {
+        return userService.insertUserAuth(userId, roleIds);
+    }
 }

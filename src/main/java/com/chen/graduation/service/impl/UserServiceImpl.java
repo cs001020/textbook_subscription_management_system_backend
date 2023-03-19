@@ -1,5 +1,6 @@
 package com.chen.graduation.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.IdUtil;
@@ -49,6 +50,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         implements UserService {
     @Resource
     private PermissionService permissionService;
+    @Resource
+    private UserRoleService userRoleService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -256,7 +259,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
             throw new ServiceException("修改失败，手机号码已存在");
         }
         //密码加盐
-        user.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
+        if (StrUtil.isNotBlank(user.getPassword())){
+            user.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
+        }
         //更新
         boolean update = updateById(user);
         //日志
@@ -281,13 +286,58 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //删除用户信息
         SpringUtil.getBean(UserInfoService.class).lambdaUpdate().eq(UserInfo::getUserFacultyId,id).remove();
         //删除用户角色关联表
-        SpringUtil.getBean(UserRoleService.class).lambdaUpdate().eq(UserRole::getUserId,id).remove();
+        userRoleService.lambdaUpdate().eq(UserRole::getUserId,id).remove();
         //删除用户
         boolean remove = this.lambdaUpdate().eq(User::getId, id).remove();
         //日志
         log.info("UserServiceImpl.deleteUser业务结束，结果:{}",remove);
         //响应
         return AjaxResult.success(remove);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> resetPwd(User user) {
+        //参数校验
+        if (Objects.isNull(user.getId())||StrUtil.isBlank(user.getPassword())){
+            throw new ServiceException("参数异常");
+        }
+        //构建对象
+        User newPwdUser = new User();
+        newPwdUser.setId(user.getId());
+        newPwdUser.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
+        //更新
+        boolean update = updateById(newPwdUser);
+        //日志
+        log.info("UserServiceImpl.resetPwd业务结束，结果:{}",update);
+        //响应
+        // TODO: 2023/3/20 下线
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds) {
+        //参数校验
+        if (CollUtil.isEmpty(Arrays.asList(roleIds))){
+            throw new ServiceException("参数异常");
+        }
+        //删除原角色
+        SpringUtil.getBean(UserRoleService.class).lambdaUpdate().eq(UserRole::getUserId,userId).remove();
+        //构建对象
+        List<UserRole> userRoleList=new ArrayList<>(roleIds.length);
+        for (Long roleId : roleIds) {
+            UserRole userRole = new UserRole();
+            userRole.setUserId(userId);
+            userRole.setRoleId(roleId);
+            userRoleList.add(userRole);
+        }
+        //插入新数据
+        boolean saveBatch = userRoleService.saveBatch(userRoleList);
+        //日志
+        log.info("UserServiceImpl.insertUserAuth业务结束，结果:{}",saveBatch);
+        //响应
+        return AjaxResult.success(saveBatch);
     }
 
     /**

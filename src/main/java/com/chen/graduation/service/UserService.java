@@ -84,4 +84,21 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> deleteUser(Long id);
+
+    /**
+     * 重置密码
+     *
+     * @param user 用户
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> resetPwd(User user);
+
+    /**
+     * 用户分配角色
+     *
+     * @param userId  用户id
+     * @param roleIds 角色id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds);
 }
