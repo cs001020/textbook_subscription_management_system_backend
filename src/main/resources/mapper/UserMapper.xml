@@ -50,5 +50,6 @@
                 and state=#{dto.type}
             </if>
         </where>
+        order by id
     </select>
 </mapper>

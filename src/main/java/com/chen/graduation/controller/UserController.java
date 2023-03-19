@@ -66,10 +66,16 @@ public class UserController {
         return userService.selectUserList(userSearchDTO);
     }
 
-    // TODO: 2023/3/11 修改用户
-    // TODO: 2023/3/11 根据id获取详细用户信息
+    @ApiOperation("修改用户状态")
+    @PutMapping("/changeState")
+    public AjaxResult<Object> changeState(@RequestBody User user){
+        return userService.changeState(user);
+    }
+
+    // TODO: 2023/3/11 修改状态
     // TODO: 2023/3/11 删除用户
     // TODO: 2023/3/11 重置密码
     // TODO: 2023/3/11 分配角色
-    // TODO: 2023/3/11 修改状态
+    // TODO: 2023/3/11 修改用户
+    // TODO: 2023/3/11 根据id获取详细用户信息
 }

@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -220,6 +221,28 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         success.setTotal(userPageList.getTotal());
         //响应
         return success;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> changeState(User user) {
+        //参数校验
+        if (Objects.isNull(user.getId())||Objects.isNull(user.getState())){
+            throw new ServiceException("参数异常");
+        }
+        //禁止修改本人
+        if (user.getId().equals(UserHolderContext.getUserId())){
+            throw new ServiceException("参数异常");
+        }
+        //更新状态
+        boolean update = lambdaUpdate().eq(User::getId, user.getId()).set(User::getState, user.getState()).update();
+        //响应结果
+        if (!update){
+            throw new ServiceException("发生未知异常，请稍后再试！");
+        }
+        log.info("UserServiceImpl.changeState业务结束，结果:{}", user);
+        // FIXME: 2023/3/19 用户下线
+        return AjaxResult.success();
     }
 
 }

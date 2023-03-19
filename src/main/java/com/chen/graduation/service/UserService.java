@@ -60,4 +60,12 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link List}<{@link UserVO}>>
      */
     AjaxResult<List<UserVO>> selectUserList(UserSearchDTO userSearchDTO);
+
+    /**
+     * 修改用户状态
+     *
+     * @param user 用户
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> changeState(User user);
 }
