@@ -1,10 +1,12 @@
 package com.chen.graduation.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.digest.MD5;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -12,8 +14,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
-import com.chen.graduation.beans.PO.Permission;
-import com.chen.graduation.beans.PO.User;
+import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
@@ -22,8 +23,7 @@ import com.chen.graduation.enums.LoginLogStateEnums;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
-import com.chen.graduation.service.PermissionService;
-import com.chen.graduation.service.UserService;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.UserMapper;
 import com.chen.graduation.utils.AsyncFactory;
 import com.chen.graduation.utils.AsyncManager;
@@ -59,7 +59,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Value("${jwt.hand}")
     private String requestHand;
 
-    // TODO: 2023/2/20 登陆日志
     @Override
     public AjaxResult<TokenVO> accountLogin(AccountLoginDTO accountLoginDTO) {
         //验证码校验
@@ -243,6 +242,93 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         log.info("UserServiceImpl.changeState业务结束，结果:{}", user);
         // FIXME: 2023/3/19 用户下线
         return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUser(User user) {
+        //检查账号是否存在
+        if (!checkAccountUnique(user)){
+            throw new ServiceException("修改失败，登录账号已存在");
+        }
+        //检查手机号是否存在
+        if (StrUtil.isNotBlank(user.getPhoneNumber())&&!checkPhoneUnique(user)){
+            throw new ServiceException("修改失败，手机号码已存在");
+        }
+        //密码加盐
+        user.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
+        //更新
+        boolean update = updateById(user);
+        //日志
+        log.info("UserServiceImpl.updateUser业务结束，结果:{}",update);
+        //响应
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> deleteUser(Long id) {
+        //判断是否为当前登陆用户
+        if (id.equals(UserHolderContext.getUserId())){
+            throw new ServiceException("当前账户无法删除");
+        }
+        //是否存在开课计划
+        if (checkHasOpeningPlan(id)){
+            throw new ServiceException("该用户存在开课计划,暂时无法删除!");
+        }
+        //删除用户反馈
+        SpringUtil.getBean(TextbookFeedbackService.class).lambdaUpdate().eq(TextbookFeedback::getStudentId,id).remove();
+        //删除用户信息
+        SpringUtil.getBean(UserInfoService.class).lambdaUpdate().eq(UserInfo::getUserFacultyId,id).remove();
+        //删除用户角色关联表
+        SpringUtil.getBean(UserRoleService.class).lambdaUpdate().eq(UserRole::getUserId,id).remove();
+        //删除用户
+        boolean remove = this.lambdaUpdate().eq(User::getId, id).remove();
+        //日志
+        log.info("UserServiceImpl.deleteUser业务结束，结果:{}",remove);
+        //响应
+        return AjaxResult.success(remove);
+    }
+
+    /**
+     * 检查账号码唯一性
+     *
+     * @param user 用户
+     * @return boolean 唯一返回true
+     */
+    private boolean checkAccountUnique(User user){
+        if (StrUtil.isBlank(user.getAccount())){
+            return true;
+        }
+        Page<User> page = this.lambdaQuery().eq(User::getAccount, user.getAccount()).page(new Page<>(1, 1));
+        List<User> userList = page.getRecords();
+        return !CollectionUtil.isNotEmpty(userList) || userList.get(0).getId().equals(user.getId());
+    }
+
+    /**
+     * 检查手机号码唯一性
+     *
+     * @param user 用户
+     * @return boolean 唯一返回true
+     */
+    private boolean checkPhoneUnique(User user){
+        if (StrUtil.isBlank(user.getPhoneNumber())){
+            return true;
+        }
+        Page<User> page = this.lambdaQuery().eq(User::getPhoneNumber,user.getPhoneNumber()).page(new Page<>(1,1));
+        List<User> userList = page.getRecords();
+        return !CollectionUtil.isNotEmpty(userList) || userList.get(0).getId().equals(user.getId());
+    }
+
+    /**
+     * 检查是否存在开课计划
+     *
+     * @param id id
+     * @return boolean 存在返回true
+     */
+    private boolean checkHasOpeningPlan(Long id){
+        Long count = SpringUtil.getBean(OpeningPlanService.class).lambdaQuery().eq(OpeningPlan::getTeacherId, id).count();
+        return count>0;
     }
 
 }

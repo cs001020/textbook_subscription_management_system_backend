@@ -1,10 +1,12 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.*;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.UserService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -66,16 +68,29 @@ public class UserController {
         return userService.selectUserList(userSearchDTO);
     }
 
+    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改用户状态")
     @PutMapping("/changeState")
     public AjaxResult<Object> changeState(@RequestBody User user){
         return userService.changeState(user);
     }
-
-    // TODO: 2023/3/11 修改状态
-    // TODO: 2023/3/11 删除用户
+    @ApiOperation("根据id获取详细用户信息")
+    @GetMapping("/userInfo/{id}")
+    public AjaxResult<User> userInfo(@PathVariable Long id){
+        return AjaxResult.success(userService.getById(id));
+    }
+    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("修改用户")
+    @PutMapping("/update")
+    public AjaxResult<Object> updateUser(@RequestBody User user){
+        return userService.updateUser(user);
+    }
+    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.DELETE)
+    @ApiOperation("删除用户")
+    @DeleteMapping("/delete/{id}")
+    public AjaxResult<Object> delete(@PathVariable Long id){
+        return userService.deleteUser(id);
+    }
     // TODO: 2023/3/11 重置密码
     // TODO: 2023/3/11 分配角色
-    // TODO: 2023/3/11 修改用户
-    // TODO: 2023/3/11 根据id获取详细用户信息
 }

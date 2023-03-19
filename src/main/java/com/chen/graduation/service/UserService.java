@@ -68,4 +68,20 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> changeState(User user);
+
+    /**
+     * 更新用户
+     *
+     * @param user 用户
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUser(User user);
+
+    /**
+     * 删除用户
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteUser(Long id);
 }
