@@ -238,12 +238,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //更新状态
         boolean update = lambdaUpdate().eq(User::getId, user.getId()).set(User::getState, user.getState()).update();
+        //如果为封禁 强制下线
+        if (UserStateEnums.BAN.equals(user.getState())){
+            kickUser(user.getId());
+        }
         //响应结果
         if (!update){
             throw new ServiceException("发生未知异常，请稍后再试！");
         }
+        //日志
         log.info("UserServiceImpl.changeState业务结束，结果:{}", user);
-        // FIXME: 2023/3/19 用户下线
+        //响应
         return AjaxResult.success();
     }
 
@@ -289,6 +294,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         userRoleService.lambdaUpdate().eq(UserRole::getUserId,id).remove();
         //删除用户
         boolean remove = this.lambdaUpdate().eq(User::getId, id).remove();
+        //强制下线
+        kickUser(id);
         //日志
         log.info("UserServiceImpl.deleteUser业务结束，结果:{}",remove);
         //响应
@@ -308,10 +315,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         newPwdUser.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
         //更新
         boolean update = updateById(newPwdUser);
+        //下线
+        kickUser(user.getId());
         //日志
         log.info("UserServiceImpl.resetPwd业务结束，结果:{}",update);
         //响应
-        // TODO: 2023/3/20 下线
         return AjaxResult.success(update);
     }
 
@@ -380,6 +388,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Long count = SpringUtil.getBean(OpeningPlanService.class).lambdaQuery().eq(OpeningPlan::getTeacherId, id).count();
         return count>0;
     }
+    
+    private void kickUser(Long id){
+        if (!Objects.isNull(id)){
+            stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY+id);
+        }
+    }
+
+    // TODO: 2023/3/20 关于鉴权 
 
 }
 

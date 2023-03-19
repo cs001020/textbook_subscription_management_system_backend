@@ -39,6 +39,7 @@
             is_deleted=0
             <if test="dto.account !=null and dto.account !=''">
                and account like concat('%',#{dto.account},'%')
+               or name like concat('%',#{dto.account},'%')
             </if>
             <if test="dto.phoneNumber !=null and dto.phoneNumber !=''">
                and phone_number like concat('%',#{dto.phoneNumber},'%')
