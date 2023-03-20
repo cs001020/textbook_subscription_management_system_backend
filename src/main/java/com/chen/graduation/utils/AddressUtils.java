@@ -34,7 +34,8 @@ public class AddressUtils {
             JSONObject obj = JSON.parseObject(rspStr);
             String region = obj.getString("pro");
             String city = obj.getString("city");
-            return String.format("%s %s", region, city);
+            String address = String.format("%s %s", region, city);
+            return StrUtil.isBlank(address)?UNKNOWN:address;
         } catch (Exception e) {
             log.error("获取地理位置异常 {}", ip);
         }
