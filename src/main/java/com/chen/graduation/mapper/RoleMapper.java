@@ -2,6 +2,9 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.Role;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -11,6 +14,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface RoleMapper extends BaseMapper<Role> {
 
+    List<Role> getRoleByUserId(@Param("userId") Long userId);
 }
 
 

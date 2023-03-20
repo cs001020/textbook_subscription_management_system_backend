@@ -38,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author 10065
@@ -52,6 +53,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private PermissionService permissionService;
     @Resource
     private UserRoleService userRoleService;
+    @Resource
+    private RoleService roleService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -269,6 +272,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //更新
         boolean update = updateById(user);
+        //用户下线
+        if (StrUtil.isNotBlank(user.getPassword())||UserStateEnums.BAN.equals(user.getState())){
+            kickUser(user.getId());
+        }
         //日志
         log.info("UserServiceImpl.updateUser业务结束，结果:{}",update);
         //响应
@@ -327,7 +334,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds) {
         //参数校验
-        if (CollUtil.isEmpty(Arrays.asList(roleIds))){
+        if (CollUtil.isEmpty(Arrays.asList(roleIds))||Objects.isNull(userId)){
             throw new ServiceException("参数异常");
         }
         //删除原角色
@@ -346,6 +353,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         log.info("UserServiceImpl.insertUserAuth业务结束，结果:{}",saveBatch);
         //响应
         return AjaxResult.success(saveBatch);
+    }
+
+    @Override
+    public AjaxResult<UserRoleVo> authRole(Long userId) {
+
+        User user = this.getById(userId);
+        List<Role> roles = roleService.selectRolesByUserId(userId);
+        //封装对象
+        UserRoleVo userRoleVo = new UserRoleVo();
+        userRoleVo.setUser(user);
+        userRoleVo.setRoleList(roles);
+        //日志
+        log.info("UserServiceImpl.authRole业务结束，结果:{}",userRoleVo);
+        //响应
+        return AjaxResult.success(userRoleVo);
     }
 
     /**
@@ -388,14 +410,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Long count = SpringUtil.getBean(OpeningPlanService.class).lambdaQuery().eq(OpeningPlan::getTeacherId, id).count();
         return count>0;
     }
-    
+
     private void kickUser(Long id){
         if (!Objects.isNull(id)){
             stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY+id);
         }
     }
 
-    // TODO: 2023/3/20 关于鉴权 
+    // TODO: 2023/3/20 关于鉴权
 
 }
 

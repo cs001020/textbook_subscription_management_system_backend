@@ -33,6 +33,22 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         log.info("RoleServiceImpl.pageQuery业务结束，结果:{}",success);
         return success;
     }
+
+    @Override
+    public List<Role> selectRolesByUserId(Long userId) {
+        List<Role> allRoleList = list();
+        List<Role> userRoleList=baseMapper.getRoleByUserId(userId);
+        for (Role role : allRoleList) {
+            for (Role userRole : userRoleList) {
+                if (role.getId().longValue() == userRole.getId().longValue())
+                {
+                    role.setFlag(true);
+                    break;
+                }
+            }
+        }
+        return allRoleList;
+    }
 }
 
 

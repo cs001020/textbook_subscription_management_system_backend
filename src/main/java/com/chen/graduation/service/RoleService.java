@@ -21,4 +21,13 @@ public interface RoleService extends IService<Role> {
      * @return {@link AjaxResult}<{@link List}<{@link Role}>>
      */
     AjaxResult<List<Role>> pageQuery(PageParamDTO pageParamDTO);
+
+    /**
+     * 查询所有角色
+     * 当前用户拥有的角色flag将为true
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link Role}>
+     */
+    List<Role> selectRolesByUserId(Long userId);
 }

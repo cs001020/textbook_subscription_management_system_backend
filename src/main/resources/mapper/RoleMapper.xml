@@ -19,4 +19,9 @@
         state,create_time,update_time,
         is_deleted
     </sql>
+    <select id="getRoleByUserId" resultType="com.chen.graduation.beans.PO.Role">
+        select tb_role.*
+        from tb_role left join tb_user_role tur on tb_role.id = tur.role_id
+        where user_id=#{userId} and tb_role.is_deleted=0 and tur.is_deleted=0
+    </select>
 </mapper>

@@ -101,4 +101,12 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds);
+
+    /**
+     * 根据用户编号获取授权角色
+     *
+     * @param userId 用户id
+     * @return {@link AjaxResult}<{@link UserRoleVo}>
+     */
+    AjaxResult<UserRoleVo> authRole(Long userId);
 }

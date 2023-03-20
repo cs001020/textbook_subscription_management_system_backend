@@ -48,7 +48,7 @@
                 and state=#{dto.state}
             </if>
             <if test="dto.type != null">
-                and state=#{dto.type}
+                and type=#{dto.type}
             </if>
         </where>
         order by id

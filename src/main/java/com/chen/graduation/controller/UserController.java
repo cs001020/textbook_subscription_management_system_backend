@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 登录控制器
@@ -102,10 +103,18 @@ public class UserController {
         return userService.resetPwd(user);
     }
 
+    @ApiOperation("根据用户id获取授权角色")
+    @GetMapping("/authRole/{userId}")
+    public AjaxResult<UserRoleVo> authRole(@PathVariable("userId") Long userId)
+    {
+        return userService.authRole(userId);
+    }
+
     @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("分配角色")
-    @PutMapping("/authRole/{userId}")
-    public AjaxResult<Object> insertAuthRole(@PathVariable Long userId, Long[] roleIds) {
+    @PutMapping("/authRole")
+    public AjaxResult<Object> insertAuthRole( Long userId, Long[] roleIds) {
         return userService.insertUserAuth(userId, roleIds);
     }
+
 }
