@@ -19,4 +19,14 @@ public interface PermissionService extends IService<Permission> {
      * @return {@link List}<{@link Permission}>
      */
     List<Permission> getPermissionByUserId(Long userId);
+
+    /**
+     * 通过角色id获取权限
+     * 包含所有权限
+     * 该角色拥护的权限 flag为true
+     *
+     * @param roleId 角色id
+     * @return {@link List}<{@link Permission}>
+     */
+    List<Permission> selectPermissionTreeByRoleId(Long roleId);
 }

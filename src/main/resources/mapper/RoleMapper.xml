@@ -9,6 +9,7 @@
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="description" column="description" jdbcType="VARCHAR"/>
             <result property="state" column="state" jdbcType="SMALLINT"/>
+            <result property="sortValue" column="state" jdbcType="SMALLINT"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
@@ -16,7 +17,7 @@
 
     <sql id="Base_Column_List">
         id,name,description,
-        state,create_time,update_time,
+        state,sort_value,create_time,update_time,
         is_deleted
     </sql>
     <select id="getRoleByUserId" resultType="com.chen.graduation.beans.PO.Role">

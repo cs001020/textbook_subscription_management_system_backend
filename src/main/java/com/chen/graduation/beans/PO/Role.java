@@ -25,12 +25,12 @@ public class Role implements Serializable {
     private String description;
 
     private RoleStateEnums state;
-
+    private Integer sortValue;
     private Date createTime;
 
     private Date updateTime;
     @TableField(exist = false)
-    private boolean flag;
+    private Boolean flag;
 
     @JSONField(serialize = false)
     private Long isDeleted;

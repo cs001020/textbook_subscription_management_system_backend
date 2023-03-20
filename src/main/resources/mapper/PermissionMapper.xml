@@ -43,4 +43,10 @@
           and tb_role.state = 0
         order by tb_permission.id;
     </select>
+    <select id="getPermissionByRoleId" resultType="com.chen.graduation.beans.PO.Permission">
+        select tb_permission.*
+        from tb_permission right join tb_role_permission trp on tb_permission.id = trp.permission_id
+        where role_id=#{roleId}
+        order by tb_permission.id;
+    </select>
 </mapper>

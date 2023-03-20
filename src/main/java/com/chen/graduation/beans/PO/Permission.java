@@ -1,5 +1,6 @@
 package com.chen.graduation.beans.PO;
 
+import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -83,10 +84,13 @@ public class Permission implements Serializable {
     /**
      * 逻辑删除标志位，默认为0代表未删除，删除标志建议为主键id
      */
+    @JSONField(serialize = false)
     private Long isDeleted;
 
     @TableField(exist = false)
     List<Permission> children;
+    @TableField(exist = false)
+    private Boolean flag;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
