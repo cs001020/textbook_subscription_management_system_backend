@@ -8,6 +8,7 @@ import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.PO.Role;
 import com.chen.graduation.beans.PO.RolePermission;
+import com.chen.graduation.beans.PO.UserRole;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.RolePermissionVo;
 import com.chen.graduation.enums.RoleStateEnums;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -164,6 +166,30 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         //日志
         log.info("RoleServiceImpl.deleteRoleById业务结束，结果:{}",remove);
         return AjaxResult.success(remove);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> insertAuthUsers(Long roleId, Long[] userIds) {
+        //蚕食校验
+        if (Objects.isNull(roleId)||Objects.isNull(userIds)){
+            throw new ServiceException("参数异常");
+        }
+        // 新增用户与角色管理
+        List<UserRole> userRoleList = new ArrayList<>();
+        for (Long userId : userIds)
+        {
+            UserRole userRole = new UserRole();
+            userRole.setUserId(userId);
+            userRole.setRoleId(roleId);
+            userRoleList.add(userRole);
+        }
+        //插入数据
+        boolean saveBatch = userRoleService.saveBatch(userRoleList);
+        //日志
+        log.info("RoleServiceImpl.insertAuthUsers业务结束，结果:{}",saveBatch);
+        //响应
+        return AjaxResult.success(saveBatch);
     }
 
     /**

@@ -110,7 +110,7 @@ public class UserController {
         return userService.authRole(userId);
     }
 
-    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.GRANT)
     @ApiOperation("分配角色")
     @PutMapping("/authRole")
     public AjaxResult<Object> insertAuthRole( Long userId, Long[] roleIds) {

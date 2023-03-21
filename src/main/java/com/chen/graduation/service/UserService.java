@@ -1,6 +1,7 @@
 package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
@@ -109,4 +110,24 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link UserRoleVo}>
      */
     AjaxResult<UserRoleVo> authRole(Long userId);
+
+    /**
+     * 查询已分配用户角色列表
+     *
+     * @param pageParamDTO 页面参数dto
+     * @param user         用户
+     * @param roleId       角色id
+     * @return {@link AjaxResult}<{@link UserVO}>
+     */
+    AjaxResult<List<UserVO>> selectAllocatedList(PageParamDTO pageParamDTO, User user, Long roleId);
+
+    /**
+     * 查询未分配用户角色列表
+     *
+     * @param pageParamDTO 页面参数dto
+     * @param user         用户
+     * @param roleId       角色id
+     * @return {@link AjaxResult}<{@link UserVO}>
+     */
+    AjaxResult<List<UserVO>> selectUnallocatedList(PageParamDTO pageParamDTO, User user, Long roleId);
 }

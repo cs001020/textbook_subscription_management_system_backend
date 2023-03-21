@@ -53,4 +53,31 @@
         </where>
         order by id
     </select>
+    <select id="selectAllocatedList" resultType="com.chen.graduation.beans.PO.User">
+        select distinct u.id, u.account, u.name, u.phone_number, u.state, u.create_time
+        from tb_user u
+        left join tb_user_role ur on u.id = ur.user_id
+        where u.is_deleted = 0 and ur.is_deleted=0 and ur.role_id=#{roleId}
+        <if test="user.account != null and user.account != ''">
+            AND u.account like concat('%', #{user.account}, '%')
+        </if>
+        <if test="user.phoneNumber != null and user.phoneNumber != ''">
+            AND u.phone_number like concat('%', #{user.phoneNumber}, '%')
+        </if>
+        order by u.id
+    </select>
+    <select id="selectUnallocatedList" resultType="com.chen.graduation.beans.PO.User">
+        select distinct u.id, u.account, u.name, u.phone_number, u.state, u.create_time
+        from tb_user u
+        left join tb_user_role ur on u.id = ur.user_id
+        where u.is_deleted = 0 and (ur.is_deleted=0 or ur.is_deleted is null ) and (ur.role_id != #{roleId} or ur.role_id is NULL)
+        and u.id not in (select u.id from tb_user u inner join tb_user_role ur on u.id = ur.user_id and ur.role_id = #{roleId})
+        <if test="user.account != null and user.account != ''">
+            AND u.account like concat('%', #{user.account}, '%')
+        </if>
+        <if test="user.phoneNumber != null and user.phoneNumber != ''">
+            AND u.phone_number like concat('%', #{user.phoneNumber}, '%')
+        </if>
+        order by u.id
+    </select>
 </mapper>

@@ -32,6 +32,26 @@ public interface UserMapper extends BaseMapper<User> {
      * @return {@link Page}<{@link User}>
      */
     Page<User> selectUserList(Page<User> userPage, @Param("dto") UserSearchDTO userSearchDTO);
+
+    /**
+     * 查询已分配用户角色列表
+     *
+     * @param objectPage 对象页面
+     * @param user       用户
+     * @param roleId     角色id
+     * @return {@link Page}<{@link User}>
+     */
+    Page<User> selectAllocatedList(Page<User> objectPage,@Param("user") User user, @Param("roleId") Long roleId);
+
+    /**
+     * 查询未分配用户角色列表
+     *
+     * @param objectPage 对象页面
+     * @param user       用户
+     * @param roleId     角色id
+     * @return {@link Page}<{@link User}>
+     */
+    Page<User> selectUnallocatedList(Page<User> objectPage, @Param("user") User user, @Param("roleId") Long roleId);
 }
 
 

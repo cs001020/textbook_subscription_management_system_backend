@@ -6,13 +6,13 @@ import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.digest.MD5;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.*;
@@ -38,7 +38,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author 10065
@@ -369,6 +368,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         log.info("UserServiceImpl.authRole业务结束，结果:{}",userRoleVo);
         //响应
         return AjaxResult.success(userRoleVo);
+    }
+
+    @Override
+    public AjaxResult<List<UserVO>> selectAllocatedList(PageParamDTO pageParamDTO, User user, Long roleId) {
+        //查询数据库
+        Page<User> page=baseMapper.selectAllocatedList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user,roleId);
+        //封装对象
+        List<UserVO> userVOList = userConverter.po2vos(page.getRecords());
+        AjaxResult<List<UserVO>> success = AjaxResult.success(userVOList);
+        success.setTotal(page.getTotal());
+        //日志
+        log.info("UserServiceImpl.selectUnallocatedList业务结束，结果:{}",success);
+        //响应
+        return success;
+    }
+
+    @Override
+    public AjaxResult<List<UserVO>> selectUnallocatedList(PageParamDTO pageParamDTO, User user, Long roleId) {
+        //查询数据库
+        Page<User> page=baseMapper.selectUnallocatedList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user,roleId);
+        //封装对象
+        List<UserVO> userVOList = userConverter.po2vos(page.getRecords());
+        AjaxResult<List<UserVO>> success = AjaxResult.success(userVOList);
+        success.setTotal(page.getTotal());
+        //日志
+        log.info("UserServiceImpl.selectUnallocatedList业务结束，结果:{}",success);
+        //响应
+        return success;
     }
 
     /**

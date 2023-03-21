@@ -72,4 +72,13 @@ public interface RoleService extends IService<Role> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> deleteRoleById(Long roleId);
+
+    /**
+     * 批量选择用户授权
+     *
+     * @param roleId  角色id
+     * @param userIds 用户id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> insertAuthUsers(Long roleId, Long[] userIds);
 }

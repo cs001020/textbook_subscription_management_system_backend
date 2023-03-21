@@ -3,10 +3,13 @@ package com.chen.graduation.controller;
 import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Role;
+import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.RolePermissionVo;
+import com.chen.graduation.beans.VO.UserVO;
 import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.RoleService;
+import com.chen.graduation.service.UserService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -32,6 +35,8 @@ public class RoleController {
 
     @Resource
     private RoleService roleService;
+    @Resource
+    private UserService userService;
 
     @ApiOperation("角色列表")
     @GetMapping("list")
@@ -71,5 +76,24 @@ public class RoleController {
     @DeleteMapping("/del/{roleId}")
     public AjaxResult<Object> remove(@PathVariable Long roleId) {
         return roleService.deleteRoleById(roleId);
+    }
+
+    @ApiOperation("查询已分配用户角色列表")
+    @GetMapping("/authUser/allocatedList/{roleId}")
+    public AjaxResult<List<UserVO>> allocatedList(@Validated PageParamDTO pageParamDTO, User user, @PathVariable Long roleId) {
+        return userService.selectAllocatedList(pageParamDTO, user, roleId);
+    }
+
+    @ApiOperation("查询未分配用户角色列表")
+    @GetMapping("/authUser/unallocatedList/{roleId}")
+    public AjaxResult<List<UserVO>> unallocatedList(@Validated PageParamDTO pageParamDTO, User user, @PathVariable Long roleId) {
+        return userService.selectUnallocatedList(pageParamDTO, user, roleId);
+    }
+
+    @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.GRANT)
+    @ApiOperation("批量选择用户授权")
+    @PutMapping("/authUser/selectAll")
+    public AjaxResult<Object> selectAuthUserAll(Long roleId, Long[] userIds) {
+        return roleService.insertAuthUsers(roleId, userIds);
     }
 }
