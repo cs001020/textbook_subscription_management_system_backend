@@ -1,5 +1,6 @@
 package com.chen.graduation.service;
 
+import com.chen.graduation.beans.PO.Role;
 import com.chen.graduation.beans.PO.RolePermission;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -10,4 +11,17 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface RolePermissionService extends IService<RolePermission> {
 
+    /**
+     * 更新角色权限关系
+     *
+     * @param role 角色
+     */
+    void updateRolePermission(Role role);
+
+    /**
+     * 新增角色权限关系
+     *
+     * @param role 角色
+     */
+    void saveRolePermission(Role role);
 }

@@ -334,25 +334,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds) {
         //参数校验
-        if (CollUtil.isEmpty(Arrays.asList(roleIds))||Objects.isNull(userId)){
+        if (Objects.isNull(userId)||Objects.isNull(roleIds)){
             throw new ServiceException("参数异常");
         }
         //删除原角色
-        SpringUtil.getBean(UserRoleService.class).lambdaUpdate().eq(UserRole::getUserId,userId).remove();
-        //构建对象
-        List<UserRole> userRoleList=new ArrayList<>(roleIds.length);
-        for (Long roleId : roleIds) {
-            UserRole userRole = new UserRole();
-            userRole.setUserId(userId);
-            userRole.setRoleId(roleId);
-            userRoleList.add(userRole);
+        userRoleService.lambdaUpdate().eq(UserRole::getUserId,userId).remove();
+        //新角色id不为空插入新数据
+        if (CollUtil.isNotEmpty(Arrays.asList(roleIds))){
+            //构建对象
+            List<UserRole> userRoleList=new ArrayList<>();
+            for (Long roleId : roleIds) {
+                UserRole userRole = new UserRole();
+                userRole.setUserId(userId);
+                userRole.setRoleId(roleId);
+                userRoleList.add(userRole);
+            }
+            //插入新数据
+            userRoleService.saveBatch(userRoleList);
         }
-        //插入新数据
-        boolean saveBatch = userRoleService.saveBatch(userRoleList);
-        //日志
-        log.info("UserServiceImpl.insertUserAuth业务结束，结果:{}",saveBatch);
         //响应
-        return AjaxResult.success(saveBatch);
+        return AjaxResult.success();
     }
 
     @Override

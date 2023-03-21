@@ -168,10 +168,11 @@ public class LogAspect {
                     continue;
                 }
                 if (!Objects.isNull(paramsArray[i])) {
-                       map.put(parameterNames[i],paramsArray[i]);
+                    map.put(parameterNames[i], paramsArray[i]);
                 }
             }
         }
+        // TODO: 2023/3/21 枚举类存在问题
         return JSON.toJSONString(map,excludePropertyPreFilter());
     }
 

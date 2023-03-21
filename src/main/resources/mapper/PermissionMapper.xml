@@ -46,7 +46,7 @@
     <select id="getPermissionByRoleId" resultType="com.chen.graduation.beans.PO.Permission">
         select tb_permission.*
         from tb_permission right join tb_role_permission trp on tb_permission.id = trp.permission_id
-        where role_id=#{roleId}
+        where role_id=#{roleId} and tb_permission.is_deleted=0 and trp.is_deleted=0
         order by tb_permission.id;
     </select>
 </mapper>

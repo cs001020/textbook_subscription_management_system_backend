@@ -52,37 +52,17 @@ public class RoleController {
         return roleService.selectRoleById(roleId);
     }
 
-    /**
-     * 修改保存角色
-     */
-    //@Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
-    //@PutMapping
-    //public AjaxResult edit(@Validated @RequestBody SysRole role)
-    //{
-    //    roleService.checkRoleAllowed(role);
-    //    roleService.checkRoleDataScope(role.getRoleId());
-    //    if (!roleService.checkRoleNameUnique(role))
-    //    {
-    //        return error("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
-    //    }
-    //    else if (!roleService.checkRoleKeyUnique(role))
-    //    {
-    //        return error("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
-    //    }
-    //    role.setUpdateBy(getUsername());
-    //
-    //    if (roleService.updateRole(role) > 0)
-    //    {
-    //        // 更新缓存用户权限
-    //        LoginUser loginUser = getLoginUser();
-    //        if (StringUtils.isNotNull(loginUser.getUser()) && !loginUser.getUser().isAdmin())
-    //        {
-    //            loginUser.setPermissions(permissionService.getMenuPermission(loginUser.getUser()));
-    //            loginUser.setUser(userService.selectUserByUserName(loginUser.getUser().getUserName()));
-    //            tokenService.setLoginUser(loginUser);
-    //        }
-    //        return success();
-    //    }
-    //    return error("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
-    //}
+    @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("修改角色")
+    @PutMapping("/update")
+    public AjaxResult<Object> updateRole(@Validated @RequestBody Role role) {
+        return roleService.updateRole(role);
+    }
+
+    @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.INSERT)
+    @ApiOperation("新增角色")
+    @PostMapping("/add")
+    public AjaxResult<Object> add(@Validated @RequestBody Role role) {
+        return roleService.saveRole(role);
+    }
 }

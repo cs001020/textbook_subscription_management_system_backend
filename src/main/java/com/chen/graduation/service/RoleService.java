@@ -48,4 +48,20 @@ public interface RoleService extends IService<Role> {
      * @return {@link AjaxResult}<{@link RolePermissionVo}>
      */
     AjaxResult<RolePermissionVo> selectRoleById(Long roleId);
+
+    /**
+     * 更新角色
+     *
+     * @param role 角色
+     * @return boolean
+     */
+    AjaxResult<Object> updateRole(Role role);
+
+    /**
+     * 保存新角色
+     *
+     * @param role 角色
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> saveRole(Role role);
 }
