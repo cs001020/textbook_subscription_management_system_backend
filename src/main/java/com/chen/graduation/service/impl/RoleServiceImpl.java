@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.PO.Role;
+import com.chen.graduation.beans.PO.RolePermission;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.RolePermissionVo;
 import com.chen.graduation.enums.RoleStateEnums;
@@ -15,6 +16,7 @@ import com.chen.graduation.service.PermissionService;
 import com.chen.graduation.service.RolePermissionService;
 import com.chen.graduation.service.RoleService;
 import com.chen.graduation.mapper.RoleMapper;
+import com.chen.graduation.service.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -36,6 +38,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     private PermissionService permissionService;
     @Resource
     private RolePermissionService rolePermissionService;
+    @Resource
+    private UserRoleService userRoleService;
 
     @Override
     public AjaxResult<List<Role>> pageQuery(PageParamDTO pageParamDTO, Role role) {
@@ -111,7 +115,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> updateRole(Role role) {
         //参数校验
-        if (Objects.isNull(role.getId())){
+        if (Objects.isNull(role.getId())) {
             throw new ServiceException("参数异常");
         }
         //唯一性检查
@@ -129,6 +133,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> saveRole(Role role) {
         //唯一性检查
         if (!checkRoleDescriptionUnique(role)) {
@@ -142,6 +147,23 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         //新增角色关系表
         rolePermissionService.saveRolePermission(role);
         return AjaxResult.success(save);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> deleteRoleById(Long roleId) {
+        //分配用户检查
+        Role role = getById(roleId);
+        if (userRoleService.countUserRoleByRoleId(roleId) > 0) {
+            throw new ServiceException(String.format("%1$s已分配,不能删除", role.getDescription()));
+        }
+        // 删除角色与菜单关联
+        rolePermissionService.lambdaUpdate().eq(RolePermission::getRoleId, role.getId()).remove();
+        // 删除角色
+        boolean remove = removeById(role.getId());
+        //日志
+        log.info("RoleServiceImpl.deleteRoleById业务结束，结果:{}",remove);
+        return AjaxResult.success(remove);
     }
 
     /**
@@ -167,6 +189,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         List<Role> roleList = page.getRecords();
         return CollUtil.isEmpty(roleList) || roleList.get(0).getId().equals(role.getId());
     }
+    // TODO: 2023/3/21 关于鉴权
 }
 
 

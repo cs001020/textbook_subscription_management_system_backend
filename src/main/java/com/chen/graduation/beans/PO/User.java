@@ -10,6 +10,7 @@ import java.util.Date;
 import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.enums.UserTypeEnums;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -50,10 +51,12 @@ public class User implements Serializable {
     private String introduction;
     private UserStateEnums state;
     private UserTypeEnums type;
+    @JsonIgnore
     private Date createTime;
-
+    @JsonIgnore
     private Date updateTime;
     @JSONField(serialize = false)
+    @JsonIgnore
     private Long isDeleted;
 
     private static final long serialVersionUID = 1L;

@@ -65,4 +65,11 @@ public class RoleController {
     public AjaxResult<Object> add(@Validated @RequestBody Role role) {
         return roleService.saveRole(role);
     }
+
+    @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.DELETE)
+    @ApiOperation("删除角色")
+    @DeleteMapping("/del/{roleId}")
+    public AjaxResult<Object> remove(@PathVariable Long roleId) {
+        return roleService.deleteRoleById(roleId);
+    }
 }

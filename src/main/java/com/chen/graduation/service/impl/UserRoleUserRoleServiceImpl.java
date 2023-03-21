@@ -15,6 +15,10 @@ import org.springframework.stereotype.Service;
 public class UserRoleUserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
     implements UserRoleService {
 
+    @Override
+    public int countUserRoleByRoleId(Long roleId) {
+        return baseMapper.countUserRoleByRoleId(roleId);
+    }
 }
 
 

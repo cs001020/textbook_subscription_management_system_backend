@@ -17,4 +17,7 @@
         id,faculty_id,role_id,
         create_time,update_time,is_deleted
     </sql>
+    <select id="countUserRoleByRoleId" resultType="java.lang.Integer">
+        select count(1) from tb_user_role where role_id=#{id} and is_deleted=0
+    </select>
 </mapper>

@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 import com.chen.graduation.enums.RoleStateEnums;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
@@ -34,17 +35,19 @@ public class Role implements Serializable {
     private RoleStateEnums state;
     @NotNull(message = "显示顺序不能为空")
     private Integer sortValue;
+    @JsonIgnore
     private Date createTime;
-
+    @JsonIgnore
     private Date updateTime;
+
+    @JSONField(serialize = false)
+    @JsonIgnore
+    private Long isDeleted;
     @TableField(exist = false)
     @NotNull(message = "参数异常")
     private Long[] permissionIds;
     @TableField(exist = false)
     private Boolean flag;
-
-    @JSONField(serialize = false)
-    private Long isDeleted;
 
     private static final long serialVersionUID = 1L;
 }

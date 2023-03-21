@@ -2,6 +2,7 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.UserRole;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 
 /**
 * @author 10065
@@ -11,6 +12,13 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface UserRoleMapper extends BaseMapper<UserRole> {
 
+    /**
+     * 通过角色ID查询角色使用数量
+     *
+     * @param roleId 角色id
+     * @return int
+     */
+    int countUserRoleByRoleId(@Param("id") Long roleId);
 }
 
 

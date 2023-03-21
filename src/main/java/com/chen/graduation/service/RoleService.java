@@ -64,4 +64,12 @@ public interface RoleService extends IService<Role> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> saveRole(Role role);
+
+    /**
+     * 通过id删除角色
+     *
+     * @param roleId 角色id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteRoleById(Long roleId);
 }
