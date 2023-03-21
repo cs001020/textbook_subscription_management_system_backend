@@ -32,7 +32,7 @@ public class PermissionController {
     // FIXME: 2023/3/2 暂用 记得修改
     @GetMapping("list")
     public AjaxResult<List<Permission>> getList(){
-        List<Permission> list = permissionService.list();
+        List<Permission> list = permissionService.lambdaQuery().orderByAsc(Permission::getSortValue).list();
         List<Permission> permissionList = PermissionUtils.buildTree(list);
         return AjaxResult.success(permissionList);
     }

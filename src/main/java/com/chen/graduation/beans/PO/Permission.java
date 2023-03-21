@@ -86,6 +86,7 @@ public class Permission implements Serializable {
      */
     @JSONField(serialize = false)
     private Long isDeleted;
+    private Integer sortValue;
 
     @TableField(exist = false)
     List<Permission> children;

@@ -8,7 +8,7 @@
             <id property="id" column="id" jdbcType="BIGINT"/>
             <result property="parentId" column="parent_id" jdbcType="BIGINT"/>
             <result property="path" column="path" jdbcType="VARCHAR"/>
-            <result property="requesturl" column="requesturl" jdbcType="VARCHAR"/>
+            <result property="requestUrl" column="request_url" jdbcType="VARCHAR"/>
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="perms" column="perms" jdbcType="VARCHAR"/>
             <result property="icon" column="icon" jdbcType="VARCHAR"/>
@@ -18,6 +18,7 @@
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
+            <result property="sortValue" column="sort_value" jdbcType="BIGINT"/>
     </resultMap>
 
     <sql id="Base_Column_List">
@@ -25,7 +26,7 @@
         requesturl,name,perms,
         icon,component,type,
         state,create_time,update_time,
-        is_deleted
+        is_deleted,sort_value
     </sql>
     <select id="getPermissionByUserId" resultType="com.chen.graduation.beans.PO.Permission">
         select distinct tb_permission.*
@@ -41,12 +42,12 @@
           and tb_permission.is_deleted = 0
           and tb_permission.state = 0
           and tb_role.state = 0
-        order by tb_permission.id;
+        order by tb_permission.sort_value;
     </select>
     <select id="getPermissionByRoleId" resultType="com.chen.graduation.beans.PO.Permission">
         select tb_permission.*
         from tb_permission right join tb_role_permission trp on tb_permission.id = trp.permission_id
         where role_id=#{roleId} and tb_permission.is_deleted=0 and trp.is_deleted=0
-        order by tb_permission.id;
+        order by tb_permission.sort_value;
     </select>
 </mapper>
