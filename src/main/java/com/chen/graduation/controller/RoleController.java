@@ -96,4 +96,11 @@ public class RoleController {
     public AjaxResult<Object> selectAuthUserAll(Long roleId, Long[] userIds) {
         return roleService.insertAuthUsers(roleId, userIds);
     }
+
+    @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.GRANT)
+    @ApiOperation("批量取消授权用户")
+    @DeleteMapping("/authUser/cancelAll")
+    public AjaxResult<Object> cancelAuthUserAll(Long roleId, Long[] userIds) {
+        return roleService.deleteAuthUsers(roleId, userIds);
+    }
 }

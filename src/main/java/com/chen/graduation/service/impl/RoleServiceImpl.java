@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -190,6 +191,24 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         log.info("RoleServiceImpl.insertAuthUsers业务结束，结果:{}",saveBatch);
         //响应
         return AjaxResult.success(saveBatch);
+    }
+
+    @Override
+    public AjaxResult<Object> deleteAuthUsers(Long roleId, Long[] userIds) {
+        //参数校验
+        if (Objects.isNull(roleId)||Objects.isNull(userIds)){
+            throw new ServiceException("参数异常");
+        }
+        //删除数据
+        boolean remove = userRoleService
+                .lambdaUpdate()
+                .eq(UserRole::getRoleId, roleId)
+                .in(UserRole::getUserId, Arrays.asList(userIds))
+                .remove();
+        //日志
+        log.info("RoleServiceImpl.deleteAuthUsers业务结束，结果:{}",remove);
+        //响应
+        return AjaxResult.success(remove);
     }
 
     /**
