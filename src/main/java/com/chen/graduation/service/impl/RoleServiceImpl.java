@@ -194,6 +194,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> deleteAuthUsers(Long roleId, Long[] userIds) {
         //参数校验
         if (Objects.isNull(roleId)||Objects.isNull(userIds)){
