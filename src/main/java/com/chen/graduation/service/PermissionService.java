@@ -2,6 +2,7 @@ package com.chen.graduation.service;
 
 import com.chen.graduation.beans.PO.Permission;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.VO.AjaxResult;
 
 import java.util.List;
 
@@ -29,4 +30,12 @@ public interface PermissionService extends IService<Permission> {
      * @return {@link List}<{@link Permission}>
      */
     List<Permission> selectPermissionTreeByRoleId(Long roleId);
+
+    /**
+     * 查询所有权限 按照树形结构显示
+     *
+     * @param permission 许可
+     * @return {@link AjaxResult}<{@link List}<{@link Permission}>>
+     */
+    AjaxResult<List<Permission>> treeList(Permission permission);
 }

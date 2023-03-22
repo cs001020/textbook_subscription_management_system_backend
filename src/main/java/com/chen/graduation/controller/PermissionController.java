@@ -6,6 +6,7 @@ import com.chen.graduation.service.PermissionService;
 import com.chen.graduation.utils.PermissionUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -29,12 +30,10 @@ public class PermissionController {
     @Resource
     private PermissionService permissionService;
 
-    // FIXME: 2023/3/2 暂用 记得修改
     @GetMapping("list")
-    public AjaxResult<List<Permission>> getList(){
-        List<Permission> list = permissionService.lambdaQuery().orderByAsc(Permission::getSortValue).list();
-        List<Permission> permissionList = PermissionUtils.buildTree(list);
-        return AjaxResult.success(permissionList);
+    @ApiOperation("获取权限列表(树形结构)")
+    public AjaxResult<List<Permission>> list(Permission permission){
+        return permissionService.treeList(permission);
     }
 
     @PostMapping("add")

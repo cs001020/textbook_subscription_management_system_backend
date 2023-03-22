@@ -12,6 +12,7 @@ import java.util.List;
 
 import com.chen.graduation.enums.PermissionStateEnums;
 import com.chen.graduation.enums.PermissionTypeEnums;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 /**
@@ -74,17 +75,20 @@ public class Permission implements Serializable {
     /**
      * 创建时间，默认为当前时间，不需要手动设置
      */
+    @JsonIgnore
     private Date createTime;
 
     /**
      * 更新时间，默认为当前时间，可以使用触发器来进行自动更新
      */
+    @JsonIgnore
     private Date updateTime;
 
     /**
      * 逻辑删除标志位，默认为0代表未删除，删除标志建议为主键id
      */
     @JSONField(serialize = false)
+    @JsonIgnore
     private Long isDeleted;
     private Integer sortValue;
 
