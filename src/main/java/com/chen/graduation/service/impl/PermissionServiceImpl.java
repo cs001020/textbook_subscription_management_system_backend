@@ -84,9 +84,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> insertPermission(Permission permission) {
         //合理性检查
-        if (PermissionTypeEnums.DIRECTORY.equals(permission.getType()) && StrUtil.isNotBlank(permission.getComponent())) {
-            throw new ServiceException("请勿给目录权限添加组件");
-        }
+        checkRationality(permission);
+        //检查权限名唯一
         if (!checkPermissionNameUnique(permission)) {
             throw new ServiceException("新增权限'" + permission.getName() + "'失败，权限名称已存在");
         }
@@ -115,16 +114,11 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if (Objects.isNull(permission.getId())) {
             throw new ServiceException("参数异常");
         }
-        //合理性
-        if (PermissionTypeEnums.DIRECTORY.equals(permission.getType()) && StrUtil.isNotBlank(permission.getComponent())) {
-            throw new ServiceException("请勿给目录权限添加组件");
-        }
+        //合理性检查
+        checkRationality(permission);
+        //检查权限名唯一
         if (!checkPermissionNameUnique(permission)) {
             throw new ServiceException("修改权限'" + permission.getName() + "'失败，权限名称已存在");
-        }
-        //合理性检查
-        if (permission.getId().equals(permission.getParentId())) {
-            throw new ServiceException("修改权限'" + permission.getName() + "'失败，上级权限不能选择自己");
         }
         //更新
         boolean update = updateById(permission);
@@ -160,15 +154,91 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         Long id = permission.getId();
         PermissionStateEnums state = permission.getState();
         //校验
-        if (Objects.isNull(id)|| Objects.isNull(state)){
+        if (Objects.isNull(id) || Objects.isNull(state)) {
             throw new ServiceException("参数异常");
         }
         //修改
         boolean update = lambdaUpdate().eq(Permission::getId, id).set(Permission::getState, state).update();
         //日志
-        log.info("PermissionServiceImpl.changeState业务结束，结果:{}",update);
+        log.info("PermissionServiceImpl.changeState业务结束，结果:{}", update);
         //响应
         return AjaxResult.success(update);
+    }
+
+    /**
+     * 对权限的合理性检查
+     * 不合理则会抛出业务异常
+     *
+     * @param permission 权限
+     */
+    private void checkRationality(Permission permission) {
+        //空值判断
+        if (Objects.isNull(permission) || Objects.isNull(permission.getParentId())) {
+            throw new ServiceException("参数异常");
+        }
+        //通用检查
+        if (!Objects.isNull(permission.getId())&&permission.getId().equals(permission.getParentId())) {
+            throw new ServiceException("修改权限'" + permission.getName() + "'失败，上级权限不能选择自己");
+        }
+        // 获取上级权限
+        Permission parentPermission=new Permission();
+        if (!Objects.isNull(permission.getId())){
+            parentPermission = lambdaQuery().eq(Permission::getId, permission.getParentId()).one();
+        }
+        //目录权限合理性检查
+        if (PermissionTypeEnums.DIRECTORY.equals(permission.getType())){
+            if (!permission.getParentId().equals(0L)) {
+                throw new ServiceException("仅主目录可添加目录权限");
+            }
+            if (StrUtil.isNotBlank(permission.getComponent())) {
+                throw new ServiceException("请勿给目录权限添加组件");
+            }
+            if (StrUtil.isNotBlank(permission.getPerms())) {
+                throw new ServiceException("请勿给目录权限添加权限字符");
+            }
+            if (StrUtil.isBlank(permission.getIcon())) {
+                throw new ServiceException("请选择图标");
+            }
+            if (StrUtil.isBlank(permission.getPath())) {
+                throw new ServiceException("请输入路由路径");
+            }
+        }
+        //路由权限合理性检查
+        if (PermissionTypeEnums.ROUT.equals(permission.getType())){
+            if (PermissionTypeEnums.BUTTON_REQUEST.equals(parentPermission.getType())){
+                throw new ServiceException("按钮权限下禁止添加路由权限");
+            }
+            if (StrUtil.isBlank(permission.getIcon())) {
+                throw new ServiceException("请选择图标");
+            }
+            if (StrUtil.isBlank(permission.getComponent())) {
+                throw new ServiceException("请输入组件路径");
+            }
+            if (StrUtil.isBlank(permission.getPath())) {
+                throw new ServiceException("请输入路由路径");
+            }
+            if (StrUtil.isBlank(permission.getPerms())) {
+                throw new ServiceException("请输入权限字符");
+            }
+        }
+        //按钮权限合理性检查
+        if (PermissionTypeEnums.DIRECTORY.equals(permission.getType())){
+            if (!PermissionTypeEnums.ROUT.equals(parentPermission.getType())){
+                throw new ServiceException("仅路由权限下可添加按钮权限");
+            }
+            if (StrUtil.isNotBlank(permission.getIcon())) {
+                throw new ServiceException("请勿给按钮权限添加图标");
+            }
+            if (StrUtil.isNotBlank(permission.getPath())) {
+                throw new ServiceException("请勿给按钮权限添加路径");
+            }
+            if (StrUtil.isNotBlank(permission.getComponent())) {
+                throw new ServiceException("请勿给按钮权限添加组建");
+            }
+            if (StrUtil.isBlank(permission.getPerms())) {
+                throw new ServiceException("请输入权限字符");
+            }
+        }
     }
 
     /**
