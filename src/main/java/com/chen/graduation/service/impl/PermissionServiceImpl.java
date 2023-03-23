@@ -180,7 +180,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         if (!Objects.isNull(permission.getId())&&permission.getId().equals(permission.getParentId())) {
             throw new ServiceException("修改权限'" + permission.getName() + "'失败，上级权限不能选择自己");
         }
-        // 获取上级权限
+/*        // 获取上级权限
         Permission parentPermission=new Permission();
         if (!Objects.isNull(permission.getId())){
             parentPermission = lambdaQuery().eq(Permission::getId, permission.getParentId()).one();
@@ -211,9 +211,6 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             if (StrUtil.isBlank(permission.getIcon())) {
                 throw new ServiceException("请选择图标");
             }
-            if (StrUtil.isBlank(permission.getComponent())) {
-                throw new ServiceException("请输入组件路径");
-            }
             if (StrUtil.isBlank(permission.getPath())) {
                 throw new ServiceException("请输入路由路径");
             }
@@ -238,7 +235,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             if (StrUtil.isBlank(permission.getPerms())) {
                 throw new ServiceException("请输入权限字符");
             }
-        }
+        }*/
     }
 
     /**
