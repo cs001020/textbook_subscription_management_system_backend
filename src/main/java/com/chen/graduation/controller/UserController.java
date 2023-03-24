@@ -2,6 +2,7 @@ package com.chen.graduation.controller;
 
 import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
@@ -59,8 +60,8 @@ public class UserController {
 
     @ApiOperation("获取教师列表(未被封禁的教师用户)")
     @GetMapping("/teacher")
-    public AjaxResult<List<TeacherVO>> getTeacher() {
-        return userService.teacher();
+    public AjaxResult<List<User>> getTeacher(@Validated PageParamDTO pageParamDTO, User user) {
+        return userService.teacher(pageParamDTO,user);
     }
 
     @ApiOperation("获取用户列表")

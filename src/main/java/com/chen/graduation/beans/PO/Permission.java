@@ -84,13 +84,11 @@ public class Permission implements Serializable {
     /**
      * 创建时间，默认为当前时间，不需要手动设置
      */
-    @JsonIgnore
     private Date createTime;
 
     /**
      * 更新时间，默认为当前时间，可以使用触发器来进行自动更新
      */
-    @JsonIgnore
     private Date updateTime;
 
     /**

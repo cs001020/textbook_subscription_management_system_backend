@@ -193,15 +193,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public AjaxResult<List<TeacherVO>> teacher() {
+    public AjaxResult<List<User>> teacher(PageParamDTO pageParamDTO, User user) {
         //数据库查询
-        List<User> teachList = baseMapper.getTeacherList();
-        //转换对象
-        List<TeacherVO> teacherVOList = userConverter.po2teachers(teachList);
+        Page<User> page = baseMapper.getTeacherList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user);
+        //构建响应对象
+        AjaxResult<List<User>> success = AjaxResult.success(page.getRecords());
+        success.setTotal(page.getTotal());
         //打印日志
-        log.info("UserServiceImpl.teacher业务结束，结果:{}", teacherVOList);
+        log.info("UserServiceImpl.teacher业务结束，结果:{}", success);
         //响应
-        return AjaxResult.success(teacherVOList);
+        return success;
     }
 
     @Override

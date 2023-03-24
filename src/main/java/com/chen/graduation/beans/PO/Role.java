@@ -35,9 +35,7 @@ public class Role implements Serializable {
     private RoleStateEnums state;
     @NotNull(message = "显示顺序不能为空")
     private Integer sortValue;
-    @JsonIgnore
     private Date createTime;
-    @JsonIgnore
     private Date updateTime;
 
     @JSONField(serialize = false)

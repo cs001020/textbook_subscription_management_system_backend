@@ -1,6 +1,7 @@
 package com.chen.graduation.mapper;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -17,11 +18,13 @@ import java.util.List;
 public interface UserMapper extends BaseMapper<User> {
 
     /**
-     * 得到老师名单
+     * 查询教师名单
      *
-     * @return {@link List}<{@link User}>
+     * @param page 页面
+     * @param user 用户
+     * @return {@link Page}<{@link User}>
      */
-    List<User> getTeacherList();
+    Page<User> getTeacherList(Page<User> page,@Param("user") User user);
 
 
     /**

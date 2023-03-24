@@ -2,6 +2,7 @@ package com.chen.graduation.beans.PO;
 
 import com.alibaba.fastjson2.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -51,13 +52,13 @@ public class User implements Serializable {
     private String introduction;
     private UserStateEnums state;
     private UserTypeEnums type;
-    @JsonIgnore
     private Date createTime;
-    @JsonIgnore
     private Date updateTime;
     @JSONField(serialize = false)
     @JsonIgnore
     private Long isDeleted;
+    @TableField(exist = false)
+    private UserInfo userInfo;
 
     private static final long serialVersionUID = 1L;
 }
