@@ -1,13 +1,17 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.PermissionService;
 import com.chen.graduation.utils.PermissionUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -21,7 +25,7 @@ import java.util.List;
  */
 @Slf4j
 @Api(tags = "权限")
-@ApiSupport(author = "1006596474@qq.com",order = 7)
+@ApiSupport(author = "1006596474@qq.com", order = 7)
 @RestController
 @RequestMapping("/permission")
 public class PermissionController {
@@ -29,18 +33,43 @@ public class PermissionController {
     @Resource
     private PermissionService permissionService;
 
-    // FIXME: 2023/3/2 暂用 记得修改
     @GetMapping("list")
-    public AjaxResult<List<Permission>> getList(){
-        List<Permission> list = permissionService.list();
-        List<Permission> permissionList = PermissionUtils.buildTree(list);
-        return AjaxResult.success(permissionList);
+    @ApiOperation("获取权限列表(树形结构)")
+    public AjaxResult<List<Permission>> list(Permission permission) {
+        return permissionService.treeList(permission);
     }
 
+    @Log(title = "权限管理", businessTypeEnums = BusinessTypeEnums.INSERT)
     @PostMapping("add")
-    @Transactional(rollbackFor = Throwable.class)
-    public AjaxResult<Object> add(@RequestBody Permission permission){
-        boolean save = permissionService.save(permission);
-        return AjaxResult.success(save);
+    @ApiOperation("新增权限")
+    public AjaxResult<Object> add(@RequestBody @Validated Permission permission) {
+        return permissionService.insertPermission(permission);
+    }
+
+    @GetMapping(value = "/{id}")
+    @ApiOperation("根据id号获取详细信息")
+    public AjaxResult<Permission> getInfo(@PathVariable Long id) {
+        return permissionService.getPermissionByPermissionId(id);
+    }
+
+    @Log(title = "权限管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @PutMapping("/update")
+    @ApiOperation("修改菜单")
+    public AjaxResult<Object> edit(@Validated @RequestBody Permission permission) {
+        return permissionService.updatePermission(permission);
+    }
+
+    @Log(title = "权限管理", businessTypeEnums = BusinessTypeEnums.DELETE)
+    @DeleteMapping("/del/{id}")
+    @ApiOperation("根据id删除权限")
+    public AjaxResult<Object> remove(@PathVariable("id") Long id) {
+        return permissionService.deletePermissionById(id);
+    }
+
+    @Log(title = "权限管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @PutMapping("/changeSate")
+    @ApiOperation("修改权限状态")
+    public AjaxResult<Object> changeSate(@RequestBody Permission permission) {
+        return permissionService.changeState(permission);
     }
 }

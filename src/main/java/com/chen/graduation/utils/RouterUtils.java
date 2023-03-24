@@ -6,6 +6,7 @@ import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.VO.MetaVo;
 import com.chen.graduation.beans.VO.RouterVo;
 import com.chen.graduation.enums.PermissionTypeEnums;
+import com.chen.graduation.exception.ServiceException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,15 @@ import java.util.stream.Collectors;
  * @date 2023/03/01
  */
 public class RouterUtils {
+
+    /**
+     * 布局 用于目录权限
+     */
+    public static final String LAYOUT ="Layout";
+    /**
+     * 父视图 用于多级路由
+     */
+    public static final String PARENT_VIEW ="ParentView";
 
     public static List<RouterVo> buildRouterTree(List<Permission> permissionList) {
         //过滤出路由权限
@@ -41,7 +51,7 @@ public class RouterUtils {
             router.setHidden(false);
             router.setAlwaysShow(false);
             router.setPath(getRouterPath(permission));
-            router.setComponent(permission.getComponent());
+            router.setComponent(getComponentName(permission));
             router.setMeta(new MetaVo(permission.getName(), permission.getIcon()));
             List<Permission> children = permission.getChildren();
             //存在子节点
@@ -63,5 +73,18 @@ public class RouterUtils {
             return "/" + permission.getPath();
         }
         return permission.getPath();
+    }
+
+    private static String getComponentName(Permission permission) {
+        if (StrUtil.isNotBlank(permission.getComponent())){
+            return permission.getComponent();
+        }
+        if (PermissionTypeEnums.DIRECTORY.equals(permission.getType())){
+            return LAYOUT;
+        }
+        if (PermissionTypeEnums.ROUT.equals(permission.getType())){
+            return PARENT_VIEW;
+        }
+        throw new  ServiceException("路由构建异常,请联系管理员");
     }
 }

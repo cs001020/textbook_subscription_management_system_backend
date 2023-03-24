@@ -1,6 +1,7 @@
 package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
@@ -44,7 +45,7 @@ public interface UserService extends IService<User> {
      *
      * @return {@link AjaxResult}
      */
-    AjaxResult<List<TeacherVO>>  teacher();
+    AjaxResult<List<User>> teacher(PageParamDTO pageParamDTO, User user);
 
     /**
      * 注销
@@ -60,4 +61,73 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link List}<{@link UserVO}>>
      */
     AjaxResult<List<UserVO>> selectUserList(UserSearchDTO userSearchDTO);
+
+    /**
+     * 修改用户状态
+     *
+     * @param user 用户
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> changeState(User user);
+
+    /**
+     * 更新用户
+     *
+     * @param user 用户
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUser(User user);
+
+    /**
+     * 删除用户
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteUser(Long id);
+
+    /**
+     * 重置密码
+     *
+     * @param user 用户
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> resetPwd(User user);
+
+    /**
+     * 用户分配角色
+     *
+     * @param userId  用户id
+     * @param roleIds 角色id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds);
+
+    /**
+     * 根据用户编号获取授权角色
+     *
+     * @param userId 用户id
+     * @return {@link AjaxResult}<{@link UserRoleVo}>
+     */
+    AjaxResult<UserRoleVo> authRole(Long userId);
+
+    /**
+     * 查询已分配用户角色列表
+     *
+     * @param pageParamDTO 页面参数dto
+     * @param user         用户
+     * @param roleId       角色id
+     * @return {@link AjaxResult}<{@link UserVO}>
+     */
+    AjaxResult<List<UserVO>> selectAllocatedList(PageParamDTO pageParamDTO, User user, Long roleId);
+
+    /**
+     * 查询未分配用户角色列表
+     *
+     * @param pageParamDTO 页面参数dto
+     * @param user         用户
+     * @param roleId       角色id
+     * @return {@link AjaxResult}<{@link UserVO}>
+     */
+    AjaxResult<List<UserVO>> selectUnallocatedList(PageParamDTO pageParamDTO, User user, Long roleId);
 }

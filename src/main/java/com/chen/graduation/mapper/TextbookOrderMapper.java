@@ -2,10 +2,6 @@ package com.chen.graduation.mapper;
 
 import com.chen.graduation.beans.PO.TextbookOrder;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.chen.graduation.beans.TextbookIdsAndGradePeople;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.Map;
 
 /**
 * @author 10065

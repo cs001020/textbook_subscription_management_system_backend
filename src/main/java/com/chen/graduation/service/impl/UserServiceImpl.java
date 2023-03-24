@@ -1,19 +1,21 @@
 package com.chen.graduation.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.DesensitizedUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.crypto.digest.MD5;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
-import com.chen.graduation.beans.PO.Permission;
-import com.chen.graduation.beans.PO.User;
+import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.constants.SystemConstants;
@@ -22,8 +24,7 @@ import com.chen.graduation.enums.LoginLogStateEnums;
 import com.chen.graduation.enums.UserStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
-import com.chen.graduation.service.PermissionService;
-import com.chen.graduation.service.UserService;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.UserMapper;
 import com.chen.graduation.utils.AsyncFactory;
 import com.chen.graduation.utils.AsyncManager;
@@ -32,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -49,6 +51,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Resource
     private PermissionService permissionService;
     @Resource
+    private UserRoleService userRoleService;
+    @Resource
+    private RoleService roleService;
+    @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
     private UserConverter userConverter;
@@ -58,7 +64,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Value("${jwt.hand}")
     private String requestHand;
 
-    // TODO: 2023/2/20 登陆日志
     @Override
     public AjaxResult<TokenVO> accountLogin(AccountLoginDTO accountLoginDTO) {
         //验证码校验
@@ -188,15 +193,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public AjaxResult<List<TeacherVO>> teacher() {
+    public AjaxResult<List<User>> teacher(PageParamDTO pageParamDTO, User user) {
         //数据库查询
-        List<User> teachList = baseMapper.getTeacherList();
-        //转换对象
-        List<TeacherVO> teacherVOList = userConverter.po2teachers(teachList);
+        Page<User> page = baseMapper.getTeacherList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user);
+        //构建响应对象
+        AjaxResult<List<User>> success = AjaxResult.success(page.getRecords());
+        success.setTotal(page.getTotal());
         //打印日志
-        log.info("UserServiceImpl.teacher业务结束，结果:{}", teacherVOList);
+        log.info("UserServiceImpl.teacher业务结束，结果:{}", success);
         //响应
-        return AjaxResult.success(teacherVOList);
+        return success;
     }
 
     @Override
@@ -221,6 +227,226 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //响应
         return success;
     }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> changeState(User user) {
+        //参数校验
+        if (Objects.isNull(user.getId())||Objects.isNull(user.getState())){
+            throw new ServiceException("参数异常");
+        }
+        //禁止修改本人
+        if (user.getId().equals(UserHolderContext.getUserId())){
+            throw new ServiceException("参数异常");
+        }
+        //更新状态
+        boolean update = lambdaUpdate().eq(User::getId, user.getId()).set(User::getState, user.getState()).update();
+        //如果为封禁 强制下线
+        if (UserStateEnums.BAN.equals(user.getState())){
+            kickUser(user.getId());
+        }
+        //响应结果
+        if (!update){
+            throw new ServiceException("发生未知异常，请稍后再试！");
+        }
+        //日志
+        log.info("UserServiceImpl.changeState业务结束，结果:{}", user);
+        //响应
+        return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUser(User user) {
+        //检查账号是否存在
+        if (!checkAccountUnique(user)){
+            throw new ServiceException("修改失败，登录账号已存在");
+        }
+        //检查手机号是否存在
+        if (StrUtil.isNotBlank(user.getPhoneNumber())&&!checkPhoneUnique(user)){
+            throw new ServiceException("修改失败，手机号码已存在");
+        }
+        //密码加盐
+        if (StrUtil.isNotBlank(user.getPassword())){
+            user.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
+        }
+        //更新
+        boolean update = updateById(user);
+        //用户下线
+        if (StrUtil.isNotBlank(user.getPassword())||UserStateEnums.BAN.equals(user.getState())){
+            kickUser(user.getId());
+        }
+        //日志
+        log.info("UserServiceImpl.updateUser业务结束，结果:{}",update);
+        //响应
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> deleteUser(Long id) {
+        //判断是否为当前登陆用户
+        if (id.equals(UserHolderContext.getUserId())){
+            throw new ServiceException("当前账户无法删除");
+        }
+        //是否存在开课计划
+        if (checkHasOpeningPlan(id)){
+            throw new ServiceException("该用户存在开课计划,暂时无法删除!");
+        }
+        //删除用户反馈
+        SpringUtil.getBean(TextbookFeedbackService.class).lambdaUpdate().eq(TextbookFeedback::getStudentId,id).remove();
+        //删除用户信息
+        SpringUtil.getBean(UserInfoService.class).lambdaUpdate().eq(UserInfo::getUserFacultyId,id).remove();
+        //删除用户角色关联表
+        userRoleService.lambdaUpdate().eq(UserRole::getUserId,id).remove();
+        //删除用户
+        boolean remove = this.lambdaUpdate().eq(User::getId, id).remove();
+        //强制下线
+        kickUser(id);
+        //日志
+        log.info("UserServiceImpl.deleteUser业务结束，结果:{}",remove);
+        //响应
+        return AjaxResult.success(remove);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> resetPwd(User user) {
+        //参数校验
+        if (Objects.isNull(user.getId())||StrUtil.isBlank(user.getPassword())){
+            throw new ServiceException("参数异常");
+        }
+        //构建对象
+        User newPwdUser = new User();
+        newPwdUser.setId(user.getId());
+        newPwdUser.setPassword(SecureUtil.md5(user.getPassword() + SystemConstants.PASSWORD_MD5_SALT));
+        //更新
+        boolean update = updateById(newPwdUser);
+        //下线
+        kickUser(user.getId());
+        //日志
+        log.info("UserServiceImpl.resetPwd业务结束，结果:{}",update);
+        //响应
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds) {
+        //参数校验
+        if (Objects.isNull(userId)||Objects.isNull(roleIds)){
+            throw new ServiceException("参数异常");
+        }
+        //删除原角色
+        userRoleService.lambdaUpdate().eq(UserRole::getUserId,userId).remove();
+        //新角色id不为空插入新数据
+        if (CollUtil.isNotEmpty(Arrays.asList(roleIds))){
+            //构建对象
+            List<UserRole> userRoleList=new ArrayList<>();
+            for (Long roleId : roleIds) {
+                UserRole userRole = new UserRole();
+                userRole.setUserId(userId);
+                userRole.setRoleId(roleId);
+                userRoleList.add(userRole);
+            }
+            //插入新数据
+            userRoleService.saveBatch(userRoleList);
+        }
+        //响应
+        return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult<UserRoleVo> authRole(Long userId) {
+
+        User user = this.getById(userId);
+        List<Role> roles = roleService.selectRolesByUserId(userId);
+        //封装对象
+        UserRoleVo userRoleVo = new UserRoleVo();
+        userRoleVo.setUser(user);
+        userRoleVo.setRoleList(roles);
+        //日志
+        log.info("UserServiceImpl.authRole业务结束，结果:{}",userRoleVo);
+        //响应
+        return AjaxResult.success(userRoleVo);
+    }
+
+    @Override
+    public AjaxResult<List<UserVO>> selectAllocatedList(PageParamDTO pageParamDTO, User user, Long roleId) {
+        //查询数据库
+        Page<User> page=baseMapper.selectAllocatedList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user,roleId);
+        //封装对象
+        List<UserVO> userVOList = userConverter.po2vos(page.getRecords());
+        AjaxResult<List<UserVO>> success = AjaxResult.success(userVOList);
+        success.setTotal(page.getTotal());
+        //日志
+        log.info("UserServiceImpl.selectUnallocatedList业务结束，结果:{}",success);
+        //响应
+        return success;
+    }
+
+    @Override
+    public AjaxResult<List<UserVO>> selectUnallocatedList(PageParamDTO pageParamDTO, User user, Long roleId) {
+        //查询数据库
+        Page<User> page=baseMapper.selectUnallocatedList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user,roleId);
+        //封装对象
+        List<UserVO> userVOList = userConverter.po2vos(page.getRecords());
+        AjaxResult<List<UserVO>> success = AjaxResult.success(userVOList);
+        success.setTotal(page.getTotal());
+        //日志
+        log.info("UserServiceImpl.selectUnallocatedList业务结束，结果:{}",success);
+        //响应
+        return success;
+    }
+
+    /**
+     * 检查账号码唯一性
+     *
+     * @param user 用户
+     * @return boolean 唯一返回true
+     */
+    private boolean checkAccountUnique(User user){
+        if (StrUtil.isBlank(user.getAccount())){
+            return true;
+        }
+        Page<User> page = this.lambdaQuery().eq(User::getAccount, user.getAccount()).page(new Page<>(1, 1));
+        List<User> userList = page.getRecords();
+        return !CollectionUtil.isNotEmpty(userList) || userList.get(0).getId().equals(user.getId());
+    }
+
+    /**
+     * 检查手机号码唯一性
+     *
+     * @param user 用户
+     * @return boolean 唯一返回true
+     */
+    private boolean checkPhoneUnique(User user){
+        if (StrUtil.isBlank(user.getPhoneNumber())){
+            return true;
+        }
+        Page<User> page = this.lambdaQuery().eq(User::getPhoneNumber,user.getPhoneNumber()).page(new Page<>(1,1));
+        List<User> userList = page.getRecords();
+        return !CollectionUtil.isNotEmpty(userList) || userList.get(0).getId().equals(user.getId());
+    }
+
+    /**
+     * 检查是否存在开课计划
+     *
+     * @param id id
+     * @return boolean 存在返回true
+     */
+    private boolean checkHasOpeningPlan(Long id){
+        Long count = SpringUtil.getBean(OpeningPlanService.class).lambdaQuery().eq(OpeningPlan::getTeacherId, id).count();
+        return count>0;
+    }
+
+    private void kickUser(Long id){
+        if (!Objects.isNull(id)){
+            stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY+id);
+        }
+    }
+
+    // TODO: 2023/3/20 关于鉴权
 
 }
 

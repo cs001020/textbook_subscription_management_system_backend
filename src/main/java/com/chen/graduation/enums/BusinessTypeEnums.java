@@ -32,7 +32,11 @@ public enum BusinessTypeEnums {
     /**
      * 导出
      */
-    EXPORT(4,"导出");
+    EXPORT(4,"导出"),
+    /**
+     * 授权
+     */
+    GRANT(5,"授权");
 
     /**
      * 状态码

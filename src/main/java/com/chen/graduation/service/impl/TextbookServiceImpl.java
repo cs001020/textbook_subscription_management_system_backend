@@ -126,9 +126,9 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         //查询当前用户
         Long userId = UserHolderContext.getUserId();
         User user = userService.getById(userId);
-        //异常判断
+        //非学生用户返回空列表
         if (Objects.isNull(user)||Objects.isNull(user.getGradeId())||!UserTypeEnums.STUDENT.equals(user.getType())){
-            throw new ServiceException("发生未知异常,请稍后再试");
+           return AjaxResult.success(Collections.emptyList());
         }
         //根据学生班级id查询已经发放教材订单
         List<TextbookOrder> textbookOrderList = textbookOrderService.lambdaQuery().eq(TextbookOrder::getGradeId, user.getGradeId()).eq(TextbookOrder::getState, TextbookOrderStateEnums.GRANTED).list();

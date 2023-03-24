@@ -18,6 +18,14 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
+    <resultMap id="UserWithInfo" type="com.chen.graduation.beans.PO.User" extends="BaseResultMap">
+        <association property="userInfo">
+            <result property="sex" column="sex"/>
+            <result property="address" column="address"/>
+            <result property="birthday" column="birthday"/>
+            <result property="email" column="email"/>
+        </association>
+    </resultMap>
 
     <sql id="Base_Column_List">
         id,account,password,
@@ -25,12 +33,25 @@
         name,icon,state,
         create_time,update_time,is_deleted,type
     </sql>
-    <select id="getTeacherList" resultType="com.chen.graduation.beans.PO.User">
+    <select id="getTeacherList" resultMap="UserWithInfo">
         select *
-        from tb_user
+        from tb_user u left join tb_user_info ui on u.id = ui.user_faculty_id
         where type=1
-          and is_deleted=0
-          and state=0;
+          and u.is_deleted=0
+          and u.state=0
+          and (ui.is_deleted=0 or ui.is_deleted is null)
+        <if test="user.account != null and user.account != ''">
+            AND u.account like concat('%', #{user.account}, '%')
+        </if>
+        <if test="user.phoneNumber != null and user.phoneNumber != ''">
+            AND u.phone_number like concat('%', #{user.phoneNumber}, '%')
+        </if>
+        <if test="user.secondaryCollegeId != null and user.secondaryCollegeId != ''">
+            AND u.secondary_college_id = #{user.secondaryCollegeId}
+        </if>
+        <if test="user.teachingGroupId != null and user.teachingGroupId != ''">
+            AND u.teaching_group_id = #{user.teachingGroupId}
+        </if>
     </select>
     <select id="selectUserList" resultType="com.chen.graduation.beans.PO.User">
         select <include refid="Base_Column_List"/>
@@ -39,6 +60,7 @@
             is_deleted=0
             <if test="dto.account !=null and dto.account !=''">
                and account like concat('%',#{dto.account},'%')
+               or name like concat('%',#{dto.account},'%')
             </if>
             <if test="dto.phoneNumber !=null and dto.phoneNumber !=''">
                and phone_number like concat('%',#{dto.phoneNumber},'%')
@@ -47,8 +69,36 @@
                 and state=#{dto.state}
             </if>
             <if test="dto.type != null">
-                and state=#{dto.type}
+                and type=#{dto.type}
             </if>
         </where>
+        order by id
+    </select>
+    <select id="selectAllocatedList" resultType="com.chen.graduation.beans.PO.User">
+        select distinct u.id, u.account, u.name, u.phone_number, u.state, u.create_time
+        from tb_user u
+        left join tb_user_role ur on u.id = ur.user_id
+        where u.is_deleted = 0 and ur.is_deleted=0 and ur.role_id=#{roleId}
+        <if test="user.account != null and user.account != ''">
+            AND u.account like concat('%', #{user.account}, '%')
+        </if>
+        <if test="user.phoneNumber != null and user.phoneNumber != ''">
+            AND u.phone_number like concat('%', #{user.phoneNumber}, '%')
+        </if>
+        order by u.id
+    </select>
+    <select id="selectUnallocatedList" resultType="com.chen.graduation.beans.PO.User">
+        select distinct u.id, u.account, u.name, u.phone_number, u.state, u.create_time
+        from tb_user u
+        left join tb_user_role ur on u.id = ur.user_id
+        where u.is_deleted = 0 and (ur.is_deleted=0 or ur.is_deleted is null ) and (ur.role_id != #{roleId} or ur.role_id is NULL)
+        and u.id not in (select u.id from tb_user u inner join tb_user_role ur on u.id = ur.user_id and ur.role_id = #{roleId})
+        <if test="user.account != null and user.account != ''">
+            AND u.account like concat('%', #{user.account}, '%')
+        </if>
+        <if test="user.phoneNumber != null and user.phoneNumber != ''">
+            AND u.phone_number like concat('%', #{user.phoneNumber}, '%')
+        </if>
+        order by u.id
     </select>
 </mapper>

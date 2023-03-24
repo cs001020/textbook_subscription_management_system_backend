@@ -10,4 +10,11 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface UserRoleService extends IService<UserRole> {
 
+    /**
+     * 通过角色ID查询角色使用数量
+     *
+     * @param roleId 角色id
+     * @return int
+     */
+    int countUserRoleByRoleId(Long roleId);
 }

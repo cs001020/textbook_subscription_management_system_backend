@@ -4,6 +4,7 @@ import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.RolePermissionVo;
 
 import java.util.List;
 
@@ -18,7 +19,75 @@ public interface RoleService extends IService<Role> {
      * 角色分页查询
      *
      * @param pageParamDTO 页面参数dto
+     * @param role
      * @return {@link AjaxResult}<{@link List}<{@link Role}>>
      */
-    AjaxResult<List<Role>> pageQuery(PageParamDTO pageParamDTO);
+    AjaxResult<List<Role>> pageQuery(PageParamDTO pageParamDTO, Role role);
+
+    /**
+     * 查询所有角色
+     * 当前用户拥有的角色flag将为true
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link Role}>
+     */
+    List<Role> selectRolesByUserId(Long userId);
+
+    /**
+     * 改变状态
+     *
+     * @param role 角色
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> changeStatus(Role role);
+
+    /**
+     * 选择角色通过id
+     *
+     * @param roleId 角色id
+     * @return {@link AjaxResult}<{@link RolePermissionVo}>
+     */
+    AjaxResult<RolePermissionVo> selectRoleById(Long roleId);
+
+    /**
+     * 更新角色
+     *
+     * @param role 角色
+     * @return boolean
+     */
+    AjaxResult<Object> updateRole(Role role);
+
+    /**
+     * 保存新角色
+     *
+     * @param role 角色
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> saveRole(Role role);
+
+    /**
+     * 通过id删除角色
+     *
+     * @param roleId 角色id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteRoleById(Long roleId);
+
+    /**
+     * 批量选择用户授权
+     *
+     * @param roleId  角色id
+     * @param userIds 用户id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> insertAuthUsers(Long roleId, Long[] userIds);
+
+    /**
+     * 批量取消授权用户
+     *
+     * @param roleId  角色id
+     * @param userIds 用户id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteAuthUsers(Long roleId, Long[] userIds);
 }

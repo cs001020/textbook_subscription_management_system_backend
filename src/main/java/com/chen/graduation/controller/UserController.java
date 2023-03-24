@@ -1,10 +1,13 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.*;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.UserService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 登录控制器
@@ -56,8 +60,8 @@ public class UserController {
 
     @ApiOperation("获取教师列表(未被封禁的教师用户)")
     @GetMapping("/teacher")
-    public AjaxResult<List<TeacherVO>> getTeacher() {
-        return userService.teacher();
+    public AjaxResult<List<User>> getTeacher(@Validated PageParamDTO pageParamDTO, User user) {
+        return userService.teacher(pageParamDTO,user);
     }
 
     @ApiOperation("获取用户列表")
@@ -66,10 +70,52 @@ public class UserController {
         return userService.selectUserList(userSearchDTO);
     }
 
-    // TODO: 2023/3/11 修改用户
-    // TODO: 2023/3/11 根据id获取详细用户信息
-    // TODO: 2023/3/11 删除用户
-    // TODO: 2023/3/11 重置密码
-    // TODO: 2023/3/11 分配角色
-    // TODO: 2023/3/11 修改状态
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("修改用户状态")
+    @PutMapping("/changeState")
+    public AjaxResult<Object> changeState(@RequestBody User user) {
+        return userService.changeState(user);
+    }
+
+    @ApiOperation("根据id获取详细用户信息")
+    @GetMapping("/userInfo/{id}")
+    public AjaxResult<User> userInfo(@PathVariable Long id) {
+        return AjaxResult.success(userService.getById(id));
+    }
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("修改用户")
+    @PutMapping("/update")
+    public AjaxResult<Object> updateUser(@RequestBody User user) {
+        return userService.updateUser(user);
+    }
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.DELETE)
+    @ApiOperation("删除用户")
+    @DeleteMapping("/delete/{id}")
+    public AjaxResult<Object> delete(@PathVariable Long id) {
+        return userService.deleteUser(id);
+    }
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("重置密码")
+    @PutMapping("/resetPwd")
+    public AjaxResult<Object> resetPwd(@RequestBody User user) {
+        return userService.resetPwd(user);
+    }
+
+    @ApiOperation("根据用户id获取授权角色")
+    @GetMapping("/authRole/{userId}")
+    public AjaxResult<UserRoleVo> authRole(@PathVariable("userId") Long userId)
+    {
+        return userService.authRole(userId);
+    }
+
+    @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.GRANT)
+    @ApiOperation("分配角色")
+    @PutMapping("/authRole")
+    public AjaxResult<Object> insertAuthRole( Long userId, Long[] roleIds) {
+        return userService.insertUserAuth(userId, roleIds);
+    }
+
 }
