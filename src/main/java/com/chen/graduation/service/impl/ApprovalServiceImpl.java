@@ -115,6 +115,11 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setTeachingGroupState(approvalDTO.getApprovalStateEnums());
         approval.setTeachingGroupMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.WAIT_SECONDARY);
+        if (ApprovalStateEnums.ADOPT.equals(approvalDTO.getApprovalStateEnums())) {
+            LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
+            updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
+            openingPlanService.update(updateWrapper);
+        }
         //插入
         boolean b = this.updateById(approval);
         log.info("ApprovalServiceImpl.teachingGroupApproval业务结束，结果:{}", b);
@@ -141,6 +146,12 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setSecondaryCollegeState(approvalDTO.getApprovalStateEnums());
         approval.setSecondaryCollegeMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.WAIT_OFFICE);
+        //教务处审核通过 更新开课计划
+        if (ApprovalStateEnums.ADOPT.equals(approvalDTO.getApprovalStateEnums())) {
+            LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
+            updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
+            openingPlanService.update(updateWrapper);
+        }
         //插入
         boolean b = this.updateById(approval);
         log.info("ApprovalServiceImpl.teachingGroupApproval业务结束，结果:{}", b);

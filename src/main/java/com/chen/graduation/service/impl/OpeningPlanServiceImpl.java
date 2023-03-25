@@ -1,14 +1,18 @@
 package com.chen.graduation.service.impl;
 
 import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
 import com.chen.graduation.converter.OpeningPlanConverter;
+import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import com.chen.graduation.enums.OpenPlanStateEnums;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.OpeningPlanDetailService;
@@ -21,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 10065
@@ -109,6 +114,26 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", planVO);
         //返回结果
         return AjaxResult.success(planVO);
+    }
+
+    @Override
+    public AjaxResult<List<OpeningPlanDetail>> selectCourse(PageParamDTO pageParamDTO, OpeningPlanDetail openingPlanDetail) {
+        //获取参数
+        String courseName = openingPlanDetail.getCourseName();
+        OpenPlanDetailsTypeEnums type = openingPlanDetail.getType();
+        //数据库查询
+        Page<OpeningPlanDetail> page = openingPlanDetailService
+                .lambdaQuery()
+                .like(StrUtil.isNotBlank(courseName),OpeningPlanDetail::getCourseName,courseName)
+                .eq(!Objects.isNull(type),OpeningPlanDetail::getType,type)
+                .page(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()));
+        //封装响应对象
+        AjaxResult<List<OpeningPlanDetail>> success = AjaxResult.success(page.getRecords());
+        success.setTotal(page.getTotal());
+        //日志
+        log.info("OpeningPlanServiceImpl.selectCourse业务结束，结果:{}",success);
+        //响应
+        return success;
     }
 }
 

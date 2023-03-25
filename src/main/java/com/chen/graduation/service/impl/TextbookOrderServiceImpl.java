@@ -87,7 +87,7 @@ public class TextbookOrderServiceImpl extends ServiceImpl<TextbookOrderMapper, T
         //判断库存是否充足
         for (Textbook textbook : textbookList) {
             if (TextbookStateEnums.UNDER_STOCK.equals(textbook.getState())||textbook.getStock()<count){
-                throw new ServiceException("库存不足");
+                throw new ServiceException("图书《"+textbook.getBookName()+"》库存不足");
             }
             textbook.setStock((int) (textbook.getStock()-count));
         }

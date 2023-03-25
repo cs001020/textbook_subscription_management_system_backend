@@ -43,7 +43,7 @@ public class Textbook implements Serializable {
 
     private String issueNumber;
 
-    private String prePacketNumber;
+    private Integer prePacketNumber;
 
     private Date publicationDate;
 

@@ -1,6 +1,8 @@
 package com.chen.graduation.controller;
 
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
+import com.chen.graduation.beans.PO.OpeningPlanDetail;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
 import com.chen.graduation.service.OpeningPlanService;
@@ -50,5 +52,11 @@ public class OpeningPlanController {
     @GetMapping("/{id}")
     public AjaxResult<OpeningPlanVO> getPlanById(@PathVariable Long id) {
         return openingPlanService.getPlanById(id);
+    }
+
+    @ApiOperation("查询课程")
+    @GetMapping("/course")
+    public AjaxResult<List<OpeningPlanDetail>> course(@Validated PageParamDTO pageParamDTO,OpeningPlanDetail openingPlanDetail) {
+        return openingPlanService.selectCourse(pageParamDTO,openingPlanDetail);
     }
 }

@@ -24,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -57,6 +58,7 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         lambdaQueryWrapper.orderByAsc(SortableEnums.ASC.equals(textbookSearchDTO.getOrderByPrice()), Textbook::getPrice);
         lambdaQueryWrapper.orderByDesc(SortableEnums.DESC.equals(textbookSearchDTO.getOrderByStock()), Textbook::getStock);
         lambdaQueryWrapper.orderByDesc(SortableEnums.DESC.equals(textbookSearchDTO.getOrderByPrice()), Textbook::getPrice);
+        lambdaQueryWrapper.orderByAsc(Textbook::getId);
         String keyWord = textbookSearchDTO.getKeyWord();
         if (StrUtil.isNotBlank(keyWord)) {
             lambdaQueryWrapper
@@ -145,6 +147,33 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         });
         //数据库查询
         return this.getByIds(StrUtil.join(",", textBookIds));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> addStock(Long id, Integer count) {
+        //参数校验
+        if (Objects.isNull(count)|| count <=0){
+            throw new ServiceException("参数异常");
+        }
+        //获取教材信息
+        Textbook textbook = getById(id);
+        TextbookStateEnums state = textbook.getState();
+        Integer stock = textbook.getStock();
+        //教材状态判断
+        if (TextbookStateEnums.AUDIT.equals(state)||TextbookStateEnums.DISCARD.equals(state)){
+            throw new ServiceException("该图书无法添加库存");
+        }
+        //修改库存
+        textbook.setStock(stock+count);
+        if (TextbookStateEnums.UNDER_STOCK.equals(state)){
+            textbook.setState(TextbookStateEnums.NORMAL);
+        }
+        boolean update = lambdaUpdate().eq(Textbook::getId, id).set(Textbook::getStock, stock + count).set(Textbook::getState,state).update();
+        //日志
+        log.info("TextbookServiceImpl.addStock业务结束，结果:{}",update);
+        //响应
+        return AjaxResult.success(update);
     }
 }
 

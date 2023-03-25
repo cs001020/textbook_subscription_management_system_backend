@@ -46,4 +46,13 @@ public interface TextbookService extends IService<Textbook> {
      * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
      */
     AjaxResult<List<TextbookVO>> me();
+
+    /**
+     * 添加教材库存
+     *
+     * @param id    id
+     * @param count 数
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> addStock(Long id, Integer count);
 }

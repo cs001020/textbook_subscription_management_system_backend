@@ -1,10 +1,12 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.TextbookService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -54,11 +56,11 @@ public class TextbookController {
         return textbookService.me();
     }
 
-    @ApiOperation("教材入库")
-    @PostMapping("/storage")
-    public AjaxResult<Object> storage() {
-        // TODO: 2023/2/1 教材入库 for cs
-        return AjaxResult.success();
+    @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("添加教材库存")
+    @PutMapping("/addStock/{id}")
+    public AjaxResult<Object> addStock(@PathVariable Long id,Integer count) {
+        return textbookService.addStock(id,count);
     }
 
     @ApiOperation("教材发放")

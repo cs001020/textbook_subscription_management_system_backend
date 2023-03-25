@@ -1,8 +1,10 @@
 package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.PO.OpeningPlanDetail;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
 
@@ -44,4 +46,13 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link List}<{@link OpeningPlanVO}>>
      */
     AjaxResult<OpeningPlanVO>  getPlanById(Long id);
+
+    /**
+     * 查询课程信息
+     *
+     * @param pageParamDTO      页面参数dto
+     * @param openingPlanDetail
+     * @return {@link AjaxResult}<{@link OpeningPlanDetail}>
+     */
+    AjaxResult<List<OpeningPlanDetail>> selectCourse(PageParamDTO pageParamDTO, OpeningPlanDetail openingPlanDetail);
 }
