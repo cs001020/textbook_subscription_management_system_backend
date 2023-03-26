@@ -1,7 +1,10 @@
 package com.chen.graduation.controller;
 
 import cn.hutool.core.util.IdUtil;
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.enums.BusinessTypeEnums;
+import com.chen.graduation.service.FileService;
 import com.chen.graduation.utils.FileUtils;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import com.qiniu.http.Response;
@@ -27,28 +30,14 @@ import java.util.Objects;
 @ApiSupport(author = "1006596474@qq.com",order = 8)
 @RestController
 @RequestMapping("/file")
-@Slf4j
 public class FileController {
     @Resource
-    private FileUtils fileUtils;
+    private FileService fileService;
 
-    @ApiOperation("文件上传,最大5MB")
-    @PostMapping("/upload")
+    @Log(title = "文件模块",businessTypeEnums = BusinessTypeEnums.UPLOAD)
+    @ApiOperation("图片文件上传,最大5MB")
+    @PostMapping("/upload/img")
     public AjaxResult<Object> adminUpload(MultipartFile file) {
-        if (Objects.isNull(file)){
-            log.warn("ProductController.adminUpload业务结束，结果:{}","上传失败,空文件");
-            return AjaxResult.error("文件上传失败");
-        }
-        String fileName = IdUtil.simpleUUID()+"-"+file.getOriginalFilename();
-        try {
-            fileUtils.fileUpload(fileName, file.getInputStream());
-        } catch (Exception e) {
-            log.error("ProductController.adminUpload业务结束，结果:{}","上传失败",e);
-            return AjaxResult.error("文件上传失败");
-        }
-        HashMap<String, Object> stringObjectHashMap = new HashMap<>(16);
-        stringObjectHashMap.put("url","/upload/"+fileName);
-        log.info("FileController.adminUpload业务结束，结果:{},{}","上传成功","/upload/"+fileName);
-        return AjaxResult.success(stringObjectHashMap);
+        return fileService.uploadImg(file);
     }
 }

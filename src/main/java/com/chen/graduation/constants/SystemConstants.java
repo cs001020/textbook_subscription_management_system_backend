@@ -1,5 +1,8 @@
 package com.chen.graduation.constants;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * 系统常量
  *
@@ -31,4 +34,9 @@ public class SystemConstants {
      * jwt id载荷key
      */
     public static final String JWT_ID_PAYLOAD_KEY="id";
+
+    /**
+     * 图片类型
+     */
+    public static final List<String> IMG_TYPE= Arrays.asList("jpg","png");
 }

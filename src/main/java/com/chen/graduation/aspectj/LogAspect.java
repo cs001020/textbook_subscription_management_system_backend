@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -165,6 +166,11 @@ public class LogAspect {
         if (paramsArray != null) {
             for (int i = 0; i < paramsArray.length; i++)  {
                 if (paramsArray[i] instanceof HttpServletRequest||paramsArray[i] instanceof HttpServletResponse){
+                    continue;
+                }
+                if (paramsArray[i] instanceof MultipartFile ){
+                    MultipartFile multipartFile=(MultipartFile) paramsArray[i];
+                    map.put(parameterNames[i],multipartFile.getOriginalFilename());
                     continue;
                 }
                 if (!Objects.isNull(paramsArray[i])) {
