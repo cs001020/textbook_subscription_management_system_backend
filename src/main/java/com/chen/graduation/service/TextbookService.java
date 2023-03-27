@@ -63,4 +63,12 @@ public interface TextbookService extends IService<Textbook> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> updateTextbook(Textbook textbook);
+
+    /**
+     * 抛弃教材
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> discardTextbook(Long id);
 }

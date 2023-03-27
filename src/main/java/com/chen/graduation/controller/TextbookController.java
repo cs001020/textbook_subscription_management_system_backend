@@ -78,4 +78,10 @@ public class TextbookController {
         return textbookService.updateTextbook(textbook);
     }
 
+    @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("弃用教材")
+    @PutMapping("/discard/{id}")
+    public AjaxResult<Object> discardTextbook(@PathVariable Long id) {
+        return textbookService.discardTextbook(id);
+    }
 }

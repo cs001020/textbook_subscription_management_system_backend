@@ -180,12 +180,31 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         //正常状态下无库存或0库存 设置状态为库存不足
         if (TextbookStateEnums.NORMAL.equals(textbook.getState()) && textbook.getStock().equals(0)) {
             textbook.setState(TextbookStateEnums.UNDER_STOCK);
-            textbook.setStock(0);
+        }
+        if (TextbookStateEnums.UNDER_STOCK.equals(textbook.getState()) && textbook.getStock()>0) {
+            textbook.setState(TextbookStateEnums.NORMAL);
         }
         //更新
         boolean update = updateById(textbook);
         //日志
         log.info("TextbookServiceImpl.updateTextbook业务结束，结果:{}", update);
+        //响应
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> discardTextbook(Long id) {
+        //获取教材
+        Textbook textbook = getById(id);
+        //教材状态判断
+        if (TextbookStateEnums.AUDIT.equals(textbook.getState())){
+            throw new ServiceException("教材审核中,禁止修改");
+        }
+        //修改
+        boolean update = lambdaUpdate().eq(Textbook::getId, id).set(Textbook::getState, TextbookStateEnums.DISCARD).update();
+        //日志
+        log.info("TextbookServiceImpl.discardTextbook业务结束，结果:{}",update);
         //响应
         return AjaxResult.success(update);
     }
