@@ -12,10 +12,7 @@ import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.converter.TextbookConverter;
-import com.chen.graduation.enums.SortableEnums;
-import com.chen.graduation.enums.TextbookOrderStateEnums;
-import com.chen.graduation.enums.TextbookStateEnums;
-import com.chen.graduation.enums.UserTypeEnums;
+import com.chen.graduation.enums.*;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.*;
@@ -53,9 +50,10 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
     @Override
     public AjaxResult<List<TextbookVO>> search(TextbookSearchDTO textbookSearchDTO) {
         //查询
-        Page<Textbook> page =baseMapper.search(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()),textbookSearchDTO);
+        Page<Textbook> page = baseMapper.search(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()), textbookSearchDTO);
         //po转换成vo
-        List<TextbookVO> textbookVOList = textbookConverter.pos2vos(page.getRecords());;
+        List<TextbookVO> textbookVOList = textbookConverter.pos2vos(page.getRecords());
+        ;
         //封装响应
         AjaxResult<List<TextbookVO>> success = AjaxResult.success(textbookVOList);
         success.setTotal(page.getTotal());
@@ -63,12 +61,20 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         return success;
     }
 
-    // TODO: 2023/2/25 好像用不上
     @Override
-    @CacheEvict(value = RedisConstants.TEXTBOOK_PAGE_CACHE_KET, allEntries = true)
+    @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> addTextBook(TextbookDTO textbookDTO) {
         //转换
         Textbook textbook = textbookConverter.dto2po(textbookDTO);
+        //教材吗唯一性检查
+        if (UniqueEnums.UN_UNIQUE.equals(checkTextbookNameUnique(textbook))) {
+            throw new ServiceException("添加教材《" + textbook.getBookName() + "》失败，教材名已存在");
+        }
+        //教材状态判断
+        textbook.setState(TextbookStateEnums.NORMAL);
+        if (Objects.isNull(textbookDTO.getStock()) || textbook.getStock().equals(0)) {
+            textbook.setState(TextbookStateEnums.UNDER_STOCK);
+        }
         //插入
         boolean success = this.save(textbook);
         //打印日志
@@ -108,19 +114,19 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         Long userId = UserHolderContext.getUserId();
         User user = userService.getById(userId);
         //非学生用户返回空列表
-        if (Objects.isNull(user)||Objects.isNull(user.getGradeId())||!UserTypeEnums.STUDENT.equals(user.getType())){
-           return AjaxResult.success(Collections.emptyList());
+        if (Objects.isNull(user) || Objects.isNull(user.getGradeId()) || !UserTypeEnums.STUDENT.equals(user.getType())) {
+            return AjaxResult.success(Collections.emptyList());
         }
         //根据学生班级id查询已经发放教材订单
         List<TextbookOrder> textbookOrderList = textbookOrderService.lambdaQuery().eq(TextbookOrder::getGradeId, user.getGradeId()).eq(TextbookOrder::getState, TextbookOrderStateEnums.GRANTED).list();
-        if (CollectionUtil.isEmpty(textbookOrderList)){
+        if (CollectionUtil.isEmpty(textbookOrderList)) {
             return AjaxResult.success(Collections.emptyList());
         }
         //获取审核ids
         List<String> collect1 = textbookOrderList.stream().map(TextbookOrder::getTextbookIds).collect(Collectors.toList());
         //获取教材ids
-        List<Long> textBookIds=new ArrayList<>();
-        collect1.forEach(ids->{
+        List<Long> textBookIds = new ArrayList<>();
+        collect1.forEach(ids -> {
             List<Long> collect = Arrays.stream(ids.split(",")).map(Long::valueOf).collect(Collectors.toList());
             textBookIds.addAll(collect);
         });
@@ -132,7 +138,7 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> addStock(Long id, Integer count) {
         //参数校验
-        if (Objects.isNull(count)|| count <=0){
+        if (Objects.isNull(count) || count <= 0) {
             throw new ServiceException("参数异常");
         }
         //获取教材信息
@@ -140,19 +146,39 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         TextbookStateEnums state = textbook.getState();
         Integer stock = textbook.getStock();
         //教材状态判断
-        if (TextbookStateEnums.AUDIT.equals(state)||TextbookStateEnums.DISCARD.equals(state)){
+        if (TextbookStateEnums.AUDIT.equals(state) || TextbookStateEnums.DISCARD.equals(state)) {
             throw new ServiceException("该图书无法添加库存");
         }
         //修改库存
-        textbook.setStock(stock+count);
-        if (TextbookStateEnums.UNDER_STOCK.equals(state)){
+        textbook.setStock(stock + count);
+        if (TextbookStateEnums.UNDER_STOCK.equals(state)) {
             textbook.setState(TextbookStateEnums.NORMAL);
         }
-        boolean update = lambdaUpdate().eq(Textbook::getId, id).set(Textbook::getStock, stock + count).set(Textbook::getState,state).update();
+        boolean update = lambdaUpdate().eq(Textbook::getId, id).set(Textbook::getStock, stock + count).set(Textbook::getState, state).update();
         //日志
-        log.info("TextbookServiceImpl.addStock业务结束，结果:{}",update);
+        log.info("TextbookServiceImpl.addStock业务结束，结果:{}", update);
         //响应
         return AjaxResult.success(update);
+    }
+
+
+    /**
+     * 检查教材名唯一性
+     *
+     * @param textbook 教科书
+     * @return {@link UniqueEnums}
+     */
+    private UniqueEnums checkTextbookNameUnique(Textbook textbook) {
+        String bookName = textbook.getBookName();
+        if (StrUtil.isBlank(bookName)) {
+            return UniqueEnums.UNIQUE;
+        }
+        Page<Textbook> page = lambdaQuery().eq(Textbook::getBookName, bookName).page(new Page<>(1, 1));
+        List<Textbook> textbookList = page.getRecords();
+        if (CollectionUtil.isEmpty(textbookList) || textbookList.get(0).getId().equals(textbook.getId())) {
+            return UniqueEnums.UNIQUE;
+        }
+        return UniqueEnums.UN_UNIQUE;
     }
 }
 

@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 
@@ -42,14 +43,16 @@ public class TextbookDTO implements Serializable {
     @ApiModelProperty("开本")
     private String folio;
     @ApiModelProperty("价格")
-    @NotBlank(message = "参数异常")
-    private String price;
+    @NotNull(message = "参数异常")
+    private BigDecimal price;
     @ApiModelProperty("字数")
     private String words;
     @ApiModelProperty("出版社")
     private String publishingHouse;
     @ApiModelProperty("页数")
     private String pageNumber;
+    @ApiModelProperty("库存")
+    private Integer stock;
     @ApiModelProperty("出版日期")
     private Date publicationDate;
     @ApiModelProperty("封面图片地址")

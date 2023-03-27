@@ -44,8 +44,8 @@ public class TextbookController {
         return textbookService.getByIds(ids);
     }
 
-
-    @ApiOperation("添加待审核教材")
+    @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.INSERT)
+    @ApiOperation("添加教材")
     @PostMapping("/addTextBook")
     public AjaxResult<Object> addTextBook(@Validated @RequestBody TextbookDTO textbookDTO) {
         return textbookService.addTextBook(textbookDTO);
