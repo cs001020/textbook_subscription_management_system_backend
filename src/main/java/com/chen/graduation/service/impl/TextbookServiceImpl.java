@@ -3,6 +3,7 @@ package com.chen.graduation.service.impl;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.TextbookDTO;
@@ -150,11 +151,12 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
             throw new ServiceException("该图书无法添加库存");
         }
         //修改库存
-        textbook.setStock(stock + count);
+        LambdaUpdateChainWrapper<Textbook> lambdaUpdate = lambdaUpdate();
+        lambdaUpdate.set(Textbook::getStock, stock + count);
         if (TextbookStateEnums.UNDER_STOCK.equals(state)) {
-            textbook.setState(TextbookStateEnums.NORMAL);
+            lambdaUpdate.set(Textbook::getState,TextbookStateEnums.NORMAL);
         }
-        boolean update = lambdaUpdate().eq(Textbook::getId, id).set(Textbook::getStock, stock + count).set(Textbook::getState, state).update();
+        boolean update = lambdaUpdate.eq(Textbook::getId, id).update();
         //日志
         log.info("TextbookServiceImpl.addStock业务结束，结果:{}", update);
         //响应
