@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.chen.graduation.enums.TextbookStateEnums;
@@ -33,7 +34,7 @@ public class Textbook implements Serializable {
 
     private String folio;
 
-    private String price;
+    private BigDecimal price;
 
     private String words;
 

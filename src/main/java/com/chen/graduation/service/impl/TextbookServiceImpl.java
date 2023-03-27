@@ -52,31 +52,10 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
 
     @Override
     public AjaxResult<List<TextbookVO>> search(TextbookSearchDTO textbookSearchDTO) {
-        //条件构造器
-        LambdaQueryWrapper<Textbook> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.orderByAsc(SortableEnums.ASC.equals(textbookSearchDTO.getOrderByStock()), Textbook::getStock);
-        lambdaQueryWrapper.orderByAsc(SortableEnums.ASC.equals(textbookSearchDTO.getOrderByPrice()), Textbook::getPrice);
-        lambdaQueryWrapper.orderByDesc(SortableEnums.DESC.equals(textbookSearchDTO.getOrderByStock()), Textbook::getStock);
-        lambdaQueryWrapper.orderByDesc(SortableEnums.DESC.equals(textbookSearchDTO.getOrderByPrice()), Textbook::getPrice);
-        lambdaQueryWrapper.orderByAsc(Textbook::getId);
-        String keyWord = textbookSearchDTO.getKeyWord();
-        if (StrUtil.isNotBlank(keyWord)) {
-            lambdaQueryWrapper
-                    .like(Textbook::getBookName, keyWord).or()
-                    .like(Textbook::getDescription, keyWord).or()
-                    .like(Textbook::getAuthor, keyWord).or()
-                    .like(Textbook::getPublishingHouse, keyWord);
-        }
-        lambdaQueryWrapper.eq(Textbook::getState, TextbookStateEnums.NORMAL);
         //查询
-        Page<Textbook> page = page(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()), lambdaQueryWrapper);
+        Page<Textbook> page =baseMapper.search(new Page<>(textbookSearchDTO.getPage(), textbookSearchDTO.getSize()),textbookSearchDTO);
         //po转换成vo
-        List<TextbookVO> textbookVOList = textbookConverter.pos2vos(page.getRecords());
-        // TODO: 2023/2/26 优化
-        textbookVOList.forEach(textbookVO -> {
-            Long count = textbookFeedbackService.lambdaQuery().eq(TextbookFeedback::getTextbookId, textbookVO.getId()).count();
-            textbookVO.setFeedbackCount(Math.toIntExact(count));
-        });
+        List<TextbookVO> textbookVOList = textbookConverter.pos2vos(page.getRecords());;
         //封装响应
         AjaxResult<List<TextbookVO>> success = AjaxResult.success(textbookVOList);
         success.setTotal(page.getTotal());

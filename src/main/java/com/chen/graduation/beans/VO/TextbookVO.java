@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -32,7 +33,7 @@ public class TextbookVO implements Serializable {
     @ApiModelProperty("开本")
     private String folio;
     @ApiModelProperty("价格")
-    private String price;
+    private BigDecimal price;
     @ApiModelProperty("字数")
     private String words;
     @ApiModelProperty("出版社")

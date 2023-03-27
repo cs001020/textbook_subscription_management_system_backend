@@ -43,11 +43,50 @@
     <select id="getByIds" resultMap="textBookWithFeedbackCount">
         select tb_textbook.*,count(ttf.id) as feedbackCount
         from tb_textbook left join tb_textbook_feedback ttf on tb_textbook.id = ttf.textbook_id
-        where tb_textbook.id in
+        where tb_textbook.is_deleted=0
+        and ttf.is_deleted=0
+        and tb_textbook.id in
         <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
             #{id}
         </foreach>
         group by tb_textbook.id
+    </select>
+    <select id="search" resultMap="textBookWithFeedbackCount">
+        select tb.id, tb.book_name, tb.isbn, tb.bar_code, tb.author, tb.binding, tb.print, tb.folio, tb.price, tb.words,
+        tb.publishing_house, tb.page_number, tb.issue_number, tb.pre_packet_number, tb.publication_date, tb.img_url,
+        tb.description, tb.state, tb.create_time, tb.update_time, tb.is_deleted, tb.stock
+        ,(select count(*) from tb_textbook_feedback tbf where tbf.textbook_id=tb.id and tbf.is_deleted=0) as
+        feedbackCount
+        from tb_textbook tb
+        where tb.is_deleted=0
+        <if test="dto.keyWord != null and dto.keyWord != ''">
+            and (tb.book_name like concat('%',#{dto.keyWord},'%') or tb.description like concat('%',#{dto.keyWord},'%')
+            or
+            tb.author like concat('%',#{dto.keyWord},'%') or tb.publishing_house like concat('%',#{dto.keyWord},'%'))
+        </if>
+        <if test="dto.state != null">
+            and tb.state=#{dto.state}
+        </if>
+        <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 开始时间检索 -->
+            AND tb.publication_date &gt;= #{dto.beginTime}::timestamp
+        </if>
+        <if test="dto.beginTime != null and dto.beginTime != ''"><!-- 结束时间检索 -->
+            AND tb.publication_date &lt;= #{dto.endTime}::timestamp
+        </if>
+        order by
+        <if test="dto.orderByStock !=null and dto.orderByStock ==  @com.chen.graduation.enums.SortableEnums@ASC">
+            stock ,
+        </if>
+        <if test="dto.orderByStock !=null and dto.orderByStock == @com.chen.graduation.enums.SortableEnums@DESC">
+            stock desc,
+        </if>
+        <if test="dto.orderByPrice !=null and dto.orderByPrice ==  @com.chen.graduation.enums.SortableEnums@ASC">
+            price,
+        </if>
+        <if test="dto.orderByPrice !=null and dto.orderByPrice == @com.chen.graduation.enums.SortableEnums@DESC">
+            price desc,
+        </if>
+        id
     </select>
 
 </mapper>
