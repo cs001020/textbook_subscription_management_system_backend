@@ -41,8 +41,6 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
     @Resource
     private TextbookConverter textbookConverter;
     @Resource
-    private TextbookFeedbackService textbookFeedbackService;
-    @Resource
     @Lazy
     private TextbookOrderService textbookOrderService;
     @Resource
@@ -154,11 +152,40 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         LambdaUpdateChainWrapper<Textbook> lambdaUpdate = lambdaUpdate();
         lambdaUpdate.set(Textbook::getStock, stock + count);
         if (TextbookStateEnums.UNDER_STOCK.equals(state)) {
-            lambdaUpdate.set(Textbook::getState,TextbookStateEnums.NORMAL);
+            lambdaUpdate.set(Textbook::getState, TextbookStateEnums.NORMAL);
         }
         boolean update = lambdaUpdate.eq(Textbook::getId, id).update();
         //日志
         log.info("TextbookServiceImpl.addStock业务结束，结果:{}", update);
+        //响应
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateTextbook(Textbook textbook) {
+        //参数校验
+        if (Objects.isNull(textbook.getId())) {
+            throw new ServiceException("参数异常");
+        }
+        //状态校验
+        Textbook textbook1 = getById(textbook.getId());
+        if (TextbookStateEnums.AUDIT.equals(textbook1.getState())) {
+            throw new ServiceException("图书审核中,禁止修改");
+        }
+        //教材名唯一性检查
+        if (UniqueEnums.UN_UNIQUE.equals(checkTextbookNameUnique(textbook))) {
+            throw new ServiceException("添加教材《" + textbook.getBookName() + "》失败，教材名已存在");
+        }
+        //正常状态下无库存或0库存 设置状态为库存不足
+        if (TextbookStateEnums.NORMAL.equals(textbook.getState()) && textbook.getStock().equals(0)) {
+            textbook.setState(TextbookStateEnums.UNDER_STOCK);
+            textbook.setStock(0);
+        }
+        //更新
+        boolean update = updateById(textbook);
+        //日志
+        log.info("TextbookServiceImpl.updateTextbook业务结束，结果:{}", update);
         //响应
         return AjaxResult.success(update);
     }

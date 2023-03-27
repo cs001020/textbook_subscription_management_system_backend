@@ -4,6 +4,7 @@ import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.DTO.TextbookDTO;
 import com.chen.graduation.beans.DTO.TextbookSearchDTO;
+import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.BusinessTypeEnums;
@@ -38,10 +39,22 @@ public class TextbookController {
         return textbookService.search(textbookSearchDTO);
     }
 
-    @ApiOperation("更具id列表获取教材信息")
+    @ApiOperation("根据id列表获取教材信息")
     @GetMapping("/byIds")
     public AjaxResult<List<TextbookVO>> getByIds(String ids) {
         return textbookService.getByIds(ids);
+    }
+
+    @ApiOperation("根据id获取教材信息")
+    @GetMapping("/{id}")
+    public AjaxResult<Textbook> getByIds(@PathVariable Long id) {
+        return AjaxResult.success(textbookService.getById(id));
+    }
+
+    @ApiOperation("我的教材")
+    @GetMapping("/me")
+    public AjaxResult<List<TextbookVO>> me() {
+        return textbookService.me();
     }
 
     @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.INSERT)
@@ -49,11 +62,6 @@ public class TextbookController {
     @PostMapping("/addTextBook")
     public AjaxResult<Object> addTextBook(@Validated @RequestBody TextbookDTO textbookDTO) {
         return textbookService.addTextBook(textbookDTO);
-    }
-    @ApiOperation("我的教材")
-    @GetMapping("/me")
-    public AjaxResult<List<TextbookVO>> me() {
-        return textbookService.me();
     }
 
     @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
@@ -63,10 +71,11 @@ public class TextbookController {
         return textbookService.addStock(id,count);
     }
 
-    @ApiOperation("教材发放")
-    @PostMapping("/distribution")
-    public AjaxResult<Object> distribution() {
-        // TODO: 2023/2/1 教材发放 for cs
-        return AjaxResult.success();
+    @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("修改教材")
+    @PutMapping("/update")
+    public AjaxResult<Object> updateTextbook(@Validated @RequestBody Textbook textbook) {
+        return textbookService.updateTextbook(textbook);
     }
+
 }
