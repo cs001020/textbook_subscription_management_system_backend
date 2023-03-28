@@ -71,4 +71,13 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollege}>>
      */
     AjaxResult<List<TeachingGroupVO>> getTeachingGroup();
+
+
+    /**
+     * 删除通过id
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteById(Long id);
 }

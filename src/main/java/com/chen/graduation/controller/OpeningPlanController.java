@@ -34,13 +34,6 @@ public class OpeningPlanController {
     @Resource
     private OpeningPlanService openingPlanService;
 
-    @Log(title = "开课计划管理",businessTypeEnums = BusinessTypeEnums.INSERT)
-    @ApiOperation("导入开课计划")
-    @PostMapping("/import")
-    public AjaxResult<Object> addPlan(@Validated @RequestBody OpeningPlanDTO openingPlanDTO) {
-        return openingPlanService.addPlan(openingPlanDTO);
-    }
-
     @ApiOperation("查看开课计划(属于当前登录用户的开课计划)")
     @GetMapping("/me")
     public AjaxResult<List<OpeningPlanVO>> getPlanByUser() {
@@ -61,8 +54,8 @@ public class OpeningPlanController {
 
     @ApiOperation("查询课程")
     @GetMapping("/course")
-    public AjaxResult<List<OpeningPlanDetail>> course(@Validated PageParamDTO pageParamDTO,OpeningPlanDetail openingPlanDetail) {
-        return openingPlanService.selectCourse(pageParamDTO,openingPlanDetail);
+    public AjaxResult<List<OpeningPlanDetail>> course(@Validated PageParamDTO pageParamDTO, OpeningPlanDetail openingPlanDetail) {
+        return openingPlanService.selectCourse(pageParamDTO, openingPlanDetail);
     }
 
     @ApiOperation("获取班级(树形结构)")
@@ -75,5 +68,19 @@ public class OpeningPlanController {
     @GetMapping("/teachingGroup")
     public AjaxResult<List<TeachingGroupVO>> getTeachingGroup() {
         return openingPlanService.getTeachingGroup();
+    }
+
+    @Log(title = "开课计划管理", businessTypeEnums = BusinessTypeEnums.INSERT)
+    @ApiOperation("导入开课计划")
+    @PostMapping("/import")
+    public AjaxResult<Object> addPlan(@Validated @RequestBody OpeningPlanDTO openingPlanDTO) {
+        return openingPlanService.addPlan(openingPlanDTO);
+    }
+
+    @Log(title = "开课计划管理", businessTypeEnums = BusinessTypeEnums.DELETE)
+    @ApiOperation("删除开课计划")
+    @DeleteMapping("/{id}")
+    public AjaxResult<Object> deleteById(@PathVariable Long id) {
+        return openingPlanService.deleteById(id);
     }
 }

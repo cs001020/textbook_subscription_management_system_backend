@@ -15,15 +15,15 @@ public enum OpenPlanStateEnums {
     /**
      * 等待教师选定教材
      */
-    TEXTBOOKS_TO_BE_SELECT(0, "等待教师选定教材"),
+    TEXTBOOKS_TO_BE_SELECT(0, "等待选定教材"),
     /**
      * 等待审批
      */
-    WAITING_FOR_APPROVAL(1, "已经选定教材，等待审批"),
+    WAITING_FOR_APPROVAL(1, "已经选择教材,审核中"),
     /**
      * 审批完成
      */
-    APPROVAL_COMPLETED(2, "审批完成");
+    APPROVAL_COMPLETED(2, "审核通过");
 
     /**
      * 状态码

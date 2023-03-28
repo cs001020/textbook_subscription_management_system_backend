@@ -17,6 +17,7 @@ import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.converter.OpeningPlanConverter;
 import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import com.chen.graduation.enums.OpenPlanStateEnums;
+import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.OpeningPlanMapper;
@@ -145,6 +146,22 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
     @Override
     public AjaxResult<List<TeachingGroupVO>> getTeachingGroup() {
         return SpringUtil.getBean(TeachingGroupService.class).getList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> deleteById(Long id) {
+        //查询开课计划
+        OpeningPlan openingPlan = getById(id);
+        //选定教材后 无法删除
+        if (!OpenPlanStateEnums.TEXTBOOKS_TO_BE_SELECT.equals(openingPlan.getState())){
+            throw new ServiceException("该开课计划已经选择教材,无法删除");
+        }
+        //删除课程
+        openingPlanDetailService.lambdaUpdate().eq(OpeningPlanDetail::getOpeningPlanId,openingPlan.getId()).remove();
+        //删除开课计划
+        boolean remove = removeById(id);
+        return AjaxResult.success(remove);
     }
 }
 
