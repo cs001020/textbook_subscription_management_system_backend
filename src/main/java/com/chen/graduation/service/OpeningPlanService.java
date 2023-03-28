@@ -5,8 +5,10 @@ import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
+import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
+import com.chen.graduation.beans.VO.TeachingGroupVO;
 
 import java.util.List;
 
@@ -55,4 +57,18 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link OpeningPlanDetail}>
      */
     AjaxResult<List<OpeningPlanDetail>> selectCourse(PageParamDTO pageParamDTO, OpeningPlanDetail openingPlanDetail);
+
+    /**
+     * 查询班级
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollege}>>
+     */
+    AjaxResult<List<SecondaryCollege>> getGrade();
+
+    /**
+     * 查询教学组
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollege}>>
+     */
+    AjaxResult<List<TeachingGroupVO>> getTeachingGroup();
 }

@@ -2,23 +2,24 @@ package com.chen.graduation.service.impl;
 
 import cn.hutool.core.util.BooleanUtil;
 import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
+import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
+import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.converter.OpeningPlanConverter;
 import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import com.chen.graduation.enums.OpenPlanStateEnums;
 import com.chen.graduation.interceptor.UserHolderContext;
-import com.chen.graduation.service.OpeningPlanDetailService;
-import com.chen.graduation.service.OpeningPlanService;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.OpeningPlanMapper;
-import com.chen.graduation.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,6 +135,16 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         log.info("OpeningPlanServiceImpl.selectCourse业务结束，结果:{}",success);
         //响应
         return success;
+    }
+
+    @Override
+    public AjaxResult<List<SecondaryCollege>> getGrade() {
+        return SpringUtil.getBean(SecondaryCollegeService.class).getGrade();
+    }
+
+    @Override
+    public AjaxResult<List<TeachingGroupVO>> getTeachingGroup() {
+        return SpringUtil.getBean(TeachingGroupService.class).getList();
     }
 }
 

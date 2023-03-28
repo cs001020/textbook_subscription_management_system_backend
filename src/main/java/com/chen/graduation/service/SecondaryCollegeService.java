@@ -46,4 +46,11 @@ public interface SecondaryCollegeService extends IService<SecondaryCollege> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> updateById(SecondaryCollegeDTO secondaryCollegeDTO, Long id);
+
+    /**
+     * 查询班级
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollege}>>
+     */
+    AjaxResult<List<SecondaryCollege>> getGrade();
 }

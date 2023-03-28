@@ -1,10 +1,14 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
+import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
+import com.chen.graduation.beans.VO.TeachingGroupVO;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.OpeningPlanService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -30,6 +34,7 @@ public class OpeningPlanController {
     @Resource
     private OpeningPlanService openingPlanService;
 
+    @Log(title = "开课计划管理",businessTypeEnums = BusinessTypeEnums.INSERT)
     @ApiOperation("导入开课计划")
     @PostMapping("/import")
     public AjaxResult<Object> addPlan(@Validated @RequestBody OpeningPlanDTO openingPlanDTO) {
@@ -58,5 +63,17 @@ public class OpeningPlanController {
     @GetMapping("/course")
     public AjaxResult<List<OpeningPlanDetail>> course(@Validated PageParamDTO pageParamDTO,OpeningPlanDetail openingPlanDetail) {
         return openingPlanService.selectCourse(pageParamDTO,openingPlanDetail);
+    }
+
+    @ApiOperation("获取班级(树形结构)")
+    @GetMapping("/garde")
+    public AjaxResult<List<SecondaryCollege>> getGrade() {
+        return openingPlanService.getGrade();
+    }
+
+    @ApiOperation("获取教学组")
+    @GetMapping("/teachingGroup")
+    public AjaxResult<List<TeachingGroupVO>> getTeachingGroup() {
+        return openingPlanService.getTeachingGroup();
     }
 }

@@ -12,8 +12,35 @@
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
 
+    <resultMap id="SecondaryCollegeWithMajorAndGrade" type="com.chen.graduation.beans.PO.SecondaryCollege">
+        <id property="id" column="scid" jdbcType="BIGINT"/>
+        <result property="name" column="scname" jdbcType="VARCHAR"/>
+        <collection property="children" javaType="list" ofType="com.chen.graduation.beans.PO.Major">
+            <id property="id" column="mid" jdbcType="BIGINT"/>
+            <result property="name" column="mname" jdbcType="VARCHAR"/>
+            <collection property="children" javaType="list" ofType="com.chen.graduation.beans.PO.Grade">
+                <id property="id" column="gid" jdbcType="BIGINT"/>
+                <result property="year" column="year" jdbcType="INTEGER"/>
+                <result property="number" column="number" jdbcType="VARCHAR"/>
+            </collection>
+        </collection>
+    </resultMap>
+
     <sql id="Base_Column_List">
         id,name,create_time,
         update_time,is_deleted
     </sql>
+    <select id="getGrade" resultMap="SecondaryCollegeWithMajorAndGrade">
+        select sc.id as scid,
+               sc.name as scname,
+               m.id as mid,
+               m.name as mname,
+               g.id as gid,
+               year,
+               number
+        from tb_secondary_college sc
+                 left join tb_major m on sc.id = m.secondary_college_id
+                 left join tb_grade g on m.id = g.major_id
+        where sc.is_deleted=0 and (m.is_deleted=0 or m.is_deleted is null) and (g.is_deleted=0 or g.is_deleted is null )
+    </select>
 </mapper>

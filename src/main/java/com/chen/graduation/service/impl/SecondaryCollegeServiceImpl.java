@@ -108,6 +108,25 @@ public class SecondaryCollegeServiceImpl extends ServiceImpl<SecondaryCollegeMap
         return AjaxResult.success();
     }
 
+    @Override
+    public AjaxResult<List<SecondaryCollege>> getGrade() {
+        //查询
+        List<SecondaryCollege> secondaryCollegeList=baseMapper.getGrade();
+        //遍历 设置班级名
+        for (SecondaryCollege secondaryCollege : secondaryCollegeList) {
+            for (Major major : secondaryCollege.getChildren()) {
+                List<Grade> gradeList = major.getChildren();
+                if (CollUtil.isNotEmpty(gradeList)){
+                    for (Grade grade : gradeList) {
+                        grade.setName(grade.getYear()+"级"+grade.getNumber()+"班");
+                    }
+                }
+            }
+        }
+        //响应
+        return AjaxResult.success(secondaryCollegeList);
+    }
+
     /**
      * 检查用户是否存在
      *
