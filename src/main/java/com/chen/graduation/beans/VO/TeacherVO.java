@@ -1,5 +1,6 @@
 package com.chen.graduation.beans.VO;
 
+import com.chen.graduation.beans.PO.UserInfo;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -22,8 +23,12 @@ public class TeacherVO implements Serializable {
     private Long id;
     @ApiModelProperty("昵称")
     private String name;
+    @ApiModelProperty("手机号")
+    private String phone_number;
     @ApiModelProperty("头像url")
     private String avatar;
+    @ApiModelProperty("用户详细信息")
+    private UserInfo userInfo;
 
     private static final long serialVersionUID = 1L;
 }

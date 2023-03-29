@@ -16,22 +16,45 @@
         <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
 
-    <resultMap id="openPlanWithDetails" extends="BaseResultMap" type="com.chen.graduation.beans.PO.OpeningPlan">
-        <result property="secondaryCollege" column="secondaryCollege" jdbcType="VARCHAR"/>
-        <result property="teachingGroup" column="teachingGroup" jdbcType="VARCHAR"/>
-        <result property="grade" column="grade" jdbcType="VARCHAR"/>
-        <association property="teacher" >
-            <result property="id" column="teacherId"/>
-            <result property="name" column="teacherName"/>
-            <result property="avatar" column="teacherIcon"/>
+    <resultMap id="openPlanWithDetails"  type="com.chen.graduation.beans.VO.OpeningPlanVO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="state" column="state" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="DATE"/>
+        <association property="teachingGroup">
+            <id property="id" column="teaching_group_id" jdbcType="BIGINT"/>
+            <result property="name" column="teaching_group_name" jdbcType="VARCHAR"/>
         </association>
-        <collection property="openingPlanDetails" ofType="com.chen.graduation.beans.PO.OpeningPlanDetail" >
-            <id column="id2" property="id"/>
-            <result column="course_name" property="courseName"/>
-            <result column="credit" property="credit"/>
-            <result column="teaching_hours" property="teachingHours"/>
-            <result column="weeks_teach" property="weeksTeach"/>
-            <result column="type" property="type"/>
+        <association property="secondaryCollege">
+            <id property="id" column="secondary_college_id" jdbcType="BIGINT"/>
+            <result property="name" column="secondary_college_name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="major">
+            <id property="id" column="major_id" jdbcType="BIGINT"/>
+            <result property="name" column="major_name" jdbcType="VARCHAR"/>
+        </association>
+        <association property="grade">
+            <id property="id" column="major_id" jdbcType="BIGINT"/>
+            <result property="year" column="year" jdbcType="INTEGER"/>
+            <result property="number" column="number" jdbcType="VARCHAR"/>
+        </association>
+        <association property="teacher">
+            <id property="id" column="user_id" jdbcType="BIGINT"/>
+            <result property="name" column="user_name" jdbcType="VARCHAR"/>
+            <result property="phone_number" column="user_phone_number" jdbcType="VARCHAR"/>
+            <result property="avatar" column="user_icon" jdbcType="VARCHAR"/>
+            <association property="userInfo">
+                <result property="email" column="user_email" jdbcType="VARCHAR"/>
+                <result property="address" column="user_address" jdbcType="VARCHAR"/>
+                <result property="sex" column="user_sex" jdbcType="INTEGER"/>
+            </association>
+        </association>
+        <collection property="openingPlanDetails" ofType="com.chen.graduation.beans.VO.OpeningPlanDetailVO">
+            <id property="id" column="course_id" jdbcType="BIGINT"/>
+            <result property="courseName" column="course_name"/>
+            <result property="credit" column="credit"/>
+            <result property="teachingHours" column="teaching_hours"/>
+            <result property="weeksTeach" column="weeks_teach"/>
+            <result property="type" column="type"/>
         </collection>
     </resultMap>
 
@@ -43,29 +66,40 @@
     </sql>
 
     <select id="getPlanByUser" resultMap="openPlanWithDetails">
-        select top.*,
-        tsc.name as secondaryCollege,
-        tu.id    as teacherId,
-        tu.name    as teacherName,
-        tu.icon    as teacherIcon,
-        ttg.name as teachingGroup,
-        grade.name as grade,
-        topd.id as id2,
-        topd.course_name,
-        topd.credit,
-        topd.teaching_hours,
-        topd.weeks_teach,
-        topd.type
+        select top.id as id,
+        top.state as state,
+        top.create_time as create_time,
+        ttg.id as teaching_group_id,
+        ttg.name as teaching_group_name,
+        tsc.id as secondary_college_id,
+        tsc.name as secondary_college_name,
+        tm.id as major_id,
+        tm.name as major_name,
+        tg.id as grade_id,
+        tg.year as year,
+        tg.number as number,
+        tu.id as user_id,
+        tu.name as user_name,
+        tu.icon as user_icon,
+        tu.phone_number as user_phone_number,
+        tui.email as user_email,
+        tui.address as user_address,
+        tui.sex as user_sex,
+        topd.id as course_id,
+        topd.course_name as course_name,
+        topd.credit as credit,
+        topd.teaching_hours as teaching_hours,
+        topd.weeks_teach as weeks_teach,
+        topd.type as type
         from tb_opening_plan top
-        left join tb_opening_plan_detail topd on top.id = topd.opening_plan_id
+        left join tb_opening_plan_detail topd
+        on top.id = topd.opening_plan_id
         left join tb_secondary_college tsc on top.secondary_college_id = tsc.id
         left join tb_user tu on top.teacher_id = tu.id
+        left join tb_user_info tui on tu.id = tui.user_faculty_id
         left join tb_teaching_group ttg on top.teaching_group_id = ttg.id
-        left join (select tb_grade.id as id, concat(tm.name, tb_grade.year, '级', tb_grade.number, '班') as name
-        from tb_grade
-        left join tb_major tm on tb_grade.major_id = tm.id
-        where tb_grade.is_deleted = 0
-        and tm.is_deleted = 0) grade on top.grade_id = grade.id
+        left join tb_grade tg on top.grade_id = tg.id
+        left join tb_major tm on tg.major_id = tm.id
         <where>
             <if test="user.id!=null">
                 top.teacher_id = #{user.id}
@@ -73,76 +107,102 @@
             <if test="user.gradeId!=null">
                 or top.grade_id = #{user.gradeId}
             </if>
-            and top.is_deleted=0
-            and topd.is_deleted=0
-            and tsc.is_deleted=0
-            and tu.is_deleted=0
-            and ttg.is_deleted=0
+            and top.is_deleted = 0
+            and topd.is_deleted = 0
+            and tsc.is_deleted = 0
+            and tu.is_deleted = 0
+            and ttg.is_deleted = 0
+            and tm.is_deleted = 0
+            and tui.is_deleted = 0
         </where>
     </select>
 
     <select id="getPlanById" resultMap="openPlanWithDetails">
-        select top.*,
-        tsc.name as secondaryCollege,
-        tu.id    as teacherId,
-        tu.name    as teacherName,
-        tu.icon    as teacherIcon,
-        ttg.name as teachingGroup,
-        grade.name as grade,
-        topd.id as id2,
-        topd.course_name,
-        topd.credit,
-        topd.teaching_hours,
-        topd.weeks_teach,
-        topd.type
+        select top.id          as id,
+               top.state       as state,
+               top.create_time as create_time,
+               ttg.id          as teaching_group_id,
+               ttg.name        as teaching_group_name,
+               tsc.id          as secondary_college_id,
+               tsc.name        as secondary_college_name,
+               tm.id           as major_id,
+               tm.name         as major_name,
+               tg.id           as grade_id,
+               tg.year as year,
+               tg.number as number,
+               tu.id as user_id,
+               tu.name as user_name,
+               tu.icon as user_icon,
+               tu.phone_number as user_phone_number,
+               tui.email as user_email,
+               tui.address as user_address,
+               tui.sex as user_sex,
+               topd.id as course_id,
+               topd.course_name as course_name,
+               topd.credit as credit,
+               topd.teaching_hours as teaching_hours,
+               topd.weeks_teach as weeks_teach,
+               topd.type as type
         from tb_opening_plan top
-        left join tb_opening_plan_detail topd on top.id = topd.opening_plan_id
-        left join tb_secondary_college tsc on top.secondary_college_id = tsc.id
-        left join tb_user tu on top.teacher_id = tu.id
-        left join tb_teaching_group ttg on top.teaching_group_id = ttg.id
-        left join (select tb_grade.id as id, concat(tm.name, tb_grade.year, '级', tb_grade.number, '班') as name
-        from tb_grade
-        left join tb_major tm on tb_grade.major_id = tm.id
-        where tb_grade.is_deleted = 0
-        and tm.is_deleted = 0) grade on top.grade_id = grade.id
-        where
-            top.id=#{id}
-            and top.is_deleted=0
-            and topd.is_deleted=0
-            and tsc.is_deleted=0
-            and tu.is_deleted=0
-            and ttg.is_deleted=0
+            left join tb_opening_plan_detail topd
+        on top.id = topd.opening_plan_id
+            left join tb_secondary_college tsc on top.secondary_college_id = tsc.id
+            left join tb_user tu on top.teacher_id = tu.id
+            left join tb_user_info tui on tu.id = tui.user_faculty_id
+            left join tb_teaching_group ttg on top.teaching_group_id = ttg.id
+            left join tb_grade tg on top.grade_id = tg.id
+            left join tb_major tm on tg.major_id = tm.id
+        where top.id=#{id}
+          and top.is_deleted = 0
+          and topd.is_deleted = 0
+          and tsc.is_deleted = 0
+          and tu.is_deleted = 0
+          and ttg.is_deleted = 0
+          and tm.is_deleted = 0
+          and tui.is_deleted = 0
     </select>
     <select id="getAllPlanList" resultMap="openPlanWithDetails">
-            select top.*,
-                   tsc.name   as secondaryCollege,
-                   tu.id      as teacherId,
-                   tu.name    as teacherName,
-                   tu.icon    as teacherIcon,
-                   ttg.name   as teachingGroup,
-                   grade.name as grade,
-                   topd.id    as id2,
-                   topd.course_name,
-                   topd.credit,
-                   topd.teaching_hours,
-                   topd.weeks_teach,
-                   topd.type
-            from tb_opening_plan top
-                     left join tb_opening_plan_detail topd on top.id = topd.opening_plan_id
-                     left join tb_secondary_college tsc on top.secondary_college_id = tsc.id
-                     left join tb_user tu on top.teacher_id = tu.id
-                     left join tb_teaching_group ttg on top.teaching_group_id = ttg.id
-                     left join (select tb_grade.id                                                 as id,
-                                       concat(tm.name, tb_grade.year, '级', tb_grade.number, '班') as name
-                                from tb_grade
-                                         left join tb_major tm on tb_grade.major_id = tm.id
-                                where tb_grade.is_deleted = 0
-                                  and tm.is_deleted = 0) grade on top.grade_id = grade.id
-            where top.is_deleted = 0
-              and topd.is_deleted = 0
-              and tsc.is_deleted = 0
-              and tu.is_deleted = 0
-              and ttg.is_deleted = 0
+        select top.id          as id,
+               top.state       as state,
+               top.create_time as create_time,
+               ttg.id          as teaching_group_id,
+               ttg.name        as teaching_group_name,
+               tsc.id          as secondary_college_id,
+               tsc.name        as secondary_college_name,
+               tm.id           as major_id,
+               tm.name         as major_name,
+               tg.id           as grade_id,
+               tg.year as year,
+               tg.number as number,
+               tu.id as user_id,
+               tu.name as user_name,
+               tu.icon as user_icon,
+               tu.phone_number as user_phone_number,
+               tui.email as user_email,
+               tui.address as user_address,
+               tui.sex as user_sex,
+               topd.id as course_id,
+               topd.course_name as course_name,
+               topd.credit as credit,
+               topd.teaching_hours as teaching_hours,
+               topd.weeks_teach as weeks_teach,
+               topd.type as type
+        from tb_opening_plan top
+            left join tb_opening_plan_detail topd
+        on top.id = topd.opening_plan_id
+            left join tb_secondary_college tsc on top.secondary_college_id = tsc.id
+            left join tb_user tu on top.teacher_id = tu.id
+            left join tb_user_info tui on tu.id = tui.user_faculty_id
+            left join tb_teaching_group ttg on top.teaching_group_id = ttg.id
+            left join tb_grade tg on top.grade_id = tg.id
+            left join tb_major tm on tg.major_id = tm.id
+        where top.is_deleted = 0
+          and topd.is_deleted = 0
+          and tsc.is_deleted = 0
+          and tu.is_deleted = 0
+          and ttg.is_deleted = 0
+          and tm.is_deleted = 0
+          and tui.is_deleted = 0
     </select>
 
 </mapper>

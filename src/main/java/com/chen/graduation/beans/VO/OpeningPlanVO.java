@@ -1,7 +1,10 @@
 package com.chen.graduation.beans.VO;
 
 import com.alibaba.fastjson2.annotation.JSONField;
+import com.chen.graduation.beans.PO.Grade;
+import com.chen.graduation.beans.PO.Major;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
+import com.chen.graduation.beans.PO.TeachingGroup;
 import com.chen.graduation.enums.OpenPlanStateEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -22,20 +25,20 @@ import java.util.List;
 public class OpeningPlanVO implements Serializable {
     @ApiModelProperty("id")
     private Long id;
-    @ApiModelProperty("教学组")
-    private String teachingGroup;
-    @ApiModelProperty("二级学院")
-    private String secondaryCollege;
-    @ApiModelProperty("教师")
-    private TeacherVO teacher;
-    @ApiModelProperty("班级")
-    private String grade;
-    @ApiModelProperty("状态")
-    private String state;
     @ApiModelProperty("创建时间")
     private Date createTime;
-    @ApiModelProperty("可提交申请")
-    private Boolean canAddApproval;
+    @ApiModelProperty("教学组")
+    private TeachingGroupVO teachingGroup;
+    @ApiModelProperty("二级学院")
+    private SecondaryCollegeVO secondaryCollege;
+    @ApiModelProperty("专业")
+    private MajorVO major;
+    @ApiModelProperty("班级")
+    private Grade grade;
+    @ApiModelProperty("教师")
+    private TeacherVO teacher;
+    @ApiModelProperty("状态")
+    private OpenPlanStateEnums state;
     @ApiModelProperty("开课计划详情")
     private List<OpeningPlanDetailVO> openingPlanDetails;
 

@@ -83,17 +83,6 @@ class TextbookSubscriptionManagementSystemBackendApplicationTests {
         }
     }
 
-    @Test
-    void openingPlanTest() {
-        User byId = userService.getById(2);
-        List<OpeningPlan> planByUser = openingPlanMapper.getPlanByUser(byId);
-        planByUser.forEach(openingPlan -> {
-            System.out.println(openingPlan);
-            System.out.println("+++++++++++++++++++++++++++++++++++++++++++++++");
-            openingPlan.getOpeningPlanDetails().forEach(System.out::println);
-        });
-        log.info("TextbookSubscriptionManagementSystemBackendApplicationTests.openingPlanTest业务结束，结果:{}",planByUser.size());
-    }
 
     @Test
     void addSupplier() {

@@ -44,7 +44,7 @@
         select tb_textbook.*,count(ttf.id) as feedbackCount
         from tb_textbook left join tb_textbook_feedback ttf on tb_textbook.id = ttf.textbook_id
         where tb_textbook.is_deleted=0
-        and ttf.is_deleted=0
+        and (ttf.is_deleted = 0 or ttf.is_deleted is null )
         and tb_textbook.id in
         <foreach collection="ids" item="id" index="index" open="(" close=")" separator=",">
             #{id}
