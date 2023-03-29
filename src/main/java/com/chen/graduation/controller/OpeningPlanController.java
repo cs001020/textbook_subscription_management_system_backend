@@ -83,4 +83,11 @@ public class OpeningPlanController {
     public AjaxResult<Object> deleteById(@PathVariable Long id) {
         return openingPlanService.deleteById(id);
     }
+
+    @Log(title = "开课计划管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("更新开课计划")
+    @PutMapping("/{id}")
+    public AjaxResult<Object> updateOpeningPlan(@RequestBody @Validated OpeningPlanDTO openingPlanDTO,@PathVariable Long id) {
+        return openingPlanService.updateOpeningPlan(openingPlanDTO,id);
+    }
 }

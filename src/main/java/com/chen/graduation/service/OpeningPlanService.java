@@ -80,4 +80,13 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> deleteById(Long id);
+
+    /**
+     * 更新开课计划
+     *
+     * @param openingPlanDTO 开放计划dto
+     * @param id             id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateOpeningPlan(OpeningPlanDTO openingPlanDTO, Long id);
 }

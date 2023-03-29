@@ -33,7 +33,7 @@
             <result property="name" column="major_name" jdbcType="VARCHAR"/>
         </association>
         <association property="grade">
-            <id property="id" column="major_id" jdbcType="BIGINT"/>
+            <id property="id" column="grade_id" jdbcType="BIGINT"/>
             <result property="year" column="year" jdbcType="INTEGER"/>
             <result property="number" column="number" jdbcType="VARCHAR"/>
         </association>
