@@ -10,10 +10,7 @@ import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.Approval;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.Textbook;
-import com.chen.graduation.beans.VO.AjaxResult;
-import com.chen.graduation.beans.VO.ApprovalDetailVO;
-import com.chen.graduation.beans.VO.ApprovalVO;
-import com.chen.graduation.beans.VO.OpeningPlanVO;
+import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.converter.ApprovalConverter;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.ApprovalStateEnums;
@@ -281,6 +278,13 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         boolean remove = removeById(id);
         log.info("ApprovalServiceImpl.adminDelete业务结束，结果:{}",remove);
         return AjaxResult.success(remove);
+    }
+
+    @Override
+    public AjaxResult<List<TextbookVO>> getTextbookList(Long id) {
+        //查询审核表
+        Approval approval = getById(id);
+        return textbookService.getByIds(approval.getTextbookIds());
     }
 
 }

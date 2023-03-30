@@ -39,12 +39,6 @@ public class TextbookController {
         return textbookService.search(textbookSearchDTO);
     }
 
-    @ApiOperation("根据id列表获取教材信息")
-    @GetMapping("/byIds")
-    public AjaxResult<List<TextbookVO>> getByIds(String ids) {
-        return textbookService.getByIds(ids);
-    }
-
     @ApiOperation("根据id获取教材信息")
     @GetMapping("/{id}")
     public AjaxResult<Textbook> getByIds(@PathVariable Long id) {

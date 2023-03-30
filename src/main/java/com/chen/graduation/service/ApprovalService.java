@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.ApprovalDetailVO;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
 
 import java.util.List;
@@ -91,4 +92,12 @@ public interface ApprovalService extends IService<Approval> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> adminDelete(Long id);
+
+    /**
+     * 获得课本列表
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
+     */
+    AjaxResult<List<TextbookVO>> getTextbookList(Long id);
 }

@@ -1,6 +1,7 @@
 package com.chen.graduation.controller;
 
 import cn.hutool.core.util.RandomUtil;
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
 import com.chen.graduation.beans.DTO.ApprovalSearchDTO;
@@ -8,8 +9,11 @@ import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.ApprovalDetailVO;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.ApprovalService;
+import com.chen.graduation.service.TextbookService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,7 +38,6 @@ public class ApprovalController {
     @Resource
     private ApprovalService approvalService;
 
-
     @ApiOperation("查看所有教材申请")
     @GetMapping("/list")
     public AjaxResult<List<ApprovalVO>> getApprovalList(@Validated PageParamDTO pageParamDTO, ApprovalSearchDTO approvalSearchDTO) {
@@ -44,6 +47,12 @@ public class ApprovalController {
     @GetMapping("/details/{id}")
     public AjaxResult<ApprovalDetailVO> getApprovalDetails(@PathVariable Long id) {
         return approvalService.getApprovalDetailsById(id);
+    }
+
+    @ApiOperation("根据审核id获取教材信息")
+    @GetMapping("/textbook/{id}")
+    public AjaxResult<List<TextbookVO>> getTextbookList( @PathVariable Long id) {
+        return approvalService.getTextbookList(id);
     }
 
     @ApiOperation("查看我的教材申请")
@@ -94,6 +103,7 @@ public class ApprovalController {
         return approvalService.academicAffairsOfficeApproval(id, approvalDTO);
     }
 
+    @Log(title = "教材申请管理",businessTypeEnums = BusinessTypeEnums.DELETE)
     @ApiOperation("管理员删除审批")
     @DeleteMapping("/admin/{id}")
     public AjaxResult<Object> adminDelete(@PathVariable Long id) {
