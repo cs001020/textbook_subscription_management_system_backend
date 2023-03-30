@@ -264,6 +264,25 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         return AjaxResult.success(approvalDetailVO);
     }
 
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> adminDelete(Long id) {
+        Approval approval = lambdaQuery().eq(Approval::getId, id).last("for update").one();
+        if (ApprovalTotalStateEnums.ADOPT.equals(approval.getState())){
+            throw new ServiceException("已完成审核，无法删除");
+        }
+        //修改开课计划
+        openingPlanService
+                .lambdaUpdate()
+                .eq(OpeningPlan::getId,approval.getOpeningPlanId())
+                .set(OpeningPlan::getState,OpenPlanStateEnums.TEXTBOOKS_TO_BE_SELECT)
+                .update();
+        //删除审核
+        boolean remove = removeById(id);
+        log.info("ApprovalServiceImpl.adminDelete业务结束，结果:{}",remove);
+        return AjaxResult.success(remove);
+    }
+
 }
 
 

@@ -83,4 +83,12 @@ public interface ApprovalService extends IService<Approval> {
      * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
      */
     AjaxResult<ApprovalDetailVO> getApprovalDetailsById(Long id);
+
+    /**
+     * 管理员删除
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> adminDelete(Long id);
 }

@@ -93,4 +93,10 @@ public class ApprovalController {
     public AjaxResult<Object> academicAffairsOfficeApproval(@PathVariable Long id, @Validated @RequestBody ApprovalDTO approvalDTO) {
         return approvalService.academicAffairsOfficeApproval(id, approvalDTO);
     }
+
+    @ApiOperation("管理员删除审批")
+    @DeleteMapping("/admin/{id}")
+    public AjaxResult<Object> adminDelete(@PathVariable Long id) {
+        return approvalService.adminDelete(id);
+    }
 }
