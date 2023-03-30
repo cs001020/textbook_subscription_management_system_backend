@@ -19,6 +19,23 @@
             <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
             <result property="isDeleted" column="is_deleted" jdbcType="BIGINT"/>
     </resultMap>
+    <resultMap id="VOMap" type="com.chen.graduation.beans.VO.ApprovalVO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="openingPlanId" column="opening_plan_id" jdbcType="BIGINT"/>
+        <result property="textbookIds" column="textbook_ids" jdbcType="BIGINT"/>
+        <result property="teachingGroupState" column="teaching_group_state" jdbcType="SMALLINT"/>
+        <result property="teachingGroupMessage" column="teaching_group_message" jdbcType="VARCHAR"/>
+        <result property="secondaryCollegeState" column="secondary_college_state" jdbcType="SMALLINT"/>
+        <result property="secondaryCollegeMessage" column="secondary_college_message" jdbcType="VARCHAR"/>
+        <result property="deansOfficeState" column="deans_office_state" jdbcType="SMALLINT"/>
+        <result property="deansOfficeMessage" column="deans_office_message" jdbcType="VARCHAR"/>
+        <result property="state" column="state" jdbcType="SMALLINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <association property="teacher" >
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+        </association>
+    </resultMap>
 
     <sql id="Base_Column_List">
         id,opening_plan_id,textbook_ids,
@@ -27,4 +44,45 @@
         state,create_time,update_time,
         is_deleted
     </sql>
+    <select id="list" resultMap="VOMap">
+        select tb_approval.id,
+        tb_approval.opening_plan_id,
+        tb_approval.textbook_ids,
+        tb_approval.teaching_group_state,
+        tb_approval.teaching_group_message,
+        tb_approval.secondary_college_state,
+        tb_approval.secondary_college_message,
+        tb_approval.deans_office_state,
+        tb_approval.deans_office_message,
+        tb_approval.state,
+        tb_approval.create_time,
+        tb_approval.update_time,
+        tu.name as name
+        from tb_approval
+        left join tb_opening_plan top on top.id = tb_approval.opening_plan_id
+        left join tb_user tu on top.teacher_id = tu.id
+        where tb_approval.is_deleted = 0
+        and top.is_deleted = 0
+        and tu.is_deleted = 0
+        <if test="dto.state != null and dto.state == '1'.toString()">
+            and (tb_approval.state = ${@com.chen.graduation.enums.ApprovalTotalStateEnums@WAIT_GROUP.getCode} or
+            tb_approval.state = ${@com.chen.graduation.enums.ApprovalTotalStateEnums@WAIT_SECONDARY.getCode} or
+            tb_approval.state = ${@com.chen.graduation.enums.ApprovalTotalStateEnums@WAIT_OFFICE.getCode})
+        </if>
+        <if test="dto.state != null and dto.state == '2'.toString()">
+            and tb_approval.state = ${@com.chen.graduation.enums.ApprovalTotalStateEnums@ADOPT.getCode}
+        </if>
+        <if test="dto.state != null and dto.state == '3'.toString()">
+            and tb_approval.state = ${@com.chen.graduation.enums.ApprovalTotalStateEnums@REJECT.getCode}
+        </if>
+        <if test="dto.name != null and dto.name != ''">
+            and tu.name like concat('%',#{dto.name},'%')
+        </if>
+        <if test="dto.beginTime != null and dto.beginTime != ''">
+            and tb_approval.create_time &gt;= #{dto.beginTime}::timestamp
+        </if>
+        <if test="dto.endTime != null and dto.endTime != ''">
+            and tb_approval.create_time &lt;= #{dto.endTime}::timestamp
+        </if>
+    </select>
 </mapper>

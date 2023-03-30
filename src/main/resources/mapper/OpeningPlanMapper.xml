@@ -40,7 +40,7 @@
         <association property="teacher">
             <id property="id" column="user_id" jdbcType="BIGINT"/>
             <result property="name" column="user_name" jdbcType="VARCHAR"/>
-            <result property="phone_number" column="user_phone_number" jdbcType="VARCHAR"/>
+            <result property="phoneNumber" column="user_phone_number" jdbcType="VARCHAR"/>
             <result property="avatar" column="user_icon" jdbcType="VARCHAR"/>
             <association property="userInfo">
                 <result property="email" column="user_email" jdbcType="VARCHAR"/>

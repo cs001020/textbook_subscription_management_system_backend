@@ -2,9 +2,12 @@ package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
+import com.chen.graduation.beans.DTO.ApprovalSearchDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Approval;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.ApprovalDetailVO;
 import com.chen.graduation.beans.VO.ApprovalVO;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
 
@@ -62,4 +65,22 @@ public interface ApprovalService extends IService<Approval> {
      * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
      */
     AjaxResult<List<ApprovalVO>> getApprovalByUser();
+
+
+    /**
+     * 获得批准列表
+     *
+     * @param pageParamDTO      页面参数dto
+     * @param approvalSearchDTO 搜索dto批准
+     * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
+     */
+    AjaxResult<List<ApprovalVO>> getApprovalList(PageParamDTO pageParamDTO, ApprovalSearchDTO approvalSearchDTO);
+
+    /**
+     * 根据id获得批准详情
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
+     */
+    AjaxResult<ApprovalDetailVO> getApprovalDetailsById(Long id);
 }

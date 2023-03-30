@@ -24,7 +24,7 @@ public class TeacherVO implements Serializable {
     @ApiModelProperty("昵称")
     private String name;
     @ApiModelProperty("手机号")
-    private String phone_number;
+    private String phoneNumber;
     @ApiModelProperty("头像url")
     private String avatar;
     @ApiModelProperty("用户详细信息")

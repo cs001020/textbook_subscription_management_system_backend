@@ -4,15 +4,16 @@ import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.beans.DTO.ApprovalDTO;
-import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
-import com.chen.graduation.beans.DTO.TextbookDTO;
+import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.Approval;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.ApprovalDetailVO;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.beans.VO.OpeningPlanVO;
 import com.chen.graduation.converter.ApprovalConverter;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.ApprovalStateEnums;
@@ -232,6 +233,35 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         log.info("ApprovalServiceImpl.getUnApproval业务结束，结果:{}", approvalVOList);
         //响应
         return AjaxResult.success(approvalVOList);
+    }
+
+    @Override
+    public AjaxResult<List<ApprovalVO>> getApprovalList(PageParamDTO pageParamDTO, ApprovalSearchDTO approvalSearchDTO) {
+        //查询
+        Page<ApprovalVO> approvalVOList=baseMapper.list(pageParamDTO.toPage(ApprovalVO.class),approvalSearchDTO);
+        //封装对象
+        AjaxResult<List<ApprovalVO>> success = AjaxResult.success(approvalVOList.getRecords());
+        success.setTotal(approvalVOList.getTotal());
+        //响应
+        return success;
+    }
+
+    @Override
+    public AjaxResult<ApprovalDetailVO> getApprovalDetailsById(Long id) {
+        //获取审批
+        Approval approval = getById(id);
+        if (Objects.isNull(approval)){
+            throw new ServiceException("错误请求");
+        }
+        ApprovalVO approvalVO = approvalConverter.po2vo(approval);
+        //获取开课计划
+        OpeningPlanVO openingPlanVO = openingPlanService.getPlanById(approval.getOpeningPlanId()).getData();
+        //封装对象
+        ApprovalDetailVO approvalDetailVO = new ApprovalDetailVO();
+        approvalDetailVO.setApproval(approvalVO);
+        approvalDetailVO.setOpeningPlan(openingPlanVO);
+        //响应
+        return AjaxResult.success(approvalDetailVO);
     }
 
 }

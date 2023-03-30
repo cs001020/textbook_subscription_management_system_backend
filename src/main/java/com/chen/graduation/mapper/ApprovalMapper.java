@@ -1,7 +1,13 @@
 package com.chen.graduation.mapper;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chen.graduation.beans.DTO.ApprovalSearchDTO;
 import com.chen.graduation.beans.PO.Approval;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chen.graduation.beans.VO.ApprovalVO;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
 * @author 10065
@@ -10,7 +16,14 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity com.chen.graduation.domain.Approval
 */
 public interface ApprovalMapper extends BaseMapper<Approval> {
-
+    /**
+     * 列表
+     *
+     * @param toPage            到另一个页面
+     * @param approvalSearchDTO 搜索dto批准
+     * @return {@link Page}<{@link ApprovalVO}>
+     */
+    Page<ApprovalVO> list(Page<ApprovalVO> toPage,@Param("dto") ApprovalSearchDTO approvalSearchDTO);
 }
 
 

@@ -3,7 +3,10 @@ package com.chen.graduation.controller;
 import cn.hutool.core.util.RandomUtil;
 import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
+import com.chen.graduation.beans.DTO.ApprovalSearchDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.ApprovalDetailVO;
 import com.chen.graduation.beans.VO.ApprovalVO;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
 import com.chen.graduation.service.ApprovalService;
@@ -33,9 +36,14 @@ public class ApprovalController {
 
 
     @ApiOperation("查看所有教材申请")
-    @GetMapping("/allApproval")
-    public AjaxResult<List<ApprovalVO>> getUnApproval() {
-        return approvalService.getApprovalByState(null);
+    @GetMapping("/list")
+    public AjaxResult<List<ApprovalVO>> getApprovalList(@Validated PageParamDTO pageParamDTO, ApprovalSearchDTO approvalSearchDTO) {
+        return approvalService.getApprovalList(pageParamDTO,approvalSearchDTO);
+    }
+    @ApiOperation("根据id查看教材申请详情")
+    @GetMapping("/details/{id}")
+    public AjaxResult<ApprovalDetailVO> getApprovalDetails(@PathVariable Long id) {
+        return approvalService.getApprovalDetailsById(id);
     }
 
     @ApiOperation("查看我的教材申请")

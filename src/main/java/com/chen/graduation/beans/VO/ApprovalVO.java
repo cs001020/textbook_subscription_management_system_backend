@@ -39,6 +39,8 @@ public class ApprovalVO implements Serializable {
     private String deansOfficeMessage;
     @ApiModelProperty("审批状态")
     private ApprovalTotalStateEnums state;
+    @ApiModelProperty("发起人")
+    private TeacherVO teacher;
     @ApiModelProperty("创建时间")
     private Date createTime;
     @ApiModelProperty("更新时间")
