@@ -21,6 +21,8 @@ import com.chen.graduation.mapper.ApprovalMapper;
 import com.chen.graduation.service.OpeningPlanService;
 import com.chen.graduation.service.TextbookOrderService;
 import com.chen.graduation.service.TextbookService;
+import com.chen.graduation.utils.AsyncFactory;
+import com.chen.graduation.utils.AsyncManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -312,6 +314,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
                 .update();
         //删除审核
         boolean remove = removeById(id);
+        //异步删除审核中图书
+        AsyncManager.me().execute(AsyncFactory.deleteAuditTextbook(approval.getTextbookIds()));
         log.info("ApprovalServiceImpl.adminDelete业务结束，结果:{}",remove);
         return AjaxResult.success(remove);
     }

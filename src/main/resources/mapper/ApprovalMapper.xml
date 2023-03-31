@@ -84,5 +84,6 @@
         <if test="dto.endTime != null and dto.endTime != ''">
             and tb_approval.create_time &lt;= #{dto.endTime}::timestamp
         </if>
+        order by tb_approval.id
     </select>
 </mapper>

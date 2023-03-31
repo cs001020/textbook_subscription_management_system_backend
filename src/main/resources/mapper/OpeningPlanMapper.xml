@@ -115,6 +115,7 @@
             and tm.is_deleted = 0
             and tui.is_deleted = 0
         </where>
+        order by top.id
     </select>
 
     <select id="getPlanById" resultMap="openPlanWithDetails">
@@ -160,6 +161,7 @@
           and ttg.is_deleted = 0
           and tm.is_deleted = 0
           and tui.is_deleted = 0
+        order by top.id
     </select>
     <select id="getAllPlanList" resultMap="openPlanWithDetails">
         select top.id          as id,
@@ -203,6 +205,7 @@
           and ttg.is_deleted = 0
           and tm.is_deleted = 0
           and tui.is_deleted = 0
+        order by top.id
     </select>
 
 </mapper>
