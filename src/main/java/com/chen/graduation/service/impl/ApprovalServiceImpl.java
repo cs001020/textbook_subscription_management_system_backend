@@ -13,9 +13,7 @@ import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.converter.ApprovalConverter;
 import com.chen.graduation.converter.TextbookConverter;
-import com.chen.graduation.enums.ApprovalStateEnums;
-import com.chen.graduation.enums.ApprovalTotalStateEnums;
-import com.chen.graduation.enums.OpenPlanStateEnums;
+import com.chen.graduation.enums.*;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.ApprovalService;
@@ -28,9 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -54,7 +50,6 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     @Resource
     private TextbookOrderService textbookOrderService;
 
-    // FIXME: 2023/2/22 图书id校验
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> submit(ApprovalInsertDTO approvalInsertDTO) {
@@ -62,30 +57,71 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         if (CollectionUtil.isEmpty(approvalInsertDTO.getTextBookIds()) && CollectionUtil.isEmpty(approvalInsertDTO.getTextbookDTOList())) {
             throw new ServiceException("请选择教材");
         }
-        //添加教材
-        if (CollectionUtil.isNotEmpty(approvalInsertDTO.getTextbookDTOList())) {
-            List<TextbookDTO> textbookDTOList = approvalInsertDTO.getTextbookDTOList();
+        //检查开课计划
+        OpeningPlan openingPlan = openingPlanService
+                .lambdaQuery()
+                .eq(OpeningPlan::getId,approvalInsertDTO.getOpeningPlanId())
+                .last("for update")
+                .one();
+        if (Objects.isNull(openingPlan)){
+            throw new ServiceException("非法请求!!");
+        }
+        //检查开课计划 是否属于当前用户
+        Long userId = UserHolderContext.getUserId();
+        if (!userId.equals(openingPlan.getTeacherId())){
+            throw new ServiceException("非法请求!!");
+        }
+        //检查开课计划状态
+        if (!OpenPlanStateEnums.TEXTBOOKS_TO_BE_SELECT.equals(openingPlan.getState())){
+            throw new ServiceException("当前开课计划已选择教材，请勿重复申请");
+        }
+        //初始化 审核教材ids
+        List<Long> approvalInsertTextbookIds=new ArrayList<>();
+        //检查教材
+        List<Long> textBookIds = approvalInsertDTO.getTextBookIds();
+        if(CollectionUtil.isNotEmpty(textBookIds)){
+            String textBookIdsString = StrUtil.join(",", textBookIds);
+            List<TextbookVO> textbookList = textbookService.getByIds(textBookIdsString).getData();
+            //禁止选择重复教材
+            if (textBookIds.size()!=textbookList.size()){
+                throw new ServiceException("禁止选择重复教材");
+            }
+            for (TextbookVO textbookVO : textbookList) {
+                //非状态状态图书无法选择
+                if (!TextbookStateEnums.NORMAL.getStateName().equals(textbookVO.getState())){
+                    throw new ServiceException("《"+textbookVO.getBookName()+"》，非正常状态无法选择");
+                }
+            }
+            approvalInsertTextbookIds.addAll(textBookIds);
+        }
+        //添加新教材
+        List<TextbookDTO> textbookDTOList = approvalInsertDTO.getTextbookDTOList();
+        if (CollectionUtil.isNotEmpty(textbookDTOList)) {
+            //绕过前端验证  纯在于旧图书同名的新图书
+            if (UniqueEnums.UN_UNIQUE.equals(checkNewBookNameUnique(textbookDTOList))){
+                throw new ServiceException("非法请求！！");
+            }
+            //列表同名判断
+            if (checkHasSameName(textbookDTOList)){
+                throw new ServiceException("请勿添加同名图书");
+            }
+            //插入数据
             List<Textbook> textbookList = textbookConverter.dto2vos(textbookDTOList);
             textbookService.saveBatch(textbookList);
             //获取教材ids
             List<Long> textbookIds = textbookList.stream().map(Textbook::getId).collect(Collectors.toList());
-            if (CollectionUtil.isEmpty(approvalInsertDTO.getTextBookIds())) {
-                approvalInsertDTO.setTextBookIds(textbookIds);
-            } else {
-                approvalInsertDTO.getTextBookIds().addAll(textbookIds);
-            }
+            approvalInsertTextbookIds.addAll(textbookIds);
         }
-        String join = StrUtil.join(",", approvalInsertDTO.getTextBookIds());
+        String join = StrUtil.join(",", approvalInsertTextbookIds);
         //构建插入对象
         Approval approval = new Approval();
-        approval.setOpeningPlanId(approvalInsertDTO.getOpeningPlanId());
+        approval.setOpeningPlanId(openingPlan.getId());
         approval.setTextbookIds(join);
         //插入
         boolean save = this.save(approval);
         //更新开课计划
-        LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
-        updateWrapper.eq(OpeningPlan::getId,approvalInsertDTO.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.WAITING_FOR_APPROVAL);
-        openingPlanService.update(updateWrapper);
+        openingPlan.setState(OpenPlanStateEnums.WAITING_FOR_APPROVAL);
+        openingPlanService.updateById(openingPlan);
         //打印日志
         log.info("ApprovalServiceImpl.submit业务结束，结果:{}", save);
         //响应
@@ -285,6 +321,41 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         //查询审核表
         Approval approval = getById(id);
         return textbookService.getByIds(approval.getTextbookIds());
+    }
+
+    /**
+     * 检查新书名字独一无二
+     *
+     * @param textbookDTOList 教科书dtolist
+     * @return {@link UniqueEnums}
+     */
+    private UniqueEnums checkNewBookNameUnique(List<TextbookDTO> textbookDTOList) {
+        if (CollectionUtil.isEmpty(textbookDTOList)){
+            throw new ServiceException("参数异常");
+        }
+        //获取图书名列表
+        List<String> bookNameList = textbookDTOList.stream().map(TextbookDTO::getBookName).collect(Collectors.toList());
+        //查询数据库
+        Page<Textbook> page = textbookService.lambdaQuery().in(Textbook::getBookName, bookNameList).page(new Page<>(1, 1));
+        List<Textbook> textbookList = page.getRecords();
+        if (CollectionUtil.isEmpty(textbookList)){
+            return UniqueEnums.UNIQUE;
+        }
+        return UniqueEnums.UN_UNIQUE;
+    }
+
+    /**
+     * 检查该图书Dto列表是否存在同名
+     *
+     * @param textbookDTOList 教科书dtolist
+     * @return boolean 存在同名放回tue
+     */
+    private boolean checkHasSameName(List<TextbookDTO> textbookDTOList) {
+        if (CollectionUtil.isEmpty(textbookDTOList)){
+            throw new ServiceException("参数异常");
+        }
+        Set<String> bookNameSet = textbookDTOList.stream().map(TextbookDTO::getBookName).collect(Collectors.toSet());
+        return bookNameSet.size() != textbookDTOList.size();
     }
 
 }

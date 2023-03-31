@@ -2,7 +2,6 @@ package com.chen.graduation.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.conditions.update.LambdaUpdateChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -11,7 +10,6 @@ import com.chen.graduation.beans.DTO.TextbookSearchDTO;
 import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
-import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.*;
 import com.chen.graduation.exception.ServiceException;
@@ -19,7 +17,6 @@ import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.TextbookMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -207,6 +204,19 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         log.info("TextbookServiceImpl.discardTextbook业务结束，结果:{}",update);
         //响应
         return AjaxResult.success(update);
+    }
+
+    @Override
+    public AjaxResult<UniqueEnums> checkBookName(String name) {
+        if (StrUtil.isBlank(name)){
+            throw new ServiceException("参数异常");
+        }
+        Page<Textbook> page = lambdaQuery().eq(Textbook::getBookName, name).page(new Page<>(1, 1));
+        List<Textbook> textbookList = page.getRecords();
+        if (CollectionUtil.isEmpty(textbookList)) {
+            return AjaxResult.success(UniqueEnums.UNIQUE);
+        }
+        return AjaxResult.success(UniqueEnums.UN_UNIQUE);
     }
 
 

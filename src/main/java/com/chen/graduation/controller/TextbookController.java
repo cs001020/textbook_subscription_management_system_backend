@@ -8,6 +8,7 @@ import com.chen.graduation.beans.PO.Textbook;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.BusinessTypeEnums;
+import com.chen.graduation.enums.UniqueEnums;
 import com.chen.graduation.service.TextbookService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
@@ -49,6 +50,12 @@ public class TextbookController {
     @GetMapping("/me")
     public AjaxResult<List<TextbookVO>> me() {
         return textbookService.me();
+    }
+
+    @ApiOperation("教材是否存在该名字图书")
+    @GetMapping("/checkbookName")
+    public AjaxResult<UniqueEnums> checkBookName(String name) {
+        return textbookService.checkBookName(name);
     }
 
     @Log(title = "教材管理",businessTypeEnums = BusinessTypeEnums.INSERT)
