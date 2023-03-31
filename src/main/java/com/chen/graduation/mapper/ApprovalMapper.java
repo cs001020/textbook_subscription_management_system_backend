@@ -24,6 +24,14 @@ public interface ApprovalMapper extends BaseMapper<Approval> {
      * @return {@link Page}<{@link ApprovalVO}>
      */
     Page<ApprovalVO> list(Page<ApprovalVO> toPage,@Param("dto") ApprovalSearchDTO approvalSearchDTO);
+
+    /**
+     * 查询属于当前用户的教材申请
+     *
+     * @param id id
+     * @return {@link List}<{@link ApprovalVO}>
+     */
+    List<ApprovalVO> getApprovalByUser(@Param("id") Long id);
 }
 
 

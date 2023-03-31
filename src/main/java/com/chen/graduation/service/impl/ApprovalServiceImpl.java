@@ -10,17 +10,15 @@ import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.Approval;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.Textbook;
+import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.converter.ApprovalConverter;
 import com.chen.graduation.converter.TextbookConverter;
 import com.chen.graduation.enums.*;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
-import com.chen.graduation.service.ApprovalService;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.ApprovalMapper;
-import com.chen.graduation.service.OpeningPlanService;
-import com.chen.graduation.service.TextbookOrderService;
-import com.chen.graduation.service.TextbookService;
 import com.chen.graduation.utils.AsyncFactory;
 import com.chen.graduation.utils.AsyncManager;
 import lombok.extern.slf4j.Slf4j;
@@ -51,6 +49,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     private OpeningPlanService openingPlanService;
     @Resource
     private TextbookOrderService textbookOrderService;
+    @Resource
+    private UserService userService;
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
@@ -252,18 +252,8 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
     public AjaxResult<List<ApprovalVO>> getApprovalByUser() {
         //获取用户
         Long userId = UserHolderContext.getUserId();
-        //获取用户的开课计划
-        List<OpeningPlan> openingPlanList = openingPlanService.lambdaQuery().eq(OpeningPlan::getTeacherId, userId).list();
-        //如果不存在开课计划 返回空列表
-        if (CollectionUtil.isEmpty(openingPlanList)){
-            return AjaxResult.success(Collections.emptyList());
-        }
-        //获取开课计划id列表
-        List<Long> openingPlanIdList = openingPlanList.stream().map(OpeningPlan::getId).collect(Collectors.toList());
-        //查询申请
-        List<Approval> approvalList = this.lambdaQuery().in(Approval::getOpeningPlanId, openingPlanIdList).list();
-        //转换
-        List<ApprovalVO> approvalVOList = approvalConverter.po2vos(approvalList);
+        //查询
+        List<ApprovalVO> approvalVOList = baseMapper.getApprovalByUser(userId);
         //打印日志
         log.info("ApprovalServiceImpl.getUnApproval业务结束，结果:{}", approvalVOList);
         //响应
