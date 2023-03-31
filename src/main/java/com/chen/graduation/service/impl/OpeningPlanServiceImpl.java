@@ -144,17 +144,21 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         if (OpenPlanStateEnums.APPROVAL_COMPLETED.equals(openingPlan.getState())){
             throw new ServiceException("该开课计划已经完成教材审核,无法删除");
         }
-        ApprovalService approvalService = SpringUtil.getBean(ApprovalService.class);
         //获取审核
+        ApprovalService approvalService = SpringUtil.getBean(ApprovalService.class);
         Approval approval = approvalService.lambdaQuery().eq(Approval::getOpeningPlanId, id).one();
+        //存在审核 删除
+        if (!Objects.isNull(approval)){
+            //删除审核
+            approvalService.removeById(approval.getId());
+            //异步删除审核中图书
+            AsyncManager.me().execute(AsyncFactory.deleteAuditTextbook(approval.getTextbookIds()));
+        }
+
         //删除课程
         openingPlanDetailService.lambdaUpdate().eq(OpeningPlanDetail::getOpeningPlanId,openingPlan.getId()).remove();
-        //删除审核
-        approvalService.removeById(approval.getId());
         //删除开课计划
         boolean remove = removeById(id);
-        //异步删除审核中图书
-        AsyncManager.me().execute(AsyncFactory.deleteAuditTextbook(approval.getTextbookIds()));
         return AjaxResult.success(remove);
     }
 
