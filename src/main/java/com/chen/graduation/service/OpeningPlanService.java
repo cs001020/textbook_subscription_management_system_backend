@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
 import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.OpeningPlanDetailVO;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
 
@@ -89,4 +90,12 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> updateOpeningPlan(OpeningPlanDTO openingPlanDTO, Long id);
+
+    /**
+     * 通过id获取课程
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link OpeningPlanDetailVO}>
+     */
+    AjaxResult<List<OpeningPlanDetail>> getCourseById(Long id);
 }

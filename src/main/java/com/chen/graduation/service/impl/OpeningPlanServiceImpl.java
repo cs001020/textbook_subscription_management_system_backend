@@ -13,7 +13,6 @@ import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.converter.OpeningPlanConverter;
-import com.chen.graduation.converter.OpeningPlanDetailConverter;
 import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import com.chen.graduation.enums.OpenPlanStateEnums;
 import com.chen.graduation.exception.ServiceException;
@@ -188,6 +187,12 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         log.info("OpeningPlanServiceImpl.updateOpeningPlan业务结束，结果:{}",update);
         //响应
         return AjaxResult.success(update);
+    }
+
+    @Override
+    public AjaxResult<List<OpeningPlanDetail>> getCourseById(Long id) {
+        List<OpeningPlanDetail> list = openingPlanDetailService.lambdaQuery().eq(OpeningPlanDetail::getOpeningPlanId, id).list();
+        return AjaxResult.success(list);
     }
 }
 

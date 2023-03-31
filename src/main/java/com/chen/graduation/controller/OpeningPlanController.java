@@ -6,6 +6,7 @@ import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlanDetail;
 import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.OpeningPlanDetailVO;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.enums.BusinessTypeEnums;
@@ -44,6 +45,12 @@ public class OpeningPlanController {
     @GetMapping("/list")
     public AjaxResult<List<OpeningPlanVO>> getAllPlanList() {
         return openingPlanService.getAllPlanList();
+    }
+
+    @ApiOperation("根据id查看开课计划下的课程")
+    @GetMapping("/course/{id}")
+    public AjaxResult<List<OpeningPlanDetail>> getCourseById(@PathVariable Long id) {
+        return openingPlanService.getCourseById(id);
     }
 
     @ApiOperation("根据id查看开课计划")
