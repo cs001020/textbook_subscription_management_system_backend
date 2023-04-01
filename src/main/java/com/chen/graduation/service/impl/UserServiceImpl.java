@@ -28,6 +28,7 @@ import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.UserMapper;
 import com.chen.graduation.utils.AsyncFactory;
 import com.chen.graduation.utils.AsyncManager;
+import com.chen.graduation.utils.PermissionUtils;
 import com.chen.graduation.utils.RouterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -187,6 +188,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         simpleUserInfoVO.setIntroduction(user.getIntroduction());
         simpleUserInfoVO.setRoles(Collections.singletonList("[admin]"));
         simpleUserInfoVO.setRouters(RouterUtils.buildRouterTree(permissionList));
+        simpleUserInfoVO.setPermissions(PermissionUtils.getButtonOrRequestPermission(permissionList));
         //响应结果
         log.info("UserServiceImpl.info业务结束，结果:{}", simpleUserInfoVO);
         return AjaxResult.success(simpleUserInfoVO);
