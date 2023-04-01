@@ -4,6 +4,7 @@ import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Role;
 import com.chen.graduation.beans.PO.TextbookOrder;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.service.RoleService;
 import com.chen.graduation.service.TextbookOrderService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
@@ -43,6 +44,12 @@ public class TextbookOrderController {
     @PostMapping("/grant/{id}")
     public AjaxResult<Object> grant( @PathVariable Long id) {
         return textbookOrderService.grant(id);
+    }
+
+    @ApiOperation("根据教材订单id获得教材信息")
+    @GetMapping("/textbook/{id}")
+    public AjaxResult<List<TextbookVO>> getTextBookListById(@PathVariable Long id){
+        return textbookOrderService.getTextBookListById(id);
     }
 
 }

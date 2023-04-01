@@ -3,17 +3,23 @@ package com.chen.graduation.service.impl;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.TextbookFeedbackInsertDTO;
 import com.chen.graduation.beans.PO.TextbookFeedback;
+import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookFeedbackVO;
+import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.converter.TextbookFeedbackConverter;
+import com.chen.graduation.enums.UserTypeEnums;
+import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.TextbookFeedbackService;
 import com.chen.graduation.mapper.TextbookFeedbackMapper;
+import com.chen.graduation.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -30,6 +36,8 @@ public class TextbookFeedbackServiceImpl extends ServiceImpl<TextbookFeedbackMap
 
     @Resource
     private TextbookFeedbackConverter textbookFeedbackConverter;
+    @Resource
+    private UserService userService;
 
     @Override
     @Cacheable(value = RedisConstants.TEXTBOOK_FEEDBACK_CACHE_KEY,key = "#textbookId")
@@ -58,9 +66,15 @@ public class TextbookFeedbackServiceImpl extends ServiceImpl<TextbookFeedbackMap
 
     @Override
     @CacheEvict(value = RedisConstants.TEXTBOOK_FEEDBACK_CACHE_KEY,key = "#textbookFeedbackInsertDTO.textbookId")
+    @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> addFeedback(TextbookFeedbackInsertDTO textbookFeedbackInsertDTO) {
         //获取用户id
         Long userId = UserHolderContext.getUserId();
+        User user = userService.getById(userId);
+        //判断当前用户类型
+        if (!UserTypeEnums.STUDENT.equals(user.getType())){
+            throw new ServiceException("非法请求");
+        }
         //封装po
         TextbookFeedback textbookFeedback = textbookFeedbackConverter.dto2po(textbookFeedbackInsertDTO);
         textbookFeedback.setStudentId(userId);
