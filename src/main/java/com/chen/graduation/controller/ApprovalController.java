@@ -64,19 +64,19 @@ public class ApprovalController {
     @ApiOperation("查看教学组待审核")
     @GetMapping("/unApproval/teachingGroup")
     public AjaxResult<List<ApprovalVO>> getUnApprovalForTeachingGroup() {
-        return approvalService.getApprovalByState(ApprovalTotalStateEnums.WAIT_GROUP);
+        return approvalService.getApprovalByStateAndUser(ApprovalTotalStateEnums.WAIT_GROUP);
     }
 
     @ApiOperation("查看二级学院待审核")
     @GetMapping("/unApproval/secondaryCollege")
     public AjaxResult<List<ApprovalVO>> getUnApprovalForSecondaryCollege() {
-        return approvalService.getApprovalByState(ApprovalTotalStateEnums.WAIT_SECONDARY);
+        return approvalService.getApprovalByStateAndUser(ApprovalTotalStateEnums.WAIT_SECONDARY);
     }
 
     @ApiOperation("查看二级学院待审核")
     @GetMapping("/unApproval/academicAffairsOffice")
     public AjaxResult<List<ApprovalVO>> getUnApprovalForAcademicAffairsOffice() {
-        return approvalService.getApprovalByState(ApprovalTotalStateEnums.WAIT_OFFICE);
+        return approvalService.getApprovalByStateAndUser(ApprovalTotalStateEnums.WAIT_OFFICE);
     }
 
     @ApiOperation("提交申请")

@@ -86,7 +86,7 @@
         </if>
         order by tb_approval.id
     </select>
-    <select id="getApprovalByUser" resultType="com.chen.graduation.beans.VO.ApprovalVO">
+    <select id="getApprovalByUser"  resultMap="VOMap">
         select tb_approval.id,
         tb_approval.opening_plan_id,
         tb_approval.textbook_ids,
@@ -107,6 +107,35 @@
         and top.is_deleted = 0
         and tu.is_deleted = 0
         and  top.teacher_id = #{id}
+        order by tb_approval.id
+    </select>
+    <select id="getApprovalByStateAndUser"  resultMap="VOMap">
+        select tb_approval.id,
+        tb_approval.opening_plan_id,
+        tb_approval.textbook_ids,
+        tb_approval.teaching_group_state,
+        tb_approval.teaching_group_message,
+        tb_approval.secondary_college_state,
+        tb_approval.secondary_college_message,
+        tb_approval.deans_office_state,
+        tb_approval.deans_office_message,
+        tb_approval.state,
+        tb_approval.create_time,
+        tb_approval.update_time,
+        tu.name as name
+        from tb_approval
+        left join tb_opening_plan top on top.id = tb_approval.opening_plan_id
+        left join tb_user tu on top.teacher_id = tu.id
+        where tb_approval.is_deleted = 0
+        and top.is_deleted = 0
+        and tu.is_deleted = 0
+        and tb_approval.state= #{state}
+        <if test="state == @com.chen.graduation.enums.ApprovalTotalStateEnums@WAIT_GROUP">
+            and top.teaching_group_id = #{user.teachingGroupId}
+        </if>
+        <if test="state == @com.chen.graduation.enums.ApprovalTotalStateEnums@WAIT_SECONDARY">
+            and top.secondary_college_id = #{user.secondaryCollegeId}
+        </if>
         order by tb_approval.id
     </select>
 </mapper>

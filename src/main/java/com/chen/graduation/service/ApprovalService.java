@@ -58,7 +58,7 @@ public interface ApprovalService extends IService<Approval> {
      * @param approvalTotalStateEnums 总批准状态枚举
      * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
      */
-    AjaxResult<List<ApprovalVO>> getApprovalByState(ApprovalTotalStateEnums approvalTotalStateEnums);
+    AjaxResult<List<ApprovalVO>> getApprovalByStateAndUser(ApprovalTotalStateEnums approvalTotalStateEnums);
 
     /**
      * 获得用户教材申请

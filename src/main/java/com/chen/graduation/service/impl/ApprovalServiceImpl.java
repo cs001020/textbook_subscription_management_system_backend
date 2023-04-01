@@ -151,11 +151,6 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setTeachingGroupState(approvalDTO.getApprovalStateEnums());
         approval.setTeachingGroupMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.WAIT_SECONDARY);
-        if (ApprovalStateEnums.ADOPT.equals(approvalDTO.getApprovalStateEnums())) {
-            LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
-            updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
-            openingPlanService.update(updateWrapper);
-        }
         //插入
         boolean b = this.updateById(approval);
         log.info("ApprovalServiceImpl.teachingGroupApproval业务结束，结果:{}", b);
@@ -182,12 +177,6 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setSecondaryCollegeState(approvalDTO.getApprovalStateEnums());
         approval.setSecondaryCollegeMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.WAIT_OFFICE);
-        //教务处审核通过 更新开课计划
-        if (ApprovalStateEnums.ADOPT.equals(approvalDTO.getApprovalStateEnums())) {
-            LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
-            updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
-            openingPlanService.update(updateWrapper);
-        }
         //插入
         boolean b = this.updateById(approval);
         log.info("ApprovalServiceImpl.teachingGroupApproval业务结束，结果:{}", b);
@@ -232,16 +221,17 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         return AjaxResult.success();
     }
 
-    // TODO: 2023/2/26 教学组的id 匹配
     @Override
-    public AjaxResult<List<ApprovalVO>> getApprovalByState(ApprovalTotalStateEnums approvalTotalStateEnums) {
-        //条件构造器
-        LambdaQueryWrapper<Approval> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(!Objects.isNull(approvalTotalStateEnums),Approval::getState, approvalTotalStateEnums);
-        //查询
-        List<Approval> approvalList = list(queryWrapper);
+    public AjaxResult<List<ApprovalVO>> getApprovalByStateAndUser(ApprovalTotalStateEnums approvalTotalStateEnums) {
+        //获取当前用户
+        Long userId = UserHolderContext.getUserId();
+        User user = userService.getById(userId);
+        //非教师用户 视为非法请求
+        if (UserTypeEnums.STUDENT.equals(user.getType())){
+            throw new ServiceException("非法请求");
+        }
         //转换
-        List<ApprovalVO> approvalVOList = approvalConverter.po2vos(approvalList);
+        List<ApprovalVO> approvalVOList = baseMapper.getApprovalByStateAndUser(user,approvalTotalStateEnums);
         //打印日志
         log.info("ApprovalServiceImpl.getUnApproval业务结束，结果:{}", approvalVOList);
         //响应

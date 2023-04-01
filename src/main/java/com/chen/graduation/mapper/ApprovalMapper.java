@@ -4,7 +4,9 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.chen.graduation.beans.DTO.ApprovalSearchDTO;
 import com.chen.graduation.beans.PO.Approval;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.enums.ApprovalTotalStateEnums;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -32,6 +34,15 @@ public interface ApprovalMapper extends BaseMapper<Approval> {
      * @return {@link List}<{@link ApprovalVO}>
      */
     List<ApprovalVO> getApprovalByUser(@Param("id") Long id);
+
+    /**
+     * 根据状态以及当前用户获取教材申请
+     *
+     * @param user                    用户
+     * @param approvalTotalStateEnums 总批准状态枚举
+     * @return {@link List}<{@link ApprovalVO}>
+     */
+    List<ApprovalVO> getApprovalByStateAndUser(@Param("user") User user,@Param("state") ApprovalTotalStateEnums approvalTotalStateEnums);
 }
 
 
