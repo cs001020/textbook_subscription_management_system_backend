@@ -30,7 +30,7 @@ public class OpeningPlanDetailVO implements Serializable {
     @ApiModelProperty("教学周数")
     private Integer weeksTeach;
     @ApiModelProperty("类型")
-    private String type;
+    private OpenPlanDetailsTypeEnums type;
 
     private static final long serialVersionUID = 1L;
 

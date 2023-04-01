@@ -1,6 +1,7 @@
 package com.chen.graduation.beans.DTO;
 
 import com.chen.graduation.enums.SortableEnums;
+import com.chen.graduation.enums.TextbookStateEnums;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -30,7 +31,13 @@ public class TextbookSearchDTO implements Serializable {
     private Integer size;
     @ApiModelProperty(value = "关键字")
     private String keyWord;
-    @ApiModelProperty(value = "根据库存排序(aes desc)")
+    @ApiModelProperty(value = "教材状态")
+    private TextbookStateEnums state;
+    @ApiModelProperty("开始时间,请输入正确格式(yyyy-MM-dd)")
+    private String beginTime;
+    @ApiModelProperty("结束时间,请输入正确格式(yyyy-MM-dd)")
+    private String endTime;
+    @ApiModelProperty(value = "根据库存排序")
     private SortableEnums orderByStock;
     @ApiModelProperty(value = "根据价格排序")
     private SortableEnums orderByPrice;

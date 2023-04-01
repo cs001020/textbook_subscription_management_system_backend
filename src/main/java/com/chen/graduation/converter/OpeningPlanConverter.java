@@ -20,17 +20,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface OpeningPlanConverter {
 
-    /**
-     * po2vo
-     *
-     * @param openingPlan 开放计划
-     * @return {@link OpeningPlanVO}
-     */
-    @Mappings(value = {
-            @Mapping(target = "state", expression = "java(openingPlan.getState().getStateName())"),
-            @Mapping(target = "openingPlanDetails", expression = "java(org.mapstruct.factory.Mappers.getMapper(OpeningPlanDetailConverter.class).pos2vos(openingPlan.getOpeningPlanDetails()))")
-    })
-    OpeningPlanVO po2vo(OpeningPlan openingPlan);
 
     /**
      * dto2po
@@ -43,11 +32,4 @@ public interface OpeningPlanConverter {
     })
     OpeningPlan dto2po(OpeningPlanDTO openingPlanDTO);
 
-    /**
-     * pos2vos
-     *
-     * @param openingPlanList 开放计划列表
-     * @return {@link List}<{@link OpeningPlanVO}>
-     */
-    List<OpeningPlanVO> pos2vos(List<OpeningPlan> openingPlanList);
 }

@@ -5,6 +5,7 @@ import com.chen.graduation.beans.PO.Approval;
 import com.chen.graduation.beans.PO.TextbookOrder;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.TextbookVO;
 
 import java.util.List;
 
@@ -37,4 +38,12 @@ public interface TextbookOrderService extends IService<TextbookOrder> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> grant(Long id);
+
+    /**
+     * 通过id获取教材信息
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
+     */
+    AjaxResult<List<TextbookVO>> getTextBookListById(Long id);
 }

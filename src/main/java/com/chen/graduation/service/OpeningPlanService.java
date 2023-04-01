@@ -1,10 +1,15 @@
 package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.chen.graduation.beans.PO.OpeningPlanDetail;
+import com.chen.graduation.beans.PO.SecondaryCollege;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.OpeningPlanDetailVO;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
+import com.chen.graduation.beans.VO.TeachingGroupVO;
 
 import java.util.List;
 
@@ -44,4 +49,53 @@ public interface OpeningPlanService extends IService<OpeningPlan> {
      * @return {@link AjaxResult}<{@link List}<{@link OpeningPlanVO}>>
      */
     AjaxResult<OpeningPlanVO>  getPlanById(Long id);
+
+    /**
+     * 查询课程信息
+     *
+     * @param pageParamDTO      页面参数dto
+     * @param openingPlanDetail
+     * @return {@link AjaxResult}<{@link OpeningPlanDetail}>
+     */
+    AjaxResult<List<OpeningPlanDetail>> selectCourse(PageParamDTO pageParamDTO, OpeningPlanDetail openingPlanDetail);
+
+    /**
+     * 查询班级
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollege}>>
+     */
+    AjaxResult<List<SecondaryCollege>> getGrade();
+
+    /**
+     * 查询教学组
+     *
+     * @return {@link AjaxResult}<{@link List}<{@link SecondaryCollege}>>
+     */
+    AjaxResult<List<TeachingGroupVO>> getTeachingGroup();
+
+
+    /**
+     * 删除通过id
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> deleteById(Long id);
+
+    /**
+     * 更新开课计划
+     *
+     * @param openingPlanDTO 开放计划dto
+     * @param id             id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateOpeningPlan(OpeningPlanDTO openingPlanDTO, Long id);
+
+    /**
+     * 通过id获取课程
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link OpeningPlanDetailVO}>
+     */
+    AjaxResult<List<OpeningPlanDetail>> getCourseById(Long id);
 }

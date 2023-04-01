@@ -1,5 +1,6 @@
 package com.chen.graduation.beans.DTO;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -28,4 +29,7 @@ public class PageParamDTO implements Serializable {
     @NotNull(message = "分页参数异常")
     private Integer size;
 
+    public <T> Page<T> toPage(Class<T> tClass){
+        return new Page<>(this.page,this.size);
+    }
 }

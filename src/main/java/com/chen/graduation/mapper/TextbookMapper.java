@@ -26,6 +26,14 @@ public interface TextbookMapper extends BaseMapper<Textbook> {
     List<Textbook> getByIds(@Param("ids") List<Long> ids);
 
 
+    /**
+     * 搜索
+     *
+     * @param objectPage        对象页面
+     * @param textbookSearchDTO 教科书搜索dto
+     * @return {@link Page}<{@link Textbook}>
+     */
+    Page<Textbook> search(Page<Object> objectPage,@Param("dto") TextbookSearchDTO textbookSearchDTO);
 }
 
 

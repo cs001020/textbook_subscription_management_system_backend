@@ -5,10 +5,15 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.chen.graduation.enums.TextbookStateEnums;
 import lombok.Data;
+import org.hibernate.validator.constraints.ISBN;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @TableName tb_textbook
@@ -18,13 +23,14 @@ import lombok.Data;
 public class Textbook implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long id;
-
+    @NotBlank(message = "参数异常")
     private String bookName;
-
+    @ISBN(message = "isbn码格式错误")
+    @NotBlank(message = "参数异常")
     private String isbn;
 
     private String barCode;
-
+    @NotBlank(message = "参数异常")
     private String author;
 
     private String binding;
@@ -32,8 +38,8 @@ public class Textbook implements Serializable {
     private String print;
 
     private String folio;
-
-    private String price;
+    @NotNull(message = "参数异常")
+    private BigDecimal price;
 
     private String words;
 
@@ -43,10 +49,10 @@ public class Textbook implements Serializable {
 
     private String issueNumber;
 
-    private String prePacketNumber;
+    private Integer prePacketNumber;
 
     private Date publicationDate;
-
+    @NotBlank(message = "参数异常")
     private String imgUrl;
 
     private String description;

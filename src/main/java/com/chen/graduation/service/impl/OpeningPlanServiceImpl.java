@@ -1,26 +1,34 @@
 package com.chen.graduation.service.impl;
 
 import cn.hutool.core.util.BooleanUtil;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.extra.spring.SpringUtil;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.OpeningPlanDTO;
-import com.chen.graduation.beans.PO.OpeningPlan;
-import com.chen.graduation.beans.PO.OpeningPlanDetail;
-import com.chen.graduation.beans.PO.User;
+import com.chen.graduation.beans.DTO.OpeningPlanDetailDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
+import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.OpeningPlanVO;
+import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.converter.OpeningPlanConverter;
+import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import com.chen.graduation.enums.OpenPlanStateEnums;
+import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
-import com.chen.graduation.service.OpeningPlanDetailService;
-import com.chen.graduation.service.OpeningPlanService;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.OpeningPlanMapper;
-import com.chen.graduation.service.UserService;
+import com.chen.graduation.utils.AsyncFactory;
+import com.chen.graduation.utils.AsyncManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author 10065
@@ -44,17 +52,7 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         Long userId = UserHolderContext.getUserId();
         User user = userService.getById(userId);
         //查询开课计划
-        List<OpeningPlan> openingPlanList = baseMapper.getPlanByUser(user);
-        //封装结果
-        List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
-        openingPlanVOList.forEach(openingPlanVO -> {
-            openingPlanVO
-                    .setCanAddApproval(
-                            openingPlanVO.getTeacher().getName().equals(user.getName())
-                                    &&
-                                    OpenPlanStateEnums.TEXTBOOKS_TO_BE_SELECT.getStateName().equals(openingPlanVO.getState())
-                    );
-        });
+        List<OpeningPlanVO> openingPlanVOList = baseMapper.getPlanByUser(user);
         //打印日志
         log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
         //返回结果
@@ -90,25 +88,122 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
     @Override
     public AjaxResult<List<OpeningPlanVO>> getAllPlanList() {
         //查询开课计划
-        List<OpeningPlan> openingPlanList = baseMapper.getAllPlanList();
-        //封装结果
-        List<OpeningPlanVO> openingPlanVOList = openingPlanConverter.pos2vos(openingPlanList);
+        List<OpeningPlanVO> openingPlanList = baseMapper.getAllPlanList();
         //打印日志
-        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanVOList);
+        log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", openingPlanList);
         //返回结果
-        return AjaxResult.success(openingPlanVOList);
+        return AjaxResult.success(openingPlanList);
     }
 
     @Override
     public AjaxResult<OpeningPlanVO> getPlanById(Long id) {
         //查询开课计划
-        OpeningPlan planById = baseMapper.getPlanById(id);
-        //封装结果
-        OpeningPlanVO planVO = openingPlanConverter.po2vo(planById);
+        OpeningPlanVO planVO = baseMapper.getPlanById(id);
         //打印日志
         log.info("OpeningPlanServiceImpl.getPlan业务结束，结果:{}", planVO);
         //返回结果
         return AjaxResult.success(planVO);
+    }
+
+    @Override
+    public AjaxResult<List<OpeningPlanDetail>> selectCourse(PageParamDTO pageParamDTO, OpeningPlanDetail openingPlanDetail) {
+        //获取参数
+        String courseName = openingPlanDetail.getCourseName();
+        OpenPlanDetailsTypeEnums type = openingPlanDetail.getType();
+        //数据库查询
+        Page<OpeningPlanDetail> page = openingPlanDetailService
+                .lambdaQuery()
+                .like(StrUtil.isNotBlank(courseName),OpeningPlanDetail::getCourseName,courseName)
+                .eq(!Objects.isNull(type),OpeningPlanDetail::getType,type)
+                .page(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()));
+        //封装响应对象
+        AjaxResult<List<OpeningPlanDetail>> success = AjaxResult.success(page.getRecords());
+        success.setTotal(page.getTotal());
+        //日志
+        log.info("OpeningPlanServiceImpl.selectCourse业务结束，结果:{}",success);
+        //响应
+        return success;
+    }
+
+    @Override
+    public AjaxResult<List<SecondaryCollege>> getGrade() {
+        return SpringUtil.getBean(SecondaryCollegeService.class).getGrade();
+    }
+
+    @Override
+    public AjaxResult<List<TeachingGroupVO>> getTeachingGroup() {
+        return SpringUtil.getBean(TeachingGroupService.class).getList();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> deleteById(Long id) {
+        //查询开课计划
+        OpeningPlan openingPlan = getById(id);
+        //完成审核 无法删除
+        if (OpenPlanStateEnums.APPROVAL_COMPLETED.equals(openingPlan.getState())){
+            throw new ServiceException("该开课计划已经完成教材审核,无法删除");
+        }
+        //获取审核
+        ApprovalService approvalService = SpringUtil.getBean(ApprovalService.class);
+        Approval approval = approvalService.lambdaQuery().eq(Approval::getOpeningPlanId, id).one();
+        //存在审核 删除
+        if (!Objects.isNull(approval)){
+            //删除审核
+            approvalService.removeById(approval.getId());
+            //异步删除审核中图书
+            AsyncManager.me().execute(AsyncFactory.deleteAuditTextbook(approval.getTextbookIds()));
+        }
+
+        //删除课程
+        openingPlanDetailService.lambdaUpdate().eq(OpeningPlanDetail::getOpeningPlanId,openingPlan.getId()).remove();
+        //删除开课计划
+        boolean remove = removeById(id);
+        return AjaxResult.success(remove);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateOpeningPlan(OpeningPlanDTO openingPlanDTO, Long id) {
+        //查询开课计划
+        OpeningPlan openingPlan = getById(id);
+        //选定教材后 无法修改
+        if (!OpenPlanStateEnums.TEXTBOOKS_TO_BE_SELECT.equals(openingPlan.getState())){
+            throw new ServiceException("该开课计划已经选择教材,无法修改");
+        }
+        //构建课程
+        List<OpeningPlanDetail> openingPlanDetails = new ArrayList<>();
+        for (OpeningPlanDetailDTO openingPlanDetailDTO : openingPlanDTO.getOpeningPlanDetailDTOList()) {
+            OpeningPlanDetail openingPlanDetail = new OpeningPlanDetail();
+            openingPlanDetail.setOpeningPlanId(openingPlan.getId());
+            openingPlanDetail.setCourseName(openingPlanDetailDTO.getCourseName());
+            openingPlanDetail.setCredit(openingPlanDetailDTO.getCredit());
+            openingPlanDetail.setTeachingHours(openingPlanDetailDTO.getTeachingHours());
+            openingPlanDetail.setWeeksTeach(openingPlanDetailDTO.getWeeksTeach());
+            openingPlanDetail.setType(openingPlanDetailDTO.getType());
+            openingPlanDetails.add(openingPlanDetail);
+        }
+        //删除旧课程
+        openingPlanDetailService.lambdaUpdate().eq(OpeningPlanDetail::getOpeningPlanId,openingPlan.getId()).remove();
+        //添加新课程
+        openingPlanDetailService.saveBatch(openingPlanDetails);
+        //更新开课计划
+        openingPlan.setSecondaryCollegeId(openingPlanDTO.getSecondaryCollegeId());
+        openingPlan.setTeacherId(openingPlanDTO.getTeacherId());
+        openingPlan.setGradeId(openingPlanDTO.getGradeId());
+        openingPlan.setTeachingGroupId(openingPlanDTO.getTeachingGroupId());
+        openingPlan.setCreateTime(null);
+        boolean update = updateById(openingPlan);
+        //日志
+        log.info("OpeningPlanServiceImpl.updateOpeningPlan业务结束，结果:{}",update);
+        //响应
+        return AjaxResult.success(update);
+    }
+
+    @Override
+    public AjaxResult<List<OpeningPlanDetail>> getCourseById(Long id) {
+        List<OpeningPlanDetail> list = openingPlanDetailService.lambdaQuery().eq(OpeningPlanDetail::getOpeningPlanId, id).list();
+        return AjaxResult.success(list);
     }
 }
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.TextbookOrderStateEnums;
 import com.chen.graduation.enums.TextbookStateEnums;
 import com.chen.graduation.exception.ServiceException;
@@ -87,7 +88,7 @@ public class TextbookOrderServiceImpl extends ServiceImpl<TextbookOrderMapper, T
         //判断库存是否充足
         for (Textbook textbook : textbookList) {
             if (TextbookStateEnums.UNDER_STOCK.equals(textbook.getState())||textbook.getStock()<count){
-                throw new ServiceException("库存不足");
+                throw new ServiceException("图书《"+textbook.getBookName()+"》库存不足");
             }
             textbook.setStock((int) (textbook.getStock()-count));
         }
@@ -100,6 +101,18 @@ public class TextbookOrderServiceImpl extends ServiceImpl<TextbookOrderMapper, T
             throw new ServiceException("发生未知异常");
         }
         return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult<List<TextbookVO>> getTextBookListById(Long id) {
+        //获取教材订单
+        TextbookOrder order = getById(id);
+        //空值判断
+        if (Objects.isNull(order)){
+            throw new ServiceException("非法请求");
+        }
+        //获取教材
+        return textbookService.getByIds(order.getTextbookIds());
     }
 }
 

@@ -3,6 +3,7 @@ package com.chen.graduation.mapper;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chen.graduation.beans.PO.User;
+import com.chen.graduation.beans.VO.OpeningPlanVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public interface OpeningPlanMapper extends BaseMapper<OpeningPlan> {
      * @param user 用户
      * @return {@link List}<{@link OpeningPlan}>
      */
-    List<OpeningPlan> getPlanByUser(@Param("user") User user);
+    List<OpeningPlanVO> getPlanByUser(@Param("user") User user);
 
     /**
      * 通过id获取计划
@@ -29,14 +30,14 @@ public interface OpeningPlanMapper extends BaseMapper<OpeningPlan> {
      * @param id id
      * @return {@link List}<{@link OpeningPlan}>
      */
-    OpeningPlan getPlanById(@Param("id")Long id);
+    OpeningPlanVO getPlanById(@Param("id")Long id);
 
     /**
      * 得到所有计划列表
      *
      * @return {@link List}<{@link OpeningPlan}>
      */
-    List<OpeningPlan> getAllPlanList();
+    List<OpeningPlanVO> getAllPlanList();
 }
 
 

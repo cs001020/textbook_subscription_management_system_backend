@@ -2,10 +2,14 @@ package com.chen.graduation.service;
 
 import com.chen.graduation.beans.DTO.ApprovalDTO;
 import com.chen.graduation.beans.DTO.ApprovalInsertDTO;
+import com.chen.graduation.beans.DTO.ApprovalSearchDTO;
+import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Approval;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.beans.VO.ApprovalDetailVO;
 import com.chen.graduation.beans.VO.ApprovalVO;
+import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.ApprovalTotalStateEnums;
 
 import java.util.List;
@@ -54,7 +58,7 @@ public interface ApprovalService extends IService<Approval> {
      * @param approvalTotalStateEnums 总批准状态枚举
      * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
      */
-    AjaxResult<List<ApprovalVO>> getApprovalByState(ApprovalTotalStateEnums approvalTotalStateEnums);
+    AjaxResult<List<ApprovalVO>> getApprovalByStateAndUser(ApprovalTotalStateEnums approvalTotalStateEnums);
 
     /**
      * 获得用户教材申请
@@ -62,4 +66,47 @@ public interface ApprovalService extends IService<Approval> {
      * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
      */
     AjaxResult<List<ApprovalVO>> getApprovalByUser();
+
+
+    /**
+     * 获得批准列表
+     *
+     * @param pageParamDTO      页面参数dto
+     * @param approvalSearchDTO 搜索dto批准
+     * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
+     */
+    AjaxResult<List<ApprovalVO>> getApprovalList(PageParamDTO pageParamDTO, ApprovalSearchDTO approvalSearchDTO);
+
+    /**
+     * 根据id获得批准详情
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link List}<{@link ApprovalVO}>>
+     */
+    AjaxResult<ApprovalDetailVO> getApprovalDetailsById(Long id);
+
+    /**
+     * 管理员删除
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> adminDelete(Long id);
+
+    /**
+     * 获得课本列表
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
+     */
+    AjaxResult<List<TextbookVO>> getTextbookList(Long id);
+
+    /**
+     * 重新提交
+     *
+     * @param approvalInsertDTO 插入dto批准
+     * @param id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> reSubmit(ApprovalInsertDTO approvalInsertDTO, Long id);
 }

@@ -6,6 +6,7 @@ import com.chen.graduation.beans.PO.Textbook;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
+import com.chen.graduation.enums.UniqueEnums;
 
 import java.util.List;
 
@@ -46,4 +47,37 @@ public interface TextbookService extends IService<Textbook> {
      * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
      */
     AjaxResult<List<TextbookVO>> me();
+
+    /**
+     * 添加教材库存
+     *
+     * @param id    id
+     * @param count 数
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> addStock(Long id, Integer count);
+
+    /**
+     * 更新教材
+     *
+     * @param textbook 教科书
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateTextbook(Textbook textbook);
+
+    /**
+     * 抛弃教材
+     *
+     * @param id id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> discardTextbook(Long id);
+
+    /**
+     * 支票簿名称
+     *
+     * @param name 名字
+     * @return boolean
+     */
+    AjaxResult<UniqueEnums> checkBookName(String name);
 }

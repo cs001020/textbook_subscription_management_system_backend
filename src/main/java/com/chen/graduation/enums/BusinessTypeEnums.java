@@ -36,7 +36,11 @@ public enum BusinessTypeEnums {
     /**
      * 授权
      */
-    GRANT(5,"授权");
+    GRANT(5,"授权"),
+    /**
+     * 上传
+     */
+    UPLOAD(6,"上传");
 
     /**
      * 状态码
