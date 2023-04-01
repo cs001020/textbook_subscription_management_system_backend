@@ -100,4 +100,13 @@ public interface ApprovalService extends IService<Approval> {
      * @return {@link AjaxResult}<{@link List}<{@link TextbookVO}>>
      */
     AjaxResult<List<TextbookVO>> getTextbookList(Long id);
+
+    /**
+     * 重新提交
+     *
+     * @param approvalInsertDTO 插入dto批准
+     * @param id
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> reSubmit(ApprovalInsertDTO approvalInsertDTO, Long id);
 }

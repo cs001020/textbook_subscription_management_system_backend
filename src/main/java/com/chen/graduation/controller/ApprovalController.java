@@ -84,6 +84,11 @@ public class ApprovalController {
     public AjaxResult<Object> submit(@Validated @RequestBody ApprovalInsertDTO approvalInsertDTO) {
         return approvalService.submit(approvalInsertDTO);
     }
+    @ApiOperation("重新提交申请")
+    @PostMapping("/reSubmit/{id}")
+    public AjaxResult<Object> reSubmit(@Validated @RequestBody ApprovalInsertDTO approvalInsertDTO,@PathVariable Long id) {
+        return approvalService.reSubmit(approvalInsertDTO,id);
+    }
 
     @ApiOperation("教学组审批")
     @PostMapping("/teachingGroup/{id}")

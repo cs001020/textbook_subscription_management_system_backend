@@ -2,7 +2,6 @@ package com.chen.graduation.service.impl;
 
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.StrUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -58,6 +57,9 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         //参数校验
         if (CollectionUtil.isEmpty(approvalInsertDTO.getTextBookIds()) && CollectionUtil.isEmpty(approvalInsertDTO.getTextbookDTOList())) {
             throw new ServiceException("请选择教材");
+        }
+        if (Objects.isNull(approvalInsertDTO.getOpeningPlanId())){
+            throw new ServiceException("非法请求");
         }
         //检查开课计划
         OpeningPlan openingPlan = openingPlanService
@@ -128,6 +130,105 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         log.info("ApprovalServiceImpl.submit业务结束，结果:{}", save);
         //响应
         if (!save) {
+            throw new ServiceException("插入异常");
+        }
+        return AjaxResult.success();
+    }
+
+    @Override
+    public AjaxResult<Object> reSubmit(ApprovalInsertDTO approvalInsertDTO, Long id) {
+        //参数校验
+        if (CollectionUtil.isEmpty(approvalInsertDTO.getTextBookIds()) && CollectionUtil.isEmpty(approvalInsertDTO.getTextbookDTOList())) {
+            throw new ServiceException("请选择教材");
+        }
+        //检查 当前申请
+        Approval approval = getById(id);
+        if (Objects.isNull(approval)){
+            throw new ServiceException("非法请求!!");
+        }
+        if (!ApprovalTotalStateEnums.REJECT.equals(approval.getState())){
+            throw new ServiceException("非法请求!!");
+        }
+        //检查开课计划
+        OpeningPlan openingPlan = openingPlanService
+                .lambdaQuery()
+                .eq(OpeningPlan::getId,approval.getOpeningPlanId())
+                .last("for update")
+                .one();
+        if (Objects.isNull(openingPlan)){
+            throw new ServiceException("非法请求!!");
+        }
+        //检查开课计划 是否属于当前用户
+        Long userId = UserHolderContext.getUserId();
+        if (!userId.equals(openingPlan.getTeacherId())){
+            throw new ServiceException("非法请求!!");
+        }
+        //初始化 审核教材ids
+        List<Long> approvalInsertTextbookIds=new ArrayList<>();
+        //旧图书ids
+        List<Long> oldTextBookIds = Arrays.stream(approval.getTextbookIds().split(",")).map(Long::valueOf).collect(Collectors.toList());
+        //初始化被删除的教材
+        List<Long> discardIds=new ArrayList<>(oldTextBookIds);
+        //检查教材
+        List<Long> textBookIds = approvalInsertDTO.getTextBookIds();
+        if(CollectionUtil.isNotEmpty(textBookIds)){
+            String textBookIdsString = StrUtil.join(",", textBookIds);
+            List<TextbookVO> newTextbookList = textbookService.getByIds(textBookIdsString).getData();
+            //禁止选择重复教材
+            if (textBookIds.size()!=newTextbookList.size()){
+                throw new ServiceException("禁止选择重复教材");
+            }
+            for (TextbookVO textbookVO : newTextbookList) {
+                discardIds.remove(textbookVO.getId());
+                if (oldTextBookIds.contains(textbookVO.getId())){
+                    continue;
+                }
+                //非状态状态图书无法选择 且旧图书id不包含该图书
+                if (!TextbookStateEnums.NORMAL.getStateName().equals(textbookVO.getState())){
+                    throw new ServiceException("《"+textbookVO.getBookName()+"》，非正常状态无法选择");
+                }
+            }
+            approvalInsertTextbookIds.addAll(textBookIds);
+        }
+        //添加新教材
+        List<TextbookDTO> textbookDTOList = approvalInsertDTO.getTextbookDTOList();
+        if (CollectionUtil.isNotEmpty(textbookDTOList)) {
+            //绕过前端验证  纯在于旧图书同名的新图书
+            if (UniqueEnums.UN_UNIQUE.equals(checkNewBookNameUnique(textbookDTOList))){
+                throw new ServiceException("非法请求！！");
+            }
+            //列表同名判断
+            if (checkHasSameName(textbookDTOList)){
+                throw new ServiceException("请勿添加同名图书");
+            }
+            //插入数据
+            List<Textbook> textbookList = textbookConverter.dto2vos(textbookDTOList);
+            textbookService.saveBatch(textbookList);
+            //获取教材ids
+            List<Long> textbookIds = textbookList.stream().map(Textbook::getId).collect(Collectors.toList());
+            approvalInsertTextbookIds.addAll(textbookIds);
+        }
+        String join = StrUtil.join(",", approvalInsertTextbookIds);
+        //异步删除旧图书
+        if (CollectionUtil.isNotEmpty(discardIds)){
+            String discard = StrUtil.join(",", discardIds);
+            AsyncManager.me().execute(AsyncFactory.deleteAuditTextbook(discard));
+        }
+        //修改对象
+        approval.setTextbookIds(join);
+        approval.setState(ApprovalTotalStateEnums.WAIT_GROUP);
+        approval.setTeachingGroupState(ApprovalStateEnums.UNAPPROVED);
+        approval.setTeachingGroupMessage("");
+        approval.setSecondaryCollegeState(ApprovalStateEnums.UNAPPROVED);
+        approval.setSecondaryCollegeMessage("");
+        approval.setDeansOfficeState(ApprovalStateEnums.UNAPPROVED);
+        approval.setDeansOfficeMessage("");
+        //修改
+        boolean update = this.updateById(approval);
+        //打印日志
+        log.info("ApprovalServiceImpl.submit业务结束，结果:{}", update);
+        //响应
+        if (!update) {
             throw new ServiceException("插入异常");
         }
         return AjaxResult.success();

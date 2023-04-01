@@ -20,7 +20,6 @@ import java.util.List;
 @ApiModel("申请表添加DTO")
 public class ApprovalInsertDTO implements Serializable {
     @ApiModelProperty("开课计划id")
-    @NotNull(message = "未选定开课计划")
     private Long openingPlanId;
 
     @ApiModelProperty("教材ids(从教材库选取的)")
