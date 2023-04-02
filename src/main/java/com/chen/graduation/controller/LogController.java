@@ -1,12 +1,9 @@
 package com.chen.graduation.controller;
 
-import cn.hutool.poi.excel.ExcelUtil;
-import cn.hutool.poi.excel.ExcelWriter;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chen.graduation.annotation.Auth;
 import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.LoginLogSearchDTO;
 import com.chen.graduation.beans.DTO.OperateLogSearchDTO;
-import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.LoginLogVO;
 import com.chen.graduation.beans.VO.OperateLogVO;
@@ -19,7 +16,6 @@ import com.github.xiaoymin.knife4j.annotations.ApiSupport;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,7 +41,7 @@ public class LogController {
 
     @Resource
     private LoginLogService loginLogService;
-
+    @Auth({"system:operateLog:list"})
     @ApiOperation("操作日志查询")
     @GetMapping("/operate/list")
     public AjaxResult<List<OperateLogVO>> operateLogList(@Validated OperateLogSearchDTO operateLogSearchDTO) {
@@ -53,6 +49,8 @@ public class LogController {
         return operateLogService.selectOperLogList(operateLogSearchDTO);
     }
 
+    // TODO: 2023/4/3 优化速度
+    // FIXME: 2023/4/3 拦截后依然可以导出
     /**
      * 导出日志
      * 注意 请勿使用swagger2接口文档调试 存在bug
@@ -60,6 +58,7 @@ public class LogController {
      *
      * @param response 响应
      */
+    @Auth({"system:operateLog:export"})
     @ApiOperation("操作日志导出(请勿使用swagger调试，存在bug，请使用postman等工具调试)")
     @Log(title = "操作日志", businessTypeEnums = BusinessTypeEnums.EXPORT)
     @PostMapping("/operate/export")
@@ -75,6 +74,7 @@ public class LogController {
         }
     }
 
+    @Auth({"system:loginLog:list"})
     @ApiOperation("登陆日志查询")
     @GetMapping("/login/list")
     public AjaxResult<List<LoginLogVO>> loginLogList(@Validated LoginLogSearchDTO loginLogSearchDTO) {
@@ -89,6 +89,7 @@ public class LogController {
      *
      * @param response 响应
      */
+    @Auth({"system:loginLog:export"})
     @ApiOperation("登陆日志导出(请勿使用swagger调试，存在bug，请使用postman等工具调试)")
     @Log(title = "登陆日志", businessTypeEnums = BusinessTypeEnums.EXPORT)
     @PostMapping("/login/export")

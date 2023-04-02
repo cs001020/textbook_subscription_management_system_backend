@@ -2,12 +2,15 @@ package com.chen.graduation.controller;
 
 import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.chen.graduation.annotation.Auth;
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.TeachingGroupDTO;
 import com.chen.graduation.beans.PO.Major;
 import com.chen.graduation.beans.PO.OpeningPlan;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TeachingGroupVO;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.MajorService;
 import com.chen.graduation.service.OpeningPlanService;
 import com.chen.graduation.service.TeachingGroupService;
@@ -37,26 +40,33 @@ public class TeachingGroupController {
     @Resource
     private TeachingGroupService teachingGroupService;
 
+    @Auth({"academic:teachingGroup:list"})
     @GetMapping("/list")
     @ApiOperation(value = "获取教学组列表")
     public AjaxResult<List<TeachingGroupVO>> list() {
         return teachingGroupService.getList();
     }
 
+    @Auth({"academic:teachingGroup:remove"})
+    @Log(title = "教学组管理",businessTypeEnums = BusinessTypeEnums.DELETE)
     @DeleteMapping("/delete/{id}")
     @ApiOperation(value = "根据id删除教学组")
     public AjaxResult<Object> deleteById(@PathVariable Long id) {
         return teachingGroupService.deleteById(id);
     }
 
+    @Auth({"academic:teachingGroup:add"})
+    @Log(title = "教学组管理",businessTypeEnums = BusinessTypeEnums.INSERT)
     @PostMapping("/add")
     @ApiOperation(value = "添加教学组")
     public AjaxResult<Object> add(@Validated @RequestBody TeachingGroupDTO teachingGroupDTO) {
         return teachingGroupService.add(teachingGroupDTO);
     }
 
+    @Auth({"academic:teachingGroup:edit"})
+    @Log(title = "教学组管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
     @PutMapping("/update/{id}")
-    @ApiOperation(value = "根据id跟新教学组")
+    @ApiOperation(value = "根据id更新教学组")
     public AjaxResult<Object> updateById(@Validated @RequestBody TeachingGroupDTO teachingGroupDTO, @PathVariable Long id) {
         return teachingGroupService.updateById(teachingGroupDTO, id);
     }

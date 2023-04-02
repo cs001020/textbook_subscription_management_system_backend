@@ -8,6 +8,7 @@ import com.chen.graduation.beans.DTO.SmsLoginDTO;
 import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.*;
+import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.UserService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
@@ -47,18 +48,21 @@ public class UserController {
         return userService.smsLogin(smsLoginDTO);
     }
 
+    @Auth({SystemConstants.LOGIN_PERM})
     @ApiOperation("登出")
     @PostMapping("/logout")
     public AjaxResult<Object> logout() {
         return userService.logout();
     }
 
-    @ApiOperation("个人简易信息")
+    @Auth({SystemConstants.LOGIN_PERM})
+    @ApiOperation("个人信息")
     @GetMapping("/info")
     public AjaxResult<SimpleUserInfoVO> getUserInfo() {
         return userService.info();
     }
 
+    @Auth({"academic:openingPlan:add","academic:openingPlan:edit"})
     @ApiOperation("获取教师列表(未被封禁的教师用户)")
     @GetMapping("/teacher")
     public AjaxResult<List<User>> getTeacher(@Validated PageParamDTO pageParamDTO, User user) {
@@ -71,7 +75,7 @@ public class UserController {
     public AjaxResult<List<UserVO>> list(@Validated UserSearchDTO userSearchDTO) {
         return userService.selectUserList(userSearchDTO);
     }
-
+    @Auth({"system:user:edit"})
     @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改用户状态")
     @PutMapping("/changeState")
@@ -79,12 +83,14 @@ public class UserController {
         return userService.changeState(user);
     }
 
+    @Auth({"system:user:edit"})
     @ApiOperation("根据id获取详细用户信息")
     @GetMapping("/userInfo/{id}")
     public AjaxResult<User> userInfo(@PathVariable Long id) {
         return AjaxResult.success(userService.getById(id));
     }
 
+    @Auth({"system:user:edit"})
     @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改用户")
     @PutMapping("/update")
@@ -92,6 +98,7 @@ public class UserController {
         return userService.updateUser(user);
     }
 
+    @Auth({"system:user:remove"})
     @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.DELETE)
     @ApiOperation("删除用户")
     @DeleteMapping("/delete/{id}")
@@ -99,6 +106,7 @@ public class UserController {
         return userService.deleteUser(id);
     }
 
+    @Auth({"system:user:resetPwd"})
     @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("重置密码")
     @PutMapping("/resetPwd")
@@ -106,6 +114,7 @@ public class UserController {
         return userService.resetPwd(user);
     }
 
+    @Auth({"system:user:auth"})
     @ApiOperation("根据用户id获取授权角色")
     @GetMapping("/authRole/{userId}")
     public AjaxResult<UserRoleVo> authRole(@PathVariable("userId") Long userId)
@@ -113,6 +122,7 @@ public class UserController {
         return userService.authRole(userId);
     }
 
+    @Auth({"system:user:auth"})
     @Log(title = "用户管理", businessTypeEnums = BusinessTypeEnums.GRANT)
     @ApiOperation("分配角色")
     @PutMapping("/authRole")

@@ -1,6 +1,7 @@
 package com.chen.graduation.interceptor;
 
 import com.chen.graduation.annotation.Auth;
+import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.exception.AuthorizationException;
 import com.chen.graduation.service.PermissionService;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +45,10 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
         String[] value = auth.value();
         //权限判断
         for (String s : value) {
+            //部分接口只需要登陆 不需要进行具体的鉴权
+            if (s.equals(SystemConstants.LOGIN_PERM)) {
+                return true;
+            }
             if (perms.contains(s)){
                 return true;
             }

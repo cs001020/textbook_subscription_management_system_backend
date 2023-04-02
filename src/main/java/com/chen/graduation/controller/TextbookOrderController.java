@@ -1,10 +1,13 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Auth;
+import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Role;
 import com.chen.graduation.beans.PO.TextbookOrder;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.TextbookVO;
+import com.chen.graduation.enums.BusinessTypeEnums;
 import com.chen.graduation.service.RoleService;
 import com.chen.graduation.service.TextbookOrderService;
 import com.github.xiaoymin.knife4j.annotations.ApiSupport;
@@ -34,18 +37,22 @@ public class TextbookOrderController {
     @Resource
     private TextbookOrderService textbookOrderService;
 
+    @Auth({"textbookSubscription:order:list"})
     @ApiOperation("教材订单列表")
     @GetMapping("list")
     public AjaxResult<List<TextbookOrder>> getList(@Validated PageParamDTO pageParamDTO) {
         return textbookOrderService.pageQuery(pageParamDTO);
     }
 
+    @Auth({"textbookSubscription:order:grant"})
+    @Log(title = "教材订单管理",businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("发放教材")
     @PostMapping("/grant/{id}")
     public AjaxResult<Object> grant( @PathVariable Long id) {
         return textbookOrderService.grant(id);
     }
 
+    @Auth({"textbookSubscription:order:list"})
     @ApiOperation("根据教材订单id获得教材信息")
     @GetMapping("/textbook/{id}")
     public AjaxResult<List<TextbookVO>> getTextBookListById(@PathVariable Long id){

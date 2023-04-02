@@ -1,5 +1,6 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Auth;
 import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.PageParamDTO;
 import com.chen.graduation.beans.PO.Role;
@@ -38,12 +39,14 @@ public class RoleController {
     @Resource
     private UserService userService;
 
+    @Auth({"system:role:list"})
     @ApiOperation("角色列表")
     @GetMapping("list")
     public AjaxResult<List<Role>> getList(@Validated PageParamDTO pageParamDTO, Role role) {
         return roleService.pageQuery(pageParamDTO, role);
     }
 
+    @Auth({"system:role:edit"})
     @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改角色状态")
     @PutMapping("/changeState")
@@ -51,12 +54,14 @@ public class RoleController {
         return roleService.changeStatus(role);
     }
 
+    @Auth({"system:role:edit"})
     @ApiOperation("根据角色id获取详细信息")
     @GetMapping(value = "/{roleId}")
     public AjaxResult<RolePermissionVo> getInfo(@PathVariable Long roleId) {
         return roleService.selectRoleById(roleId);
     }
 
+    @Auth({"system:role:edit"})
     @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.UPDATE)
     @ApiOperation("修改角色")
     @PutMapping("/update")
@@ -64,6 +69,7 @@ public class RoleController {
         return roleService.updateRole(role);
     }
 
+    @Auth({"system:role:add"})
     @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.INSERT)
     @ApiOperation("新增角色")
     @PostMapping("/add")
@@ -71,6 +77,7 @@ public class RoleController {
         return roleService.saveRole(role);
     }
 
+    @Auth({"system:role:remove"})
     @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.DELETE)
     @ApiOperation("删除角色")
     @DeleteMapping("/del/{roleId}")
@@ -78,18 +85,21 @@ public class RoleController {
         return roleService.deleteRoleById(roleId);
     }
 
+    @Auth({"system:role:auth"})
     @ApiOperation("查询已分配用户角色列表")
     @GetMapping("/authUser/allocatedList/{roleId}")
     public AjaxResult<List<UserVO>> allocatedList(@Validated PageParamDTO pageParamDTO, User user, @PathVariable Long roleId) {
         return userService.selectAllocatedList(pageParamDTO, user, roleId);
     }
 
+    @Auth({"system:role:auth"})
     @ApiOperation("查询未分配用户角色列表")
     @GetMapping("/authUser/unallocatedList/{roleId}")
     public AjaxResult<List<UserVO>> unallocatedList(@Validated PageParamDTO pageParamDTO, User user, @PathVariable Long roleId) {
         return userService.selectUnallocatedList(pageParamDTO, user, roleId);
     }
 
+    @Auth({"system:role:auth"})
     @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.GRANT)
     @ApiOperation("批量选择用户授权")
     @PutMapping("/authUser/selectAll")
@@ -97,6 +107,7 @@ public class RoleController {
         return roleService.insertAuthUsers(roleId, userIds);
     }
 
+    @Auth({"system:role:auth"})
     @Log(title = "角色管理", businessTypeEnums = BusinessTypeEnums.GRANT)
     @ApiOperation("批量取消授权用户")
     @DeleteMapping("/authUser/cancelAll")

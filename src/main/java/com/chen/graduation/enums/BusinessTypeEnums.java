@@ -40,7 +40,11 @@ public enum BusinessTypeEnums {
     /**
      * 上传
      */
-    UPLOAD(6,"上传");
+    UPLOAD(6,"上传"),
+    /**
+     * 审核
+     */
+    AUDIT(7,"审核");
 
     /**
      * 状态码

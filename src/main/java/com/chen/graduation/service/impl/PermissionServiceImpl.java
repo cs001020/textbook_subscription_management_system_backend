@@ -173,7 +173,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
      * @param userId 用户id
      * @return {@link List}<{@link String}>
      */
-    @Cacheable(value = RedisConstants.USER_PERMISSION_KEY,key = "#userId")
+    //@Cacheable(value = RedisConstants.USER_PERMISSION_KEY,key = "#userId.longValue()")
     @Override
     public List<String> getPermissionPermsByUserId(Long userId) {
         List<Permission> permissionByUserId = baseMapper.getPermissionByUserId(userId);
