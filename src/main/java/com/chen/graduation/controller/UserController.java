@@ -1,5 +1,6 @@
 package com.chen.graduation.controller;
 
+import com.chen.graduation.annotation.Auth;
 import com.chen.graduation.annotation.Log;
 import com.chen.graduation.beans.DTO.AccountLoginDTO;
 import com.chen.graduation.beans.DTO.PageParamDTO;
@@ -64,6 +65,7 @@ public class UserController {
         return userService.teacher(pageParamDTO,user);
     }
 
+    @Auth({"system:user:list"})
     @ApiOperation("获取用户列表")
     @GetMapping("/list")
     public AjaxResult<List<UserVO>> list(@Validated UserSearchDTO userSearchDTO) {

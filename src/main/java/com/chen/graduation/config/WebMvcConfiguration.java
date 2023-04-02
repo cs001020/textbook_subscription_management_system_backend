@@ -4,8 +4,10 @@ package com.chen.graduation.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.chen.graduation.interceptor.AuthorizeInterceptor;
 import com.chen.graduation.interceptor.LoginAuthenticationInterceptor;
 import com.chen.graduation.interceptor.RefreshTokenInterceptor;
+import com.chen.graduation.service.PermissionService;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -39,12 +41,18 @@ import java.util.List;
 public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     @Resource
     private StringRedisTemplate stringRedisTemplate;
+    @Resource
+    private PermissionService permissionService;
     private List<String> requestWhiteList;
     private String hand;
     private String key;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        //鉴权拦截器
+        registry.addInterceptor(new AuthorizeInterceptor(permissionService))
+                .excludePathPatterns(requestWhiteList)
+                .order(2);
         //登陆拦截器
         registry.addInterceptor(new LoginAuthenticationInterceptor())
                 .excludePathPatterns(requestWhiteList)

@@ -50,4 +50,9 @@ public class RedisConstants {
      * 教科书反馈缓存key
      */
     public static final String TEXTBOOK_FEEDBACK_CACHE_KEY="textbook.feedback";
+
+    /**
+     * 用户权限key
+     */
+    public static final String USER_PERMISSION_KEY="user.permission";
 }

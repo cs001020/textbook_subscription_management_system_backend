@@ -60,7 +60,11 @@ public class AjaxResult<T> implements Serializable {
         /**
          * 未认证
          */
-        UN_AUTH(401);
+        UN_AUTH(401),
+        /**
+         * 未授权
+         */
+        UN_AUTHORIZATION(403);
         private final int value;
 
         ResponseType(int value) {

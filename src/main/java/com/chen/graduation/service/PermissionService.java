@@ -32,6 +32,14 @@ public interface PermissionService extends IService<Permission> {
     List<Permission> selectPermissionTreeByRoleId(Long roleId);
 
     /**
+     * 通过用户id获得拥有的权限字符
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link String}>
+     */
+    List<String> getPermissionPermsByUserId(Long userId);
+
+    /**
      * 查询所有权限 按照树形结构显示
      *
      * @param permission 许可

@@ -73,6 +73,17 @@ public class GlobalExceptionHandler{
         return new AjaxResult<>(AjaxResult.ResponseType.UN_AUTH,"尚未登录，请登录",null);
     }
 
+    /**
+     * 鉴权异常
+     *
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    @ExceptionHandler(AuthorizationException.class)
+    public AjaxResult<Object> handleUnAuthorizationException() {
+        log.warn("鉴权异常");
+        return new AjaxResult<>(AjaxResult.ResponseType.UN_AUTHORIZATION,"无权限访问",null);
+    }
+
 
     /**
      * 拦截未知的运行时异常

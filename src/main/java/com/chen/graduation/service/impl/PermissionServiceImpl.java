@@ -9,6 +9,7 @@ import com.chen.graduation.beans.PO.Permission;
 import com.chen.graduation.beans.PO.Role;
 import com.chen.graduation.beans.PO.RolePermission;
 import com.chen.graduation.beans.VO.AjaxResult;
+import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.enums.PermissionStateEnums;
 import com.chen.graduation.enums.PermissionTypeEnums;
 import com.chen.graduation.exception.ServiceException;
@@ -17,6 +18,7 @@ import com.chen.graduation.mapper.PermissionMapper;
 import com.chen.graduation.service.RolePermissionService;
 import com.chen.graduation.utils.PermissionUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -163,6 +165,19 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         log.info("PermissionServiceImpl.changeState业务结束，结果:{}", update);
         //响应
         return AjaxResult.success(update);
+    }
+
+    /**
+     * 通过用户id获得拥有的权限字符
+     *
+     * @param userId 用户id
+     * @return {@link List}<{@link String}>
+     */
+    @Cacheable(value = RedisConstants.USER_PERMISSION_KEY,key = "#userId")
+    @Override
+    public List<String> getPermissionPermsByUserId(Long userId) {
+        List<Permission> permissionByUserId = baseMapper.getPermissionByUserId(userId);
+        return PermissionUtils.getButtonOrRequestPermission(permissionByUserId);
     }
 
     /**
