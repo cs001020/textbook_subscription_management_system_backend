@@ -39,7 +39,6 @@ public class TeachingGroupServiceImpl extends ServiceImpl<TeachingGroupMapper, T
     @Resource
     private OpeningPlanService openingPlanService;
 
-    // TODO: 2023/2/23 缓存
     @Override
     public AjaxResult<List<TeachingGroupVO>> getList() {
         List<TeachingGroup> list = this.list();

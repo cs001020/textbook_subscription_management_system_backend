@@ -41,7 +41,6 @@ public class SecondaryCollegeServiceImpl extends ServiceImpl<SecondaryCollegeMap
     @Resource
     private MajorService majorService;
 
-    // TODO: 2023/2/23 缓存
     @Override
     public AjaxResult<List<SecondaryCollegeVO>> getList() {
         List<SecondaryCollege> list = this.list();

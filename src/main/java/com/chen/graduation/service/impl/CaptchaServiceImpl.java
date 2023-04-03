@@ -35,7 +35,6 @@ public class CaptchaServiceImpl implements CaptchaService {
     @Resource
     private Snowflake snowflake;
 
-    // FIXME: 2023/2/3 防刷 for cs
     @Override
     public AjaxResult<CaptchaVO> getImgCaptcha() {
         //生成验证码
