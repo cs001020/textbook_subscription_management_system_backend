@@ -2,10 +2,7 @@ package com.chen.graduation.controller;
 
 import com.chen.graduation.annotation.Auth;
 import com.chen.graduation.annotation.Log;
-import com.chen.graduation.beans.DTO.AccountLoginDTO;
-import com.chen.graduation.beans.DTO.PageParamDTO;
-import com.chen.graduation.beans.DTO.SmsLoginDTO;
-import com.chen.graduation.beans.DTO.UserSearchDTO;
+import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.User;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.SystemConstants;
@@ -78,6 +75,13 @@ public class UserController {
         return userService.updateUserAvatar(file);
     }
 
+    @Auth({SystemConstants.LOGIN_PERM})
+    @Log(title = "个人资料", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("用户修改资料")
+    @PostMapping("/profile")
+    public AjaxResult<Object> updateUserProfile(@RequestBody @Validated UserProfileUpdateDTO userProfileUpdateDTO) {
+        return userService.updateUserProfile(userProfileUpdateDTO);
+    }
     @Auth({"academic:openingPlan:add","academic:openingPlan:edit"})
     @ApiOperation("获取教师列表(未被封禁的教师用户)")
     @GetMapping("/teacher")

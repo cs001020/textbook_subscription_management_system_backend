@@ -11,10 +11,7 @@ import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.beans.DTO.AccountLoginDTO;
-import com.chen.graduation.beans.DTO.PageParamDTO;
-import com.chen.graduation.beans.DTO.SmsLoginDTO;
-import com.chen.graduation.beans.DTO.UserSearchDTO;
+import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.RedisConstants;
@@ -59,6 +56,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private RoleService roleService;
     @Resource
     private FileService fileService;
+    @Resource
+    private UserInfoService userInfoService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -243,6 +242,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         lambdaUpdate().eq(User::getId,userId).set(User::getIcon,imgUrl).update();
         //响应
         return AjaxResult.success(imgUrl);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUserProfile(UserProfileUpdateDTO userProfileUpdateDTO) {
+        // 更新用户表
+        lambdaUpdate()
+                .eq(User::getId,UserHolderContext.getUserId())
+                .set(User::getName,userProfileUpdateDTO.getName())
+                .set(User::getPhoneNumber,userProfileUpdateDTO.getPhoneNumber())
+                .update();
+        // 更新用户信息表
+        userInfoService.lambdaUpdate()
+                .eq(UserInfo::getUserFacultyId,UserHolderContext.getUserId())
+                .set(UserInfo::getEmail,userProfileUpdateDTO.getEmail())
+                .set(UserInfo::getSex,userProfileUpdateDTO.getSex())
+                .update();
+        return AjaxResult.success();
     }
 
     @Override

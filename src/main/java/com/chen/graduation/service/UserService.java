@@ -1,9 +1,6 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.beans.DTO.AccountLoginDTO;
-import com.chen.graduation.beans.DTO.PageParamDTO;
-import com.chen.graduation.beans.DTO.SmsLoginDTO;
-import com.chen.graduation.beans.DTO.UserSearchDTO;
+import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.*;
@@ -146,4 +143,12 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> updateUserAvatar(MultipartFile file);
+
+    /**
+     * 更新用户个人资料
+     *
+     * @param userProfileUpdateDTO 用户配置文件更新dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUserProfile(UserProfileUpdateDTO userProfileUpdateDTO);
 }
