@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -60,6 +61,21 @@ public class UserController {
     @GetMapping("/info")
     public AjaxResult<SimpleUserInfoVO> getUserInfo() {
         return userService.info();
+    }
+
+    @Auth({SystemConstants.LOGIN_PERM})
+    @ApiOperation("个人资料")
+    @GetMapping("/profile")
+    public AjaxResult<UserProfileVO> getUserProfile() {
+        return userService.profile();
+    }
+
+    @Auth({SystemConstants.LOGIN_PERM})
+    @Log(title = "个人资料", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("用户修改头像")
+    @PostMapping("/avatar")
+    public AjaxResult<Object> updateUserAvatar(@RequestParam("avatarfile") MultipartFile file) {
+        return userService.updateUserAvatar(file);
     }
 
     @Auth({"academic:openingPlan:add","academic:openingPlan:edit"})

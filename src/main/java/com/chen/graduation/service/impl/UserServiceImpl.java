@@ -36,6 +36,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -56,6 +57,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private UserRoleService userRoleService;
     @Resource
     private RoleService roleService;
+    @Resource
+    private FileService fileService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -193,6 +196,53 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         //响应结果
         log.info("UserServiceImpl.info业务结束，结果:{}", simpleUserInfoVO);
         return AjaxResult.success(simpleUserInfoVO);
+    }
+
+    @Override
+    public AjaxResult<UserProfileVO> profile() {
+        //获取当前登陆用户
+        User user = getById(UserHolderContext.getUserId());
+        //获取用户信息
+        UserInfo info = SpringUtil.getBean(UserInfoService.class).lambdaQuery().eq(UserInfo::getUserFacultyId, user.getId()).one();
+        //获取二级学院
+        if (!Objects.isNull(user.getGradeId())){
+            Grade grade = SpringUtil.getBean(GradeService.class).getById(user.getGradeId());
+            Major major = SpringUtil.getBean(MajorService.class).getById(grade.getMajorId());
+            user.setSecondaryCollegeId(major.getSecondaryCollegeId());
+        }
+        String secondaryCollege = null;
+        if (!Objects.isNull(user.getSecondaryCollegeId())){
+            SecondaryCollege college = SpringUtil.getBean(SecondaryCollegeService.class).getById(user.getSecondaryCollegeId());
+            secondaryCollege=college.getName();
+        }
+        //封装vo
+        UserProfileVO userProfileVO = new UserProfileVO();
+        userProfileVO.setAccount(user.getAccount());
+        userProfileVO.setName(user.getName());
+        userProfileVO.setPhoneNumber(user.getPhoneNumber());
+        userProfileVO.setCreateTime(user.getCreateTime());
+        if (StrUtil.isNotBlank(secondaryCollege)){
+            userProfileVO.setSecondaryCollege(secondaryCollege);
+        }
+        if (!Objects.isNull(info)){
+            userProfileVO.setSex(info.getSex());
+            userProfileVO.setEmail(info.getEmail());
+        }
+        //响应
+        return AjaxResult.success(userProfileVO);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUserAvatar(MultipartFile file) {
+        // 上传图片
+        String imgUrl = fileService.uploadImg(file).getMsg();
+        //获取用户id
+        Long userId = UserHolderContext.getUserId();
+        //更新用户头像
+        lambdaUpdate().eq(User::getId,userId).set(User::getIcon,imgUrl).update();
+        //响应
+        return AjaxResult.success(imgUrl);
     }
 
     @Override

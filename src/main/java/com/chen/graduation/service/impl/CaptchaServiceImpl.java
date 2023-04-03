@@ -63,7 +63,7 @@ public class CaptchaServiceImpl implements CaptchaService {
         String smsCode = RandomUtil.randomNumbers(6);
         //存入redis
         stringRedisTemplate.opsForValue().set(SMS_CAPTCHA_KEY+phoneNumber,smsCode,SMS_CAPTCHA_TTL,TimeUnit.MILLISECONDS);
-        // TODO: 2023/2/3 发送验证码 for cs
+        // TODO: 2023/2/3 发送验证码 for cs 验证码存在发送费用 暂时不考虑接入
         //返回
         return AjaxResult.success();
     }

@@ -52,6 +52,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         String name = role.getName();
         String description = role.getDescription();
         RoleStateEnums state = role.getState();
+        // FIXME: 2023/4/3 分页会报警告日志 不影响使用 暂无修复打算
         //数据库查询
         Page<Role> page = lambdaQuery()
                 .like(StrUtil.isNotBlank(name), Role::getName, name)

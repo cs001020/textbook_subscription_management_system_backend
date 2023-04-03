@@ -7,6 +7,7 @@ import com.chen.graduation.beans.DTO.UserSearchDTO;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -130,4 +131,19 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link UserVO}>
      */
     AjaxResult<List<UserVO>> selectUnallocatedList(PageParamDTO pageParamDTO, User user, Long roleId);
+
+    /**
+     * 用户资料
+     *
+     * @return {@link AjaxResult}<{@link UserProfileVO}>
+     */
+    AjaxResult<UserProfileVO> profile();
+
+    /**
+     * 更新用户头像
+     *
+     * @param file 文件
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUserAvatar(MultipartFile file);
 }
