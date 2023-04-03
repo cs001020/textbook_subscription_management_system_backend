@@ -159,4 +159,19 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> updateUserPwd(UserRestPasswordDTO userRestPasswordDTO);
+
+    /**
+     * 获取所有教学组以及二级学院以及班级，用于添加
+     *
+     * @return {@link AjaxResult}<{@link TeachingGroupAndSecondaryCollegeAndGradeTree}>
+     */
+    AjaxResult<TeachingGroupAndSecondaryCollegeAndGradeTree> getAllTeachingGroupAndSecondaryCollEgeAndGradeTree();
+
+    /**
+     * 添加用户
+     *
+     * @param userInsertDTO 用户插入dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> add(UserInsertDTO userInsertDTO);
 }

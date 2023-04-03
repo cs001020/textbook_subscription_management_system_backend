@@ -159,4 +159,19 @@ public class UserController {
         return userService.insertUserAuth(userId, roleIds);
     }
 
+    @Auth({"system:user:add"})
+    @ApiOperation("获取所有教学组以及二级学院以及班级，用于添加")
+    @GetMapping("/allPart")
+    public AjaxResult<TeachingGroupAndSecondaryCollegeAndGradeTree> getAllTeachingGroupAndSecondaryCollEgeAndGradeTree(){
+        return userService.getAllTeachingGroupAndSecondaryCollEgeAndGradeTree();
+    }
+
+    @Auth({"system:user:add"})
+    @Log(title = "用户管理",businessTypeEnums = BusinessTypeEnums.INSERT)
+    @ApiOperation("添加用户")
+    @PostMapping("/add")
+    public AjaxResult<Object> add(@RequestBody @Validated UserInsertDTO userInsertDTO){
+        return userService.add(userInsertDTO);
+    }
+
 }

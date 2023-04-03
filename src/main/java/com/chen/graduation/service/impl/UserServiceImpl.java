@@ -19,6 +19,7 @@ import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.converter.UserConverter;
 import com.chen.graduation.enums.LoginLogStateEnums;
 import com.chen.graduation.enums.UserStateEnums;
+import com.chen.graduation.enums.UserTypeEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.*;
@@ -491,6 +492,74 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         log.info("UserServiceImpl.selectUnallocatedList业务结束，结果:{}",success);
         //响应
         return success;
+    }
+
+    @Override
+    public AjaxResult<TeachingGroupAndSecondaryCollegeAndGradeTree> getAllTeachingGroupAndSecondaryCollEgeAndGradeTree() {
+        //获取角色
+        List<Role> roleList = roleService.list();
+        //获取教学组
+        List<TeachingGroupVO> teachingGroupVOList = SpringUtil.getBean(TeachingGroupService.class).getList().getData();
+        //获取二级学院
+        List<SecondaryCollegeVO> secondaryCollegeVOList = SpringUtil.getBean(SecondaryCollegeService.class).getList().getData();
+        //获取班级
+        List<SecondaryCollege> data = SpringUtil.getBean(SecondaryCollegeService.class).getGrade().getData();
+        //封装对象
+        TeachingGroupAndSecondaryCollegeAndGradeTree teachingGroupAndSecondaryCollegeAndGradeTree = new TeachingGroupAndSecondaryCollegeAndGradeTree();
+        teachingGroupAndSecondaryCollegeAndGradeTree.setRoles(roleList);
+        teachingGroupAndSecondaryCollegeAndGradeTree.setTeachingGroup(teachingGroupVOList);
+        teachingGroupAndSecondaryCollegeAndGradeTree.setSecondaryCollege(secondaryCollegeVOList);
+        teachingGroupAndSecondaryCollegeAndGradeTree.setGradeTree(data);
+        //响应
+        return AjaxResult.success(teachingGroupAndSecondaryCollegeAndGradeTree);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> add(UserInsertDTO userInsertDTO) {
+        //构建对象
+        User user = new User();
+        user.setAccount(userInsertDTO.getAccount());
+        user.setPassword(SecureUtil.md5(userInsertDTO.getPassword()+SystemConstants.PASSWORD_MD5_SALT));
+        user.setPhoneNumber(userInsertDTO.getPhoneNumber());
+        user.setTeachingGroupId(userInsertDTO.getTeachingGroupId());
+        user.setSecondaryCollegeId(userInsertDTO.getSecondaryCollegeId());
+        user.setGradeId(userInsertDTO.getGradeId());
+        user.setName(userInsertDTO.getName());
+        user.setIntroduction(userInsertDTO.getIntroduction());
+        user.setState(userInsertDTO.getState());
+        user.setType(userInsertDTO.getType());
+        // 唯一性检查
+        if (!checkAccountUnique(user)){
+            throw new ServiceException("登录账号已存在");
+        }
+        if (!checkPhoneUnique(user)){
+            throw new ServiceException("手机号码已存在");
+        }
+        //除去无用id
+        if (UserTypeEnums.TEACHER.equals(user.getType())){
+            user.setGradeId(null);
+        }
+        if (UserTypeEnums.STUDENT.equals(user.getType())){
+            user.setSecondaryCollegeId(null);
+            user.setTeachingGroupId(null);
+        }
+        //新增用户
+        save(user);
+        //新增用户信息
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserFacultyId(user.getId());
+        userInfo.setSex(userInsertDTO.getSex());
+        userInfo.setEmail(userInsertDTO.getEmail());
+        userInfoService.save(userInfo);
+        //新增用户角色关系
+        List<Long> roleIds = userInsertDTO.getRoleIds();
+        if (CollectionUtil.isNotEmpty(roleIds)){
+            Long[] ids = roleIds.toArray(new Long[0]);
+            this.insertUserAuth(user.getId(),ids );
+        }
+        //响应
+        return AjaxResult.success();
     }
 
     /**
