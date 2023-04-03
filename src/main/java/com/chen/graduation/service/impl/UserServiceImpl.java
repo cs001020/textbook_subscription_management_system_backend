@@ -11,10 +11,7 @@ import cn.hutool.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.chen.graduation.beans.DTO.AccountLoginDTO;
-import com.chen.graduation.beans.DTO.PageParamDTO;
-import com.chen.graduation.beans.DTO.SmsLoginDTO;
-import com.chen.graduation.beans.DTO.UserSearchDTO;
+import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.*;
 import com.chen.graduation.beans.VO.*;
 import com.chen.graduation.constants.RedisConstants;
@@ -22,18 +19,22 @@ import com.chen.graduation.constants.SystemConstants;
 import com.chen.graduation.converter.UserConverter;
 import com.chen.graduation.enums.LoginLogStateEnums;
 import com.chen.graduation.enums.UserStateEnums;
+import com.chen.graduation.enums.UserTypeEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.UserMapper;
 import com.chen.graduation.utils.AsyncFactory;
 import com.chen.graduation.utils.AsyncManager;
+import com.chen.graduation.utils.PermissionUtils;
 import com.chen.graduation.utils.RouterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -54,6 +55,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private UserRoleService userRoleService;
     @Resource
     private RoleService roleService;
+    @Resource
+    private FileService fileService;
+    @Resource
+    private UserInfoService userInfoService;
     @Resource
     private StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -187,9 +192,96 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         simpleUserInfoVO.setIntroduction(user.getIntroduction());
         simpleUserInfoVO.setRoles(Collections.singletonList("[admin]"));
         simpleUserInfoVO.setRouters(RouterUtils.buildRouterTree(permissionList));
+        simpleUserInfoVO.setPermissions(PermissionUtils.getButtonOrRequestPermission(permissionList));
         //响应结果
         log.info("UserServiceImpl.info业务结束，结果:{}", simpleUserInfoVO);
         return AjaxResult.success(simpleUserInfoVO);
+    }
+
+    @Override
+    public AjaxResult<UserProfileVO> profile() {
+        //获取当前登陆用户
+        User user = getById(UserHolderContext.getUserId());
+        //获取用户信息
+        UserInfo info = SpringUtil.getBean(UserInfoService.class).lambdaQuery().eq(UserInfo::getUserFacultyId, user.getId()).one();
+        //获取二级学院
+        if (!Objects.isNull(user.getGradeId())){
+            Grade grade = SpringUtil.getBean(GradeService.class).getById(user.getGradeId());
+            Major major = SpringUtil.getBean(MajorService.class).getById(grade.getMajorId());
+            user.setSecondaryCollegeId(major.getSecondaryCollegeId());
+        }
+        String secondaryCollege = null;
+        if (!Objects.isNull(user.getSecondaryCollegeId())){
+            SecondaryCollege college = SpringUtil.getBean(SecondaryCollegeService.class).getById(user.getSecondaryCollegeId());
+            secondaryCollege=college.getName();
+        }
+        //封装vo
+        UserProfileVO userProfileVO = new UserProfileVO();
+        userProfileVO.setAccount(user.getAccount());
+        userProfileVO.setName(user.getName());
+        userProfileVO.setPhoneNumber(user.getPhoneNumber());
+        userProfileVO.setCreateTime(user.getCreateTime());
+        if (StrUtil.isNotBlank(secondaryCollege)){
+            userProfileVO.setSecondaryCollege(secondaryCollege);
+        }
+        if (!Objects.isNull(info)){
+            userProfileVO.setSex(info.getSex());
+            userProfileVO.setEmail(info.getEmail());
+        }
+        //响应
+        return AjaxResult.success(userProfileVO);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUserAvatar(MultipartFile file) {
+        // 上传图片
+        String imgUrl = fileService.uploadImg(file).getMsg();
+        //获取用户id
+        Long userId = UserHolderContext.getUserId();
+        //更新用户头像
+        lambdaUpdate().eq(User::getId,userId).set(User::getIcon,imgUrl).update();
+        //响应
+        return AjaxResult.success(imgUrl);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUserProfile(UserProfileUpdateDTO userProfileUpdateDTO) {
+        // 更新用户表
+        lambdaUpdate()
+                .eq(User::getId,UserHolderContext.getUserId())
+                .set(User::getName,userProfileUpdateDTO.getName())
+                .set(User::getPhoneNumber,userProfileUpdateDTO.getPhoneNumber())
+                .update();
+        // 更新用户信息表
+        userInfoService.lambdaUpdate()
+                .eq(UserInfo::getUserFacultyId,UserHolderContext.getUserId())
+                .set(UserInfo::getEmail,userProfileUpdateDTO.getEmail())
+                .set(UserInfo::getSex,userProfileUpdateDTO.getSex())
+                .update();
+        return AjaxResult.success();
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUserPwd(UserRestPasswordDTO userRestPasswordDTO) {
+        //获取用户
+        Long userId = UserHolderContext.getUserId();
+        User user = getById(userId);
+        //判断原密码是否匹配
+        String encodeOldPwd = SecureUtil.md5(userRestPasswordDTO.getOldPassword() + SystemConstants.PASSWORD_MD5_SALT);
+        if (!encodeOldPwd.equals(user.getPassword())){
+            throw new ServiceException("原密码错误，请重新输入");
+        }
+        //更新新密码
+        String encodeNewPwd = SecureUtil.md5(userRestPasswordDTO.getNewPassword() + SystemConstants.PASSWORD_MD5_SALT);
+        user.setPassword(encodeNewPwd);
+        boolean update = updateById(user);
+        //用户下线
+        kickUser(userId);
+        //响应
+        return AjaxResult.success();
     }
 
     @Override
@@ -211,6 +303,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Long userId = UserHolderContext.getUserId();
         //删除token
         stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY + userId);
+        //删除权限信息
+        stringRedisTemplate.delete(RedisConstants.USER_PERMISSION_KEY+"::" + userId);
         //响应
         return AjaxResult.success();
     }
@@ -332,6 +426,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,key="#userId.longValue()")
     public AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds) {
         //参数校验
         if (Objects.isNull(userId)||Objects.isNull(roleIds)){
@@ -399,6 +494,74 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         return success;
     }
 
+    @Override
+    public AjaxResult<TeachingGroupAndSecondaryCollegeAndGradeTree> getAllTeachingGroupAndSecondaryCollEgeAndGradeTree() {
+        //获取角色
+        List<Role> roleList = roleService.list();
+        //获取教学组
+        List<TeachingGroupVO> teachingGroupVOList = SpringUtil.getBean(TeachingGroupService.class).getList().getData();
+        //获取二级学院
+        List<SecondaryCollegeVO> secondaryCollegeVOList = SpringUtil.getBean(SecondaryCollegeService.class).getList().getData();
+        //获取班级
+        List<SecondaryCollege> data = SpringUtil.getBean(SecondaryCollegeService.class).getGrade().getData();
+        //封装对象
+        TeachingGroupAndSecondaryCollegeAndGradeTree teachingGroupAndSecondaryCollegeAndGradeTree = new TeachingGroupAndSecondaryCollegeAndGradeTree();
+        teachingGroupAndSecondaryCollegeAndGradeTree.setRoles(roleList);
+        teachingGroupAndSecondaryCollegeAndGradeTree.setTeachingGroup(teachingGroupVOList);
+        teachingGroupAndSecondaryCollegeAndGradeTree.setSecondaryCollege(secondaryCollegeVOList);
+        teachingGroupAndSecondaryCollegeAndGradeTree.setGradeTree(data);
+        //响应
+        return AjaxResult.success(teachingGroupAndSecondaryCollegeAndGradeTree);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> add(UserInsertDTO userInsertDTO) {
+        //构建对象
+        User user = new User();
+        user.setAccount(userInsertDTO.getAccount());
+        user.setPassword(SecureUtil.md5(userInsertDTO.getPassword()+SystemConstants.PASSWORD_MD5_SALT));
+        user.setPhoneNumber(userInsertDTO.getPhoneNumber());
+        user.setTeachingGroupId(userInsertDTO.getTeachingGroupId());
+        user.setSecondaryCollegeId(userInsertDTO.getSecondaryCollegeId());
+        user.setGradeId(userInsertDTO.getGradeId());
+        user.setName(userInsertDTO.getName());
+        user.setIntroduction(userInsertDTO.getIntroduction());
+        user.setState(userInsertDTO.getState());
+        user.setType(userInsertDTO.getType());
+        // 唯一性检查
+        if (!checkAccountUnique(user)){
+            throw new ServiceException("登录账号已存在");
+        }
+        if (!checkPhoneUnique(user)){
+            throw new ServiceException("手机号码已存在");
+        }
+        //除去无用id
+        if (UserTypeEnums.TEACHER.equals(user.getType())){
+            user.setGradeId(null);
+        }
+        if (UserTypeEnums.STUDENT.equals(user.getType())){
+            user.setSecondaryCollegeId(null);
+            user.setTeachingGroupId(null);
+        }
+        //新增用户
+        save(user);
+        //新增用户信息
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserFacultyId(user.getId());
+        userInfo.setSex(userInsertDTO.getSex());
+        userInfo.setEmail(userInsertDTO.getEmail());
+        userInfoService.save(userInfo);
+        //新增用户角色关系
+        List<Long> roleIds = userInsertDTO.getRoleIds();
+        if (CollectionUtil.isNotEmpty(roleIds)){
+            Long[] ids = roleIds.toArray(new Long[0]);
+            this.insertUserAuth(user.getId(),ids );
+        }
+        //响应
+        return AjaxResult.success();
+    }
+
     /**
      * 检查账号码唯一性
      *
@@ -443,10 +606,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private void kickUser(Long id){
         if (!Objects.isNull(id)){
             stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY+id);
+            //删除权限信息
+            stringRedisTemplate.delete(RedisConstants.USER_PERMISSION_KEY+"::" + id);
         }
     }
-
-    // TODO: 2023/3/20 关于鉴权
 
 }
 

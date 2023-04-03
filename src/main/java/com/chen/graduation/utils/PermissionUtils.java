@@ -1,6 +1,7 @@
 package com.chen.graduation.utils;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.chen.graduation.beans.PO.Permission;
 
 import java.util.ArrayList;
@@ -25,6 +26,23 @@ public class PermissionUtils {
             }
         }
         return tree;
+    }
+
+    /**
+     * 获取按钮或请求权限 权限标识
+     *
+     * @param permissionList 权限列表
+     * @return {@link List}<{@link String}>
+     */
+    public static List<String> getButtonOrRequestPermission(List<Permission> permissionList) {
+        List<String> permissions=new ArrayList<>();
+        for (Permission permission : permissionList) {
+            String perms = permission.getPerms();
+            if (StrUtil.isNotBlank(perms)){
+                permissions.add(perms);
+            }
+        }
+        return permissions;
     }
 
     private static void findChildren(Permission permission, List<Permission> permissionList) {

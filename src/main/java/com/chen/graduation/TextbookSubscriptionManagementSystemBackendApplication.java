@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Import;
 @SpringBootApplication
 @Import(cn.hutool.extra.spring.SpringUtil.class)
 public class TextbookSubscriptionManagementSystemBackendApplication {
-    // TODO: 2023/2/21 鉴权
     public static void main(String[] args) {
         SpringApplication.run(TextbookSubscriptionManagementSystemBackendApplication.class, args);
     }

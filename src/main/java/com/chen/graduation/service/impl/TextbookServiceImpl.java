@@ -103,7 +103,6 @@ public class TextbookServiceImpl extends ServiceImpl<TextbookMapper, Textbook>
         return AjaxResult.success(textbookVOList);
     }
 
-    // FIXME: 2023/3/16 优化
     @Override
     public AjaxResult<List<TextbookVO>> me() {
         //查询当前用户

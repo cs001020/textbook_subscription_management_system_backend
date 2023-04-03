@@ -15,6 +15,7 @@ import com.chen.graduation.beans.VO.TeachingGroupVO;
 import com.chen.graduation.converter.OpeningPlanConverter;
 import com.chen.graduation.enums.OpenPlanDetailsTypeEnums;
 import com.chen.graduation.enums.OpenPlanStateEnums;
+import com.chen.graduation.enums.UserTypeEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.interceptor.UserHolderContext;
 import com.chen.graduation.service.*;
@@ -59,10 +60,13 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
         return AjaxResult.success(openingPlanVOList);
     }
 
-    // TODO: 2023/2/21 各种id校验
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> addPlan(OpeningPlanDTO openingPlanDTO) {
+        // 参数校验
+        if (!idsCheck(openingPlanDTO)){
+            throw new ServiceException("参数异常");
+        }
         //分解参数
         OpeningPlan openingPlan = openingPlanConverter.dto2po(openingPlanDTO);
         List<OpeningPlanDetail> openingPlanDetails = openingPlan.getOpeningPlanDetails();
@@ -204,6 +208,42 @@ public class OpeningPlanServiceImpl extends ServiceImpl<OpeningPlanMapper, Openi
     public AjaxResult<List<OpeningPlanDetail>> getCourseById(Long id) {
         List<OpeningPlanDetail> list = openingPlanDetailService.lambdaQuery().eq(OpeningPlanDetail::getOpeningPlanId, id).list();
         return AjaxResult.success(list);
+    }
+
+    /**
+     * ids检查
+     * 不通过返回false
+     *
+     * @param openingPlanDTO 开放计划dto
+     * @return boolean
+     */
+    private boolean idsCheck(OpeningPlanDTO openingPlanDTO) {
+        // id 获取
+        Long teacherId = openingPlanDTO.getTeacherId();
+        Long teachingGroupId = openingPlanDTO.getTeachingGroupId();
+        Long secondaryCollegeId = openingPlanDTO.getSecondaryCollegeId();
+        Long gradeId = openingPlanDTO.getGradeId();
+        //获取教师
+        User user = userService.getById(teacherId);
+        if (Objects.isNull(user)|| !UserTypeEnums.TEACHER.equals(user.getType())){
+            return false;
+        }
+        // 教学组
+        TeachingGroup teachingGroup = SpringUtil.getBean(TeachingGroupService.class).getById(teachingGroupId);
+        if (Objects.isNull(teachingGroup)){
+            return false;
+        }
+        // 二级学院
+        SecondaryCollege secondaryCollege = SpringUtil.getBean(SecondaryCollegeService.class).getById(secondaryCollegeId);
+        if (Objects.isNull(secondaryCollege)){
+            return false;
+        }
+        //班级
+        Grade grade = SpringUtil.getBean(GradeService.class).getById(gradeId);
+        if (Objects.isNull(grade)){
+            return false;
+        }
+        return true;
     }
 }
 

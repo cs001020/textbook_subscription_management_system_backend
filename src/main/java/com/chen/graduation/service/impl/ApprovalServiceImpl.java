@@ -234,7 +234,6 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         return AjaxResult.success();
     }
 
-    // FIXME: 2023/2/22 校验。。。。。
     @Override
     @Transactional(rollbackFor = Throwable.class)
     public AjaxResult<Object> teachingGroupApproval(Long id, ApprovalDTO approvalDTO) {
@@ -304,13 +303,11 @@ public class ApprovalServiceImpl extends ServiceImpl<ApprovalMapper, Approval>
         approval.setDeansOfficeState(approvalDTO.getApprovalStateEnums());
         approval.setDeansOfficeMessage(approvalDTO.getMessage());
         approval.setState(ApprovalStateEnums.REJECT.equals(approvalDTO.getApprovalStateEnums()) ? ApprovalTotalStateEnums.REJECT : ApprovalTotalStateEnums.ADOPT);
-        // TODO: 2023/2/27 优化
         //教务处审核通过 更新开课计划
         if (ApprovalStateEnums.ADOPT.equals(approvalDTO.getApprovalStateEnums())) {
             LambdaUpdateWrapper<OpeningPlan> updateWrapper=new LambdaUpdateWrapper<>();
             updateWrapper.eq(OpeningPlan::getId,approval.getOpeningPlanId()).set(OpeningPlan::getState, OpenPlanStateEnums.APPROVAL_COMPLETED);
             openingPlanService.update(updateWrapper);
-            // TODO: 2023/2/26 教材订单
             textbookOrderService.generateTextbooksOrderByApproval(approval);
         }
         //更新

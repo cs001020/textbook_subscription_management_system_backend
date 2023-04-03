@@ -39,4 +39,11 @@ public class SystemConstants {
      * 图片类型
      */
     public static final List<String> IMG_TYPE= Arrays.asList("jpg","png");
+
+    /**
+     * 权限字符
+     * 用户部分接口 只需要登陆后即可访问
+     * 不需要再进行具体的校验
+     */
+    public static final String LOGIN_PERM="login";
 }

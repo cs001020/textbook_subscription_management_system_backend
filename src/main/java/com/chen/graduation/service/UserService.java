@@ -1,12 +1,10 @@
 package com.chen.graduation.service;
 
-import com.chen.graduation.beans.DTO.AccountLoginDTO;
-import com.chen.graduation.beans.DTO.PageParamDTO;
-import com.chen.graduation.beans.DTO.SmsLoginDTO;
-import com.chen.graduation.beans.DTO.UserSearchDTO;
+import com.chen.graduation.beans.DTO.*;
 import com.chen.graduation.beans.PO.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.chen.graduation.beans.VO.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -130,4 +128,50 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link UserVO}>
      */
     AjaxResult<List<UserVO>> selectUnallocatedList(PageParamDTO pageParamDTO, User user, Long roleId);
+
+    /**
+     * 用户资料
+     *
+     * @return {@link AjaxResult}<{@link UserProfileVO}>
+     */
+    AjaxResult<UserProfileVO> profile();
+
+    /**
+     * 更新用户头像
+     *
+     * @param file 文件
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUserAvatar(MultipartFile file);
+
+    /**
+     * 更新用户个人资料
+     *
+     * @param userProfileUpdateDTO 用户配置文件更新dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUserProfile(UserProfileUpdateDTO userProfileUpdateDTO);
+
+    /**
+     * 用户更新密码
+     *
+     * @param userRestPasswordDTO 其他用户密码dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUserPwd(UserRestPasswordDTO userRestPasswordDTO);
+
+    /**
+     * 获取所有教学组以及二级学院以及班级，用于添加
+     *
+     * @return {@link AjaxResult}<{@link TeachingGroupAndSecondaryCollegeAndGradeTree}>
+     */
+    AjaxResult<TeachingGroupAndSecondaryCollegeAndGradeTree> getAllTeachingGroupAndSecondaryCollEgeAndGradeTree();
+
+    /**
+     * 添加用户
+     *
+     * @param userInsertDTO 用户插入dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> add(UserInsertDTO userInsertDTO);
 }

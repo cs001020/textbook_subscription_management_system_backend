@@ -11,6 +11,7 @@ import com.chen.graduation.beans.PO.RolePermission;
 import com.chen.graduation.beans.PO.UserRole;
 import com.chen.graduation.beans.VO.AjaxResult;
 import com.chen.graduation.beans.VO.RolePermissionVo;
+import com.chen.graduation.constants.RedisConstants;
 import com.chen.graduation.enums.RoleStateEnums;
 import com.chen.graduation.exception.ServiceException;
 import com.chen.graduation.service.PermissionService;
@@ -19,6 +20,7 @@ import com.chen.graduation.service.RoleService;
 import com.chen.graduation.mapper.RoleMapper;
 import com.chen.graduation.service.UserRoleService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -50,6 +52,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         String name = role.getName();
         String description = role.getDescription();
         RoleStateEnums state = role.getState();
+        // FIXME: 2023/4/3 分页会报警告日志 不影响使用 暂无修复打算
         //数据库查询
         Page<Role> page = lambdaQuery()
                 .like(StrUtil.isNotBlank(name), Role::getName, name)
@@ -82,6 +85,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> changeStatus(Role role) {
         //参数获取
         Long id = role.getId();
@@ -116,6 +120,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> updateRole(Role role) {
         //参数校验
         if (Objects.isNull(role.getId())) {
@@ -154,6 +159,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> deleteRoleById(Long roleId) {
         //分配用户检查
         Role role = getById(roleId);
@@ -171,8 +177,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> insertAuthUsers(Long roleId, Long[] userIds) {
-        //蚕食校验
+        //参数校验
         if (Objects.isNull(roleId)||Objects.isNull(userIds)){
             throw new ServiceException("参数异常");
         }
@@ -195,6 +202,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> deleteAuthUsers(Long roleId, Long[] userIds) {
         //参数校验
         if (Objects.isNull(roleId)||Objects.isNull(userIds)){
@@ -235,7 +243,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         List<Role> roleList = page.getRecords();
         return CollUtil.isEmpty(roleList) || roleList.get(0).getId().equals(role.getId());
     }
-    // TODO: 2023/3/21 关于鉴权
 }
 
 

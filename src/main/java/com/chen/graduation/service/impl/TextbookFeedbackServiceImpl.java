@@ -52,7 +52,6 @@ public class TextbookFeedbackServiceImpl extends ServiceImpl<TextbookFeedbackMap
         return AjaxResult.success(textbookFeedbackVOList);
     }
 
-    // FIXME: 2023/2/21 存在缓存错误删除问题
     @Override
     @CacheEvict(value = RedisConstants.TEXTBOOK_FEEDBACK_CACHE_KEY,allEntries = true)
     public AjaxResult<Object> deleteById(Long id) {
