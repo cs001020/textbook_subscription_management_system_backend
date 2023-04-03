@@ -263,6 +263,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     }
 
     @Override
+    @Transactional(rollbackFor = Throwable.class)
+    public AjaxResult<Object> updateUserPwd(UserRestPasswordDTO userRestPasswordDTO) {
+        //获取用户
+        Long userId = UserHolderContext.getUserId();
+        User user = getById(userId);
+        //判断原密码是否匹配
+        String encodeOldPwd = SecureUtil.md5(userRestPasswordDTO.getOldPassword() + SystemConstants.PASSWORD_MD5_SALT);
+        if (!encodeOldPwd.equals(user.getPassword())){
+            throw new ServiceException("原密码错误，请重新输入");
+        }
+        //更新新密码
+        String encodeNewPwd = SecureUtil.md5(userRestPasswordDTO.getNewPassword() + SystemConstants.PASSWORD_MD5_SALT);
+        user.setPassword(encodeNewPwd);
+        boolean update = updateById(user);
+        //用户下线
+        kickUser(userId);
+        //响应
+        return AjaxResult.success();
+    }
+
+    @Override
     public AjaxResult<List<User>> teacher(PageParamDTO pageParamDTO, User user) {
         //数据库查询
         Page<User> page = baseMapper.getTeacherList(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()),user);

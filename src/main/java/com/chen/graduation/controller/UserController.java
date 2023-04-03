@@ -82,6 +82,15 @@ public class UserController {
     public AjaxResult<Object> updateUserProfile(@RequestBody @Validated UserProfileUpdateDTO userProfileUpdateDTO) {
         return userService.updateUserProfile(userProfileUpdateDTO);
     }
+
+    @Auth({SystemConstants.LOGIN_PERM})
+    @Log(title = "个人资料", businessTypeEnums = BusinessTypeEnums.UPDATE)
+    @ApiOperation("用户修改密码")
+    @PostMapping("/pwd")
+    public AjaxResult<Object> updateUserPwd(@RequestBody @Validated UserRestPasswordDTO userRestPasswordDTO) {
+        return userService.updateUserPwd(userRestPasswordDTO);
+    }
+
     @Auth({"academic:openingPlan:add","academic:openingPlan:edit"})
     @ApiOperation("获取教师列表(未被封禁的教师用户)")
     @GetMapping("/teacher")

@@ -151,4 +151,12 @@ public interface UserService extends IService<User> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> updateUserProfile(UserProfileUpdateDTO userProfileUpdateDTO);
+
+    /**
+     * 用户更新密码
+     *
+     * @param userRestPasswordDTO 其他用户密码dto
+     * @return {@link AjaxResult}<{@link Object}>
+     */
+    AjaxResult<Object> updateUserPwd(UserRestPasswordDTO userRestPasswordDTO);
 }
