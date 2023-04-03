@@ -38,17 +38,16 @@ public class AuthorizeInterceptor implements HandlerInterceptor {
             log.warn("{}接口未定义权限",request.getRequestURI());
             return true;
         }
-        //获取用户权限字符
-        Long userId = UserHolderContext.getUserId();
-        List<String> perms = permissionService.getPermissionPermsByUserId(userId);
         //获取方法需要的权限
         String[] value = auth.value();
+        //部分接口只需要登陆 不需要进行具体的鉴权
+        if (value[0].equals(SystemConstants.LOGIN_PERM)) {
+            return true;
+        }
+        //获取用户权限字符
+        List<String> perms = permissionService.getPermissionPermsByUserId(UserHolderContext.getUserId());
         //权限判断
         for (String s : value) {
-            //部分接口只需要登陆 不需要进行具体的鉴权
-            if (s.equals(SystemConstants.LOGIN_PERM)) {
-                return true;
-            }
             if (perms.contains(s)){
                 return true;
             }

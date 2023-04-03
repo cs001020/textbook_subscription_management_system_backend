@@ -32,6 +32,7 @@ import com.chen.graduation.utils.PermissionUtils;
 import com.chen.graduation.utils.RouterUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -213,6 +214,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         Long userId = UserHolderContext.getUserId();
         //删除token
         stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY + userId);
+        //删除权限信息
+        stringRedisTemplate.delete(RedisConstants.USER_PERMISSION_KEY+"::" + userId);
         //响应
         return AjaxResult.success();
     }
@@ -334,6 +337,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,key="#userId.longValue()")
     public AjaxResult<Object> insertUserAuth(Long userId, Long[] roleIds) {
         //参数校验
         if (Objects.isNull(userId)||Objects.isNull(roleIds)){
@@ -445,10 +449,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     private void kickUser(Long id){
         if (!Objects.isNull(id)){
             stringRedisTemplate.delete(RedisConstants.USER_TOKEN_KEY+id);
+            //删除权限信息
+            stringRedisTemplate.delete(RedisConstants.USER_PERMISSION_KEY+"::" + id);
         }
     }
-
-    // TODO: 2023/3/20 关于鉴权
 
 }
 

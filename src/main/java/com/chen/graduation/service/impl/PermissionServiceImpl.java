@@ -18,6 +18,7 @@ import com.chen.graduation.mapper.PermissionMapper;
 import com.chen.graduation.service.RolePermissionService;
 import com.chen.graduation.utils.PermissionUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,6 +112,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> updatePermission(Permission permission) {
         //参数检查
         if (Objects.isNull(permission.getId())) {
@@ -132,6 +134,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> deletePermissionById(Long id) {
         //子权限检查
         if (checkHasChildById(id)) {
@@ -151,6 +154,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     @Transactional(rollbackFor = Throwable.class)
+    @CacheEvict(value = RedisConstants.USER_PERMISSION_KEY,allEntries = true)
     public AjaxResult<Object> changeState(Permission permission) {
         //参数获取
         Long id = permission.getId();
@@ -173,7 +177,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
      * @param userId 用户id
      * @return {@link List}<{@link String}>
      */
-    //@Cacheable(value = RedisConstants.USER_PERMISSION_KEY,key = "#userId.longValue()")
+    @Cacheable(value = RedisConstants.USER_PERMISSION_KEY,key = "#userId.longValue()")
     @Override
     public List<String> getPermissionPermsByUserId(Long userId) {
         List<Permission> permissionByUserId = baseMapper.getPermissionByUserId(userId);
@@ -286,7 +290,6 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         List<RolePermission> rolePermissionList = rolePermissionService.lambdaQuery().eq(RolePermission::getPermissionId, id).list();
         return CollUtil.isNotEmpty(rolePermissionList);
     }
-    // TODO: 2023/3/22 关于鉴权
 }
 
 

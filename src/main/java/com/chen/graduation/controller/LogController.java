@@ -49,8 +49,6 @@ public class LogController {
         return operateLogService.selectOperLogList(operateLogSearchDTO);
     }
 
-    // TODO: 2023/4/3 优化速度
-    // FIXME: 2023/4/3 拦截后依然可以导出
     /**
      * 导出日志
      * 注意 请勿使用swagger2接口文档调试 存在bug
