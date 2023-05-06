@@ -9,11 +9,8 @@ import com.chen.graduation.beans.VO.TextbookVO;
 import com.chen.graduation.enums.TextbookOrderStateEnums;
 import com.chen.graduation.enums.TextbookStateEnums;
 import com.chen.graduation.exception.ServiceException;
-import com.chen.graduation.service.OpeningPlanService;
-import com.chen.graduation.service.TextbookOrderService;
+import com.chen.graduation.service.*;
 import com.chen.graduation.mapper.TextbookOrderMapper;
-import com.chen.graduation.service.TextbookService;
-import com.chen.graduation.service.UserService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +34,8 @@ public class TextbookOrderServiceImpl extends ServiceImpl<TextbookOrderMapper, T
     private OpeningPlanService openingPlanService;
     @Resource
     private UserService userService;
+    @Resource
+    private GradeService gradeService;
 
     @Override
     public void generateTextbooksOrderByApproval(Approval approval) {
@@ -60,8 +59,17 @@ public class TextbookOrderServiceImpl extends ServiceImpl<TextbookOrderMapper, T
 
     @Override
     public AjaxResult<List<TextbookOrder>> pageQuery(PageParamDTO pageParamDTO) {
+        //分页查询教材订单
         Page<TextbookOrder> page = page(new Page<>(pageParamDTO.getPage(), pageParamDTO.getSize()));
-        AjaxResult<List<TextbookOrder>> success = AjaxResult.success(page.getRecords());
+        List<TextbookOrder> textbookOrderList = page.getRecords();
+        for (TextbookOrder textbookOrder : textbookOrderList) {
+            Long gradeId = textbookOrder.getGradeId();
+            //获取班级人数
+            Long count = userService.lambdaQuery().eq(User::getGradeId, gradeId).count();
+            textbookOrder.setGradePeoPleNumber(count);
+            textbookOrder.setGradeName(gradeService.getNameById(gradeId));
+        }
+        AjaxResult<List<TextbookOrder>> success = AjaxResult.success(textbookOrderList);
         success.setTotal(page.getTotal());
         return success;
     }

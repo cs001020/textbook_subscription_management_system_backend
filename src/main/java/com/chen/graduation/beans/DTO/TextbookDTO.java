@@ -30,7 +30,7 @@ public class TextbookDTO implements Serializable {
     @NotBlank(message = "参数异常")
     private String bookName;
     @ApiModelProperty("ISBN码")
-    @ISBN(message = "isbn码格式错误")
+    @ISBN(message = "isbn码格式错误",type = ISBN.Type.ANY)
     @NotBlank(message = "参数异常")
     private String isbn;
     @ApiModelProperty("作者")

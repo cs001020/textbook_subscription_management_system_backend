@@ -3,6 +3,7 @@ package com.chen.graduation.mapper;
 import com.chen.graduation.beans.PO.Grade;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.chen.graduation.beans.VO.GradeVO;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -20,6 +21,8 @@ public interface GradeMapper extends BaseMapper<Grade> {
      * @return {@link List}<{@link GradeVO}>
      */
     List<GradeVO> listAll();
+
+    String getNameById(@Param("id") Long gradeId);
 }
 
 

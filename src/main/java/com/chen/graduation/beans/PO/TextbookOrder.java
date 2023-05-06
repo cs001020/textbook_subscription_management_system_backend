@@ -1,6 +1,7 @@
 package com.chen.graduation.beans.PO;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -27,6 +28,10 @@ public class TextbookOrder implements Serializable {
     private Date updateTime;
 
     private Long isDeleted;
+    @TableField(exist = false)
+    private String gradeName;
+    @TableField(exist = false)
+    private Long gradePeoPleNumber;
 
     private static final long serialVersionUID = 1L;
 }

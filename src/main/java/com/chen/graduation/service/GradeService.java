@@ -54,4 +54,12 @@ public interface GradeService extends IService<Grade> {
      * @return {@link AjaxResult}<{@link Object}>
      */
     AjaxResult<Object> update(Long id, GradeDTO gradeDTO);
+
+    /**
+     * 通过id获取班级名称
+     *
+     * @param gradeId 年级id
+     * @return {@link String}
+     */
+    String getNameById(Long gradeId);
 }

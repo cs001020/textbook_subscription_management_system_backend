@@ -111,6 +111,11 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade>
         return AjaxResult.success();
     }
 
+    @Override
+    public String getNameById(Long gradeId) {
+        return baseMapper.getNameById(gradeId);
+    }
+
     /**
      * 检查用户是否存在
      *
